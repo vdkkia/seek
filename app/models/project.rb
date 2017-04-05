@@ -38,7 +38,7 @@ class Project < ActiveRecord::Base
 
   has_many :openbis_endpoints
 
-  belongs_to :programme
+  belongs_to :programme, inverse_of: :projects
 
   # attr_accessible :project_administrator_ids, :asset_gatekeeper_ids, :pal_ids, :asset_housekeeper_ids, :title, :programme_id, :description,
   #                :web_page, :institution_ids, :parent_id, :wiki_page, :organism_ids, :default_license

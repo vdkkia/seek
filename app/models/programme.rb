@@ -18,11 +18,11 @@ class Programme < ActiveRecord::Base
   acts_as_annotatable :name_field => :title
 
   # associations
-  has_many :projects, dependent: :nullify
+  has_many :projects, dependent: :nullify, inverse_of: :programme
   has_many :work_groups, through: :projects
   has_many :group_memberships, through: :work_groups
-  has_many :people, -> { order('last_name ASC').uniq }, through: :group_memberships
-  has_many :institutions, -> { uniq }, through: :work_groups
+  has_many :people, -> { order('last_name ASC').uniq }, through: :group_memberships, inverse_of: :programmes
+  has_many :institutions, -> { uniq }, through: :work_groups, inverse_of: :programmes
   has_many :admin_defined_role_programmes, :dependent => :destroy
   accepts_nested_attributes_for :projects
 

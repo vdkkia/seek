@@ -5,10 +5,8 @@ class Study < ActiveRecord::Base
   include Seek::Rdf::RdfGeneration
   include Seek::ProjectHierarchies::ItemsProjectsExtension if Seek::Config.project_hierarchy_enabled
 
-  #FIXME: needs to be declared before acts_as_isa, else ProjectAssociation module gets pulled in
-  def projects
-    investigation.try(:projects) || []
-  end
+  belongs_to :investigation
+  has_many :projects, -> { uniq }, through: :investigation
 
   searchable(:auto_index => false) do
     text :experimentalists
@@ -22,7 +20,6 @@ class Study < ActiveRecord::Base
 
   attr_accessor :new_link_from_assay
 
-  belongs_to :investigation
   has_many :assays
   belongs_to :person_responsible, :class_name => "Person"
 

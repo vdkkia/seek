@@ -41,7 +41,14 @@ class Person < ActiveRecord::Base
   has_many :current_work_groups, :class_name => 'WorkGroup', :through => :current_group_memberships,
            :source => :work_group
 
-  has_many :institutions, -> { uniq }, :through => :work_groups
+  has_many :institutions, -> { uniq }, through: :work_groups, inverse_of: :people
+  has_many :projects, -> { uniq }, through: :work_groups, inverse_of: :people
+  has_many :current_projects, -> { uniq }, through: :current_work_groups, source: :project, class_name: 'Project'
+  has_many :old_projects, -> { uniq }, through: :former_work_groups, source: :project, class_name: 'Project'
+  has_many :former_projects, -> (r) { where.not(id: r.current_project_ids).uniq },
+           through: :former_work_groups, source: :project, class_name: 'Project'
+
+  has_many :programmes, -> { uniq }, through: :projects, inverse_of: :people
 
   has_many :favourite_group_memberships, :dependent => :destroy
   has_many :favourite_groups, :through => :favourite_group_memberships
@@ -254,22 +261,6 @@ class Person < ActiveRecord::Base
 
   def sweeps
     self.try(:user).try(:sweeps) || []
-  end
-
-  def projects # ALL projects, former and current
-    #updating workgroups doesn't change groupmemberships until you save. And vice versa.
-    work_groups.collect {|wg| wg.project }.uniq | group_memberships.collect{|gm| gm.work_group.project}
-  end
-
-  def current_projects
-    (current_work_groups.collect {|wg| wg.project }.uniq | current_group_memberships.collect{|gm| gm.work_group.project})
-  end
-
-  # Projects that the person has let completely (i.e. not still involved with through a different institution)
-  def former_projects
-    old_projects = (former_work_groups.collect {|wg| wg.project }.uniq | former_group_memberships.collect{|gm| gm.work_group.project})
-
-    old_projects - current_projects
   end
 
   def member?
