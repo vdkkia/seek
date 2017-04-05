@@ -11,9 +11,8 @@ class Investigation < ActiveRecord::Base
 
   attr_accessor :new_link_from_study
 
-  has_many :studies
-
-  has_many :assays,:through=>:studies
+  has_many :studies, inverse_of: :investigations
+  has_many :assays, through: :studies, inverse_of: :investigations
 
   validates :projects,:presence => true
 

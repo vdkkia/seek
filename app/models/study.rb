@@ -5,8 +5,8 @@ class Study < ActiveRecord::Base
   include Seek::Rdf::RdfGeneration
   include Seek::ProjectHierarchies::ItemsProjectsExtension if Seek::Config.project_hierarchy_enabled
 
-  belongs_to :investigation
-  has_many :projects, -> { uniq }, through: :investigation
+  belongs_to :investigation, inverse_of: :studies
+  has_many :projects, -> { uniq }, through: :investigation, inverse_of: :studies
 
   searchable(:auto_index => false) do
     text :experimentalists
@@ -20,7 +20,7 @@ class Study < ActiveRecord::Base
 
   attr_accessor :new_link_from_assay
 
-  has_many :assays
+  has_many :assays, inverse_of: :investigations
   belongs_to :person_responsible, :class_name => "Person"
 
   validates :investigation, :presence => true

@@ -7,9 +7,9 @@ class Assay < ActiveRecord::Base
   include Seek::Taggable
   include Seek::ProjectHierarchies::ItemsProjectsExtension if Seek::Config.project_hierarchy_enabled
 
-  belongs_to :study
-  has_one :investigation, through: :study
-  has_many :projects, -> { uniq }, through: :investigation
+  belongs_to :study, inverse_of: :assays
+  has_one :investigation, through: :study, inverse_of: :assays
+  has_many :projects, -> { uniq }, through: :investigation, inverse_of: :assays
 
   #needs to before acts_as_isa - otherwise auto_index=>false is overridden by Seek::Search::CommonFields
   searchable(:auto_index=>false) do

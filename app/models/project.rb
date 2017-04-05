@@ -13,6 +13,8 @@ class Project < ActiveRecord::Base
   include SimpleCrypt
 
   has_and_belongs_to_many :investigations
+  has_many :studies, -> { uniq }, through: :investigations, inverse_of: :projects
+  has_many :assays, -> { uniq }, through: :studies, inverse_of: :projects
 
   has_and_belongs_to_many :data_files
   has_and_belongs_to_many :models
@@ -159,14 +161,6 @@ class Project < ActiveRecord::Base
     # infer all project's locations from the institutions where the person is member of
     locations = institutions.collect(&:country).select { |l| !l.blank? }
     locations
-  end
-
-  def studies
-    investigations.collect(&:studies).flatten.uniq
-  end
-
-  def assays
-    studies.collect(&:assays).flatten.uniq
   end
 
   def set_credentials
