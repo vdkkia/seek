@@ -49,15 +49,15 @@ module Seek
 
     def set_default_subscriptions(projects)
       unless projects.empty?
-        Person.includes(:project_subscriptions).each do |person|
+        Person.includes(:project_subscriptions => :project).where('projects.id' => projects.map(&:id)).each do |person|
           project_subscriptions = person.project_subscriptions
           project_subscriptions.each do |ps|
-            next unless projects.include? ps.project
             subscriptions.create(person: person, project_subscription_id: ps.id) if !ps.unsubscribed_types.include?(self.class.name) && !self.subscribed?(person)
             # also build subscriptions for studies and assays associating with this investigation
-            next unless self.is_a?(Investigation)
-            (studies | assays).each do |item|
-              item.subscriptions << Subscription.create(person: person, project_subscription_id: ps.id) unless item.subscribed?(person)
+            if self.is_a?(Investigation)
+              (studies | assays).each do |item|
+                item.subscriptions << Subscription.create(person: person, project_subscription_id: ps.id) unless item.subscribed?(person)
+              end
             end
           end
         end
