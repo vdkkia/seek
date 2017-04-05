@@ -467,6 +467,7 @@ class SubscriptionTest < ActiveSupport::TestCase
       study.investigation = investigation
       study.save
     end
+    assay.reload
 
     assert SetSubscriptionsForItemJob.new(assay, assay.projects).exists?
     assert SetSubscriptionsForItemJob.new(study, study.projects).exists?
