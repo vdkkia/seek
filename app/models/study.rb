@@ -20,7 +20,7 @@ class Study < ActiveRecord::Base
 
   attr_accessor :new_link_from_assay
 
-  has_many :assays, inverse_of: :investigations
+  has_many :assays, inverse_of: :study
   belongs_to :person_responsible, :class_name => "Person"
 
   validates :investigation, :presence => true
