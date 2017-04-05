@@ -9,7 +9,7 @@ class Assay < ActiveRecord::Base
 
   belongs_to :study
   has_one :investigation, through: :study
-  has_many :projects, through: :investigation, uniq: true
+  has_many :projects, -> { uniq }, through: :investigation
 
   #needs to before acts_as_isa - otherwise auto_index=>false is overridden by Seek::Search::CommonFields
   searchable(:auto_index=>false) do
@@ -27,10 +27,11 @@ class Assay < ActiveRecord::Base
 
   belongs_to :institution
 
+  belongs_to :study
   belongs_to :owner, :class_name=>"Person"
   belongs_to :assay_class
-  has_many :assay_organisms, :dependent=>:destroy
-  has_many :organisms, :through=>:assay_organisms
+  has_many :assay_organisms, dependent: :destroy, inverse_of: :assay
+  has_many :organisms, through: :assay_organisms, inverse_of: :assays
   has_many :strains, :through=>:assay_organisms
   has_many :tissue_and_cell_types,:through => :assay_organisms
 
@@ -40,6 +41,8 @@ class Assay < ActiveRecord::Base
   has_many :sops, :through => :assay_assets, :source => :asset, :source_type => "Sop"
   has_many :models, :through => :assay_assets, :source => :asset, :source_type => "Model"
   has_many :samples, :through => :assay_assets, :source => :asset, :source_type => "Sample"
+
+  has_one :investigation,:through=>:study
 
   validates_presence_of :assay_type_uri
   validates_presence_of :technology_type_uri, :unless=>:is_modelling?

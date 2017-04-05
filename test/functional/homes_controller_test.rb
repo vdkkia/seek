@@ -26,7 +26,7 @@ class HomesControllerTest < ActionController::TestCase
 
   test 'correct response to unknown action' do
     login_as(:quentin)
-    assert_raises ActionController::RoutingError do
+    assert_raises ActionController::UrlGenerationError do
       get :sdjgsdfjg
     end
   end
@@ -104,7 +104,7 @@ class HomesControllerTest < ActionController::TestCase
   end
 
   test 'SOP upload option should be capitalized' do
-    login_as(:quentin)
+    login_as(Factory(:person))
     get :index
     assert_select 'li#create-menu ul.dropdown-menu', count: 1 do
       assert_select 'li>a', text: "#{I18n.t('sop')}", count: 1

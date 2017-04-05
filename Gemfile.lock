@@ -31,12 +31,6 @@ GIT
     convert_office (0.9.1)
 
 GIT
-  remote: https://github.com/SysMO-DB/doi_query_tool.git
-  revision: d87ae6ffa2393beba4bbb49817cf04a60f520fee
-  specs:
-    doi_query_tool (0.0.0)
-
-GIT
   remote: https://github.com/SysMO-DB/fleximage.git
   revision: bb1182f2716a9bf1b5d85e186d8bb7eec436797b
   ref: bb1182f2716a9bf1b5d85e186d8bb7eec436797b
@@ -50,12 +44,6 @@ GIT
     gibberish (1.0.0)
 
 GIT
-  remote: https://github.com/SysMO-DB/my_rails_settings.git
-  revision: e3f7fe9625ea27fea42b02c95e30cb4f1341655b
-  specs:
-    my_rails_settings (1.0.0)
-
-GIT
   remote: https://github.com/SysMO-DB/my_responds_to_parent.git
   revision: 5fadfd0cd85a0a70caaddd36f9617cb743047e0b
   specs:
@@ -66,15 +54,6 @@ GIT
   revision: 4ff41d5e7d1f17440240fe0886a7c9827f8f53c6
   specs:
     my_savage_beast (2.3)
-
-GIT
-  remote: https://github.com/SysMO-DB/piwik-ruby-tracking.git
-  revision: 06fa67ba4b2bd66878d745e9de5d6d6c8015bc92
-  specs:
-    piwik_analytics (1.0.1)
-      actionpack
-      activesupport
-      rails (>= 3.0.0)
 
 GIT
   remote: https://github.com/SysMO-DB/redbox.git
@@ -96,9 +75,10 @@ GIT
 
 GIT
   remote: https://github.com/myGrid/annotations.git
-  revision: d33e78993ee957fa12d71cbe9f03100dd9b0ad15
+  revision: 73db96659dd18cfb93db305eed89ee6329e898aa
+  branch: rails4
   specs:
-    my_annotations (0.6.0)
+    my_annotations (0.7.0)
 
 GIT
   remote: https://github.com/myGrid/search_biomodel.git
@@ -108,11 +88,10 @@ GIT
 
 GIT
   remote: https://github.com/myGrid/taverna-player.git
-  revision: b36e19c85b7a58d08a73aa418c0f838442c6dfd3
-  ref: b36e19c85b7a58d08a73aa418c0f838442c6dfd3
-  branch: list-inputs
+  revision: f8f012f2de560ff1608029c2887c203f29987991
+  branch: rails400-list-inputs
   specs:
-    taverna-player (0.11.0)
+    taverna-player (0.12.0)
       coderay (~> 1.1)
       daemons (~> 1.1.9)
       delayed_job_active_record (~> 4.0)
@@ -120,18 +99,20 @@ GIT
       jquery-rails (~> 3.0)
       paperclip (~> 4.1)
       pmrpc-rails (~> 1.0.0)
-      rails (~> 3.2.12)
+      rails (~> 4.0.0)
       rails_autolink (~> 1.1.0)
       require_all (~> 1.3.1)
+      responders (~> 1.1.2)
       rubyzip (~> 1.1.4)
       t2-server (~> 1.3)
       taverna-t2flow (~> 0.5.1)
 
 GIT
-  remote: https://github.com/paneq/calendar_date_select.git
-  revision: 977048211b94599fe0f08eb37a481f3d69df48f6
+  remote: https://github.com/seek4science/DOI-query-tool.git
+  revision: a389b760db2a1d00cc79319ad0bd48fd86b9d960
   specs:
-    calendar_date_select (1.16.2)
+    doi_query_tool (1.0.0)
+      libxml-ruby (>= 2.6.0)
 
 GIT
   remote: https://github.com/seek4science/zenodo-client.git
@@ -147,33 +128,36 @@ GEM
   specs:
     RedCloth (4.2.9)
     abstract_type (0.0.7)
-    actionmailer (3.2.22)
-      actionpack (= 3.2.22)
-      mail (~> 2.5.4)
-    actionpack (3.2.22)
-      activemodel (= 3.2.22)
-      activesupport (= 3.2.22)
-      builder (~> 3.0.0)
+    actionmailer (4.0.13)
+      actionpack (= 4.0.13)
+      mail (~> 2.5, >= 2.5.4)
+    actionpack (4.0.13)
+      activesupport (= 4.0.13)
+      builder (~> 3.1.0)
       erubis (~> 2.7.0)
-      journey (~> 1.0.4)
-      rack (~> 1.4.5)
-      rack-cache (~> 1.2)
-      rack-test (~> 0.6.1)
-      sprockets (~> 2.2.1)
-    activemodel (3.2.22)
-      activesupport (= 3.2.22)
-      builder (~> 3.0.0)
-    activerecord (3.2.22)
-      activemodel (= 3.2.22)
-      activesupport (= 3.2.22)
-      arel (~> 3.0.2)
-      tzinfo (~> 0.3.29)
-    activeresource (3.2.22)
-      activemodel (= 3.2.22)
-      activesupport (= 3.2.22)
-    activesupport (3.2.22)
-      i18n (~> 0.6, >= 0.6.4)
-      multi_json (~> 1.0)
+      rack (~> 1.5.2)
+      rack-test (~> 0.6.2)
+    activemodel (4.0.13)
+      activesupport (= 4.0.13)
+      builder (~> 3.1.0)
+    activerecord (4.0.13)
+      activemodel (= 4.0.13)
+      activerecord-deprecated_finders (~> 1.0.2)
+      activesupport (= 4.0.13)
+      arel (~> 4.0.0)
+    activerecord-deprecated_finders (1.0.4)
+    activerecord-session_store (1.0.0)
+      actionpack (>= 4.0, < 5.1)
+      activerecord (>= 4.0, < 5.1)
+      multi_json (~> 1.11, >= 1.11.2)
+      rack (>= 1.5.2, < 3)
+      railties (>= 4.0, < 5.1)
+    activesupport (4.0.13)
+      i18n (~> 0.6, >= 0.6.9)
+      minitest (~> 4.2)
+      multi_json (~> 1.3)
+      thread_safe (~> 0.1)
+      tzinfo (~> 0.3.37)
     acts-as-taggable-on (3.0.1)
       rails (>= 3, < 5)
     acts_as_list (0.6.0)
@@ -191,10 +175,12 @@ GEM
     api_smith (1.3.0)
       hashie (>= 1.0, < 3.0)
       httparty
-    arel (3.0.3)
+    arel (4.0.2)
     ast (2.3.0)
     astrolabe (1.3.1)
       parser (~> 2.2)
+    attr_encrypted (3.0.3)
+      encryptor (~> 3.0.0)
     auto_strip_attributes (2.0.6)
       activerecord (>= 3.0)
     axiom-types (0.1.1)
@@ -211,19 +197,16 @@ GEM
     bootstrap-sass (3.1.1.0)
       sass (~> 3.2)
     breadcrumbs_on_rails (2.3.0)
-    builder (3.0.4)
+    builder (3.1.4)
     cancan (1.6.10)
     celluloid (0.16.0)
       timers (~> 4.0.0)
-    childprocess (0.5.6)
-      ffi (~> 1.0, >= 1.0.11)
     citeproc (1.0.4)
       namae (~> 0.8)
     citeproc-ruby (1.1.4)
       citeproc (>= 1.0.4, < 2.0)
       csl (~> 1.4)
-    climate_control (0.0.3)
-      activesupport (>= 3.0)
+    climate_control (0.1.0)
     cocaine (0.5.8)
       climate_control (>= 0.0.3, < 1.0)
     code_analyzer (0.4.5)
@@ -236,7 +219,14 @@ GEM
     concord (0.1.5)
       adamantium (~> 0.2.0)
       equalizer (~> 0.0.9)
-    country-select (1.1.1)
+    countries (2.0.8)
+      i18n_data (~> 0.7.0)
+      money (~> 6.7)
+      sixarm_ruby_unaccent (~> 1.1)
+      unicode_utils (~> 1.4)
+    country_select (3.0.0)
+      countries (~> 2.0)
+      sort_alphabetical (~> 1.0)
     coveralls (0.8.1)
       json (~> 1.8)
       rest-client (>= 1.6.8, < 2)
@@ -274,6 +264,7 @@ GEM
       haml (~> 4.0)
       rdf (~> 1.1)
       sxp (~> 0.1, >= 0.1.3)
+    encryptor (3.0.0)
     equalizer (0.0.11)
     equivalent-xml (0.6.0)
       nokogiri (>= 1.4.3)
@@ -340,20 +331,20 @@ GEM
       multi_xml (>= 0.5.2)
     httpi (1.1.1)
       rack
-    i18n (0.7.0)
+    i18n (0.8.1)
+    i18n_data (0.7.0)
     ice_nine (0.11.2)
     in_place_editing (1.2.0)
-    jbuilder (2.2.13)
-      activesupport (>= 3.0.0, < 5)
+    jbuilder (2.6.3)
+      activesupport (>= 3.0.0, < 5.2)
       multi_json (~> 1.2)
-    journey (1.0.4)
     jquery-rails (3.1.2)
       railties (>= 3.0, < 5.0)
       thor (>= 0.14, < 2.0)
     jquery-ui-rails (3.0.1)
       jquery-rails
       railties (>= 3.1.0)
-    json (1.8.3)
+    json (1.8.6)
     json-ld (1.1.8)
       rdf (~> 1.1, >= 1.1.7)
     kgio (2.9.3)
@@ -398,9 +389,8 @@ GEM
     magic_lamp (1.0.0)
       rails (>= 3.2)
       rake
-    mail (2.5.4)
-      mime-types (~> 1.16)
-      treetop (~> 1.4.8)
+    mail (2.6.4)
+      mime-types (>= 1.16, < 4)
     mechanize (2.7.2)
       domain_name (~> 0.5, >= 0.5.1)
       http-cookie (~> 1.0.0)
@@ -430,6 +420,9 @@ GEM
       minitest (>= 2.12, < 5.0)
       powerbar
     modporter-plugin (0.1.0)
+    money (6.8.2)
+      i18n (>= 0.6.4, < 0.9)
+      sixarm_ruby_unaccent (>= 1.1.1, < 2)
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -456,6 +449,8 @@ GEM
       pyu-ruby-sasl (~> 0.0.3.2)
       rubyntlm (~> 0.3.4)
     open4 (1.3.0)
+    openseek-api (0.11.0)
+      cocaine
     paperclip (4.2.1)
       activemodel (>= 3.0.0)
       activesupport (>= 3.0.0)
@@ -471,7 +466,6 @@ GEM
       railties (>= 3.1.0)
     polyamorous (1.3.1)
       activerecord (>= 3.0)
-    polyglot (0.3.5)
     pothoven-attachment_fu (3.2.18)
     powerbar (1.0.12)
       ansi (~> 1.5.0)
@@ -479,8 +473,8 @@ GEM
     powerpack (0.1.1)
     pr_geohash (1.0.0)
     procto (0.0.3)
-    prototype-rails (3.2.1)
-      rails (~> 3.2)
+    prototype-rails (4.0.1)
+      rails (~> 4.0)
     pry (0.10.1)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -496,21 +490,17 @@ GEM
     pyu-ruby-sasl (0.0.3.3)
     quiet_assets (1.1.0)
       railties (>= 3.1, < 5.0)
-    rack (1.4.7)
-    rack-cache (1.2)
-      rack (>= 0.4)
-    rack-ssl (1.3.4)
-      rack
+    rack (1.5.5)
     rack-test (0.6.3)
       rack (>= 1.0)
-    rails (3.2.22)
-      actionmailer (= 3.2.22)
-      actionpack (= 3.2.22)
-      activerecord (= 3.2.22)
-      activeresource (= 3.2.22)
-      activesupport (= 3.2.22)
-      bundler (~> 1.0)
-      railties (= 3.2.22)
+    rails (4.0.13)
+      actionmailer (= 4.0.13)
+      actionpack (= 4.0.13)
+      activerecord (= 4.0.13)
+      activesupport (= 4.0.13)
+      bundler (>= 1.3.0, < 2.0)
+      railties (= 4.0.13)
+      sprockets-rails (~> 2.0)
     rails-assets-bootstrap (3.3.7)
       rails-assets-jquery (>= 1.9.1, < 4)
     rails-assets-bootstrap-multiselect (0.9.13)
@@ -519,9 +509,16 @@ GEM
     rails-assets-bootstrap-tagsinput (0.8.0)
       rails-assets-jquery (~> 2.1.1)
     rails-assets-clipboard (1.5.12)
+    rails-assets-eonasdan-bootstrap-datetimepicker (4.17.47)
+      rails-assets-jquery (>= 1.8.3)
+      rails-assets-moment (>= 2.10.5)
     rails-assets-jquery (2.1.4)
+    rails-assets-moment (2.18.1)
     rails-assets-typeahead.js (0.10.5)
       rails-assets-jquery (>= 1.7)
+    rails-assets-vue (2.1.8)
+    rails-observers (0.1.2)
+      activemodel (~> 4.0)
     rails_autolink (1.1.6)
       rails (> 3.1)
     rails_best_practices (1.15.7)
@@ -533,16 +530,14 @@ GEM
       json
       require_all
       ruby-progressbar
-    railties (3.2.22)
-      actionpack (= 3.2.22)
-      activesupport (= 3.2.22)
-      rack-ssl (~> 1.3.2)
+    railties (4.0.13)
+      actionpack (= 4.0.13)
+      activesupport (= 4.0.13)
       rake (>= 0.8.7)
-      rdoc (~> 3.4)
-      thor (>= 0.14.6, < 2.0)
-    rainbow (2.1.0)
+      thor (>= 0.18.1, < 2.0)
+    rainbow (2.2.1)
     raindrops (0.13.0)
-    rake (10.4.2)
+    rake (12.0.0)
     ransack (1.8.2)
       actionpack (>= 3.0)
       activerecord (>= 3.0)
@@ -607,8 +602,7 @@ GEM
       rdf (~> 1.1, >= 1.1.10)
     rdf-xsd (1.1.3)
       rdf (~> 1.1, >= 1.1.9)
-    rdoc (3.12.2)
-      json (~> 1.4)
+    rdoc (5.1.0)
     recaptcha (0.4.0)
     reek (1.6.5)
       parser (~> 2.2.0.pre.7)
@@ -616,6 +610,8 @@ GEM
       unparser (~> 0.2.2)
     request-log-analyzer (1.13.4)
     require_all (1.3.2)
+    responders (1.1.2)
+      railties (>= 3.2, < 4.2)
     rest-client (1.8.0)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 3.0)
@@ -628,29 +624,30 @@ GEM
       uuid (~> 2.3)
     rsolr (1.0.12)
       builder (>= 2.1.2)
-    rspec-core (3.2.3)
-      rspec-support (~> 3.2.0)
-    rspec-expectations (3.2.1)
+    rspec-core (3.5.4)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-mocks (3.2.1)
+      rspec-support (~> 3.5.0)
+    rspec-mocks (3.5.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.2.0)
-    rspec-rails (3.2.1)
-      actionpack (>= 3.0, < 4.3)
-      activesupport (>= 3.0, < 4.3)
-      railties (>= 3.0, < 4.3)
-      rspec-core (~> 3.2.0)
-      rspec-expectations (~> 3.2.0)
-      rspec-mocks (~> 3.2.0)
-      rspec-support (~> 3.2.0)
-    rspec-support (3.2.2)
-    rubocop (0.30.0)
+      rspec-support (~> 3.5.0)
+    rspec-rails (3.5.2)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      railties (>= 3.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
+    rubocop (0.35.1)
       astrolabe (~> 1.3)
-      parser (>= 2.2.0.1, < 3.0)
+      parser (>= 2.2.3.0, < 3.0)
       powerpack (~> 0.1)
       rainbow (>= 1.99.1, < 3.0)
-      ruby-progressbar (~> 1.4)
+      ruby-progressbar (~> 1.7)
+      tins (<= 1.6.0)
     ruby-debug-ide (0.6.1.beta2)
       rake (>= 0.8.1)
     ruby-prof (0.15.8)
@@ -669,11 +666,13 @@ GEM
     sample-template-generator (0.3.3)
       cocaine
       rdoc
-    sass (3.4.13)
-    sass-rails (3.2.6)
-      railties (~> 3.2.0)
-      sass (>= 3.1.10)
-      tilt (~> 1.3)
+    sass (3.4.23)
+    sass-rails (5.0.6)
+      railties (>= 4.0.0, < 6)
+      sass (~> 3.1)
+      sprockets (>= 2.8, < 4.0)
+      sprockets-rails (>= 2.0, < 4.0)
+      tilt (>= 1.1, < 3)
     savon (1.1.0)
       akami (~> 1.2.0)
       builder (>= 2.1.2)
@@ -684,11 +683,6 @@ GEM
       wasabi (~> 2.5.0)
     sax-machine (1.3.2)
     seedbank (0.3.0)
-    selenium-webdriver (2.47.1)
-      childprocess (~> 0.5)
-      multi_json (~> 1.0)
-      rubyzip (~> 1.0)
-      websocket (~> 1.0)
     sexp_processor (4.7.0)
     shellany (0.0.1)
     simple-spreadsheet-extractor (0.15.2)
@@ -699,7 +693,10 @@ GEM
       json (~> 1.8)
       simplecov-html (~> 0.10.0)
     simplecov-html (0.10.0)
+    sixarm_ruby_unaccent (1.1.1)
     slop (3.6.0)
+    sort_alphabetical (1.1.0)
+      unicode_utils (>= 1.2.2)
     sparql (1.1.5)
       builder (~> 3.0)
       ebnf (~> 0.3, >= 0.3.5)
@@ -711,11 +708,15 @@ GEM
     sparql-client (1.1.4)
       net-http-persistent (~> 2.9)
       rdf (~> 1.1)
-    sprockets (2.2.3)
+    sprockets (2.12.4)
       hike (~> 1.2)
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    sprockets-rails (2.3.3)
+      actionpack (>= 3.0)
+      activesupport (>= 3.0)
+      sprockets (>= 2.8, < 4.0)
     sqlite3 (1.3.12)
     sunspot (2.2.0)
       pr_geohash (~> 1.0)
@@ -747,21 +748,15 @@ GEM
       tins (~> 1.0)
     test_after_commit (0.4.1)
       activerecord (>= 3.2)
-    thor (0.19.1)
-    thread_safe (0.3.5)
+    thor (0.19.4)
+    thread_safe (0.3.6)
     tilt (1.4.1)
     timers (4.0.1)
       hitimes
     tins (1.5.1)
     transaction_isolation (1.0.3)
       activerecord (>= 3.0.11)
-    treetop (1.4.15)
-      polyglot
-      polyglot (>= 0.3.1)
-    turbo-sprockets-rails3 (0.3.14)
-      railties (> 3.2.8, < 4.0.0)
-      sprockets (>= 2.2.0)
-    tzinfo (0.3.44)
+    tzinfo (0.3.52)
     ucf (2.0.0)
       zip-container (~> 3.0.1)
     uglifier (3.0.0)
@@ -770,6 +765,7 @@ GEM
       unf_ext
     unf_ext (0.0.7.1)
     unicode (0.4.4.2)
+    unicode_utils (1.4.0)
     unicorn (4.9.0)
       kgio (~> 2.6)
       rack
@@ -803,7 +799,6 @@ GEM
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
     webrobots (0.1.1)
-    websocket (1.2.2)
     will_paginate (3.0.7)
     yaml_db (0.3.0)
       rails (>= 3.0, < 4.3)
@@ -817,28 +812,29 @@ PLATFORMS
 
 DEPENDENCIES
   RedCloth (= 4.2.9)
+  activerecord-session_store
   acts-as-taggable-on (= 3.0.1)
   acts_as_activity_logged!
   acts_as_list
   acts_as_trashable!
   acts_as_tree
   app_version!
+  attr_encrypted (~> 3.0.0)
   auto_strip_attributes
   bibtex-ruby (~> 4.4.2)
   bio (~> 1.5.1)
   bioportal (>= 2.3)!
   bives
-  bootstrap-sass (= 3.1.1.0)
+  bootstrap-sass
   breadcrumbs_on_rails
   bundler (>= 1.8.4)
-  calendar_date_select!
   cancan
   citeproc (~> 1.0.4)
   citeproc-ruby (~> 1.1.4)
   cocaine
   colorize (= 0.7.4)
   convert_office!
-  country-select
+  country_select
   coveralls
   csl-styles (~> 1.0.1.7)
   daemons
@@ -861,9 +857,10 @@ DEPENDENCIES
   handlebars_assets
   hpricot (~> 0.8.2)
   in_place_editing
+  jbuilder (~> 2.0)
   jquery-rails (~> 3)
   jquery-ui-rails (~> 3)
-  libxml-ruby (>= 2.6.0)
+  libxml-ruby (~> 2.8.0)
   linkeddata
   lograge
   magic_lamp
@@ -874,17 +871,16 @@ DEPENDENCIES
   minitest-reporters
   modporter-plugin
   my_annotations!
-  my_rails_settings!
   my_responds_to_parent!
   my_savage_beast!
   mysql2
   nokogiri
   omniauth (~> 1.3.1)
   omniauth-ldap (~> 1.0.5)
+  openseek-api
   paperclip (~> 4.2.0)
   passenger
   pg
-  piwik_analytics!
   pothoven-attachment_fu
   prototype-rails
   pry
@@ -893,11 +889,14 @@ DEPENDENCIES
   psych
   puma
   quiet_assets
-  rails (= 3.2.22)
+  rails (~> 4.0.0)
   rails-assets-bootstrap-multiselect (~> 0.9.13)!
   rails-assets-bootstrap-tagsinput (~> 0.8.0)!
   rails-assets-clipboard (~> 1.5.12)!
+  rails-assets-eonasdan-bootstrap-datetimepicker (~> 4.17.42)!
   rails-assets-typeahead.js (~> 0.10.5)!
+  rails-assets-vue (~> 2.1.8)!
+  rails-observers
   rails_autolink
   rails_best_practices
   ransack (~> 1.8.2)
@@ -917,11 +916,10 @@ DEPENDENCIES
   rubycritic
   rubyzip (~> 1.1.4)
   sample-template-generator
-  sass-rails (>= 3.2)
+  sass-rails
   savon (= 1.1.0)
   search_biomodel (= 2.2.1)!
   seedbank
-  selenium-webdriver
   simple-spreadsheet-extractor (~> 0.15.2)
   sqlite3
   sunspot_matchers
@@ -934,7 +932,6 @@ DEPENDENCIES
   teaspoon-mocha
   test_after_commit
   transaction_isolation
-  turbo-sprockets-rails3
   uglifier
   unicorn-rails
   uuid (~> 2.3)
@@ -947,4 +944,4 @@ DEPENDENCIES
   zenodo-client!
 
 BUNDLED WITH
-   1.12.5
+   1.14.6

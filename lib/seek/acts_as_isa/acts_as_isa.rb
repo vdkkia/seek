@@ -22,7 +22,7 @@ module Seek
 
         attr_accessor :create_from_asset
 
-        scope :default_order, order('title')
+        scope :default_order, -> { order('title') }
         validates :title, presence: true
 
         grouped_pagination
@@ -38,7 +38,6 @@ module Seek
         include ProgrammeCompat
 
         extend Seek::ActsAsISA::SingletonMethods
-
       end
 
       def is_isa?
@@ -51,6 +50,7 @@ module Seek
       def user_creatable?
         true
       end
+
       def can_create?
         User.logged_in_and_member?
       end

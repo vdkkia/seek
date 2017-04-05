@@ -44,7 +44,7 @@
     <%= render :partial => "scales/scales_selector",:locals=>{:object=>@study} %>
 <% end %>
 
-<%= render :seek_partial=>"assets/sharing_form" if @study.can_manage? -%>
+<%= render :seek_partial=>"sharing/form" if @study.can_manage? -%>
 
 <%= render :partial => "assets/associate_publication", :locals => { :resource_type => t('study'),
                                                                         :related_publications => @study.publications} -%>
@@ -63,7 +63,7 @@
                  :onclick => "javascript: previewPermissions();return(false);",
                  :class => 'btn btn-primary'-%>
 <% else %>
-    <%= f.submit button_text, :disable_with=>disabled_text, :id => "study_submit_btn",
+    <%= f.submit button_text, data: { disable_with: disabled_text }, :id => "study_submit_btn",
                  :onclick => "javascript: $('study_submit_btn').form.submit();return(false);",
                  :class => 'btn btn-primary'-%>
 <% end %>

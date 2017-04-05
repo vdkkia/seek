@@ -135,7 +135,7 @@ class PublicationsController < ApplicationController
 
         #Create policy if not present (should be)
         if @publication.policy.nil?
-          @publication.policy = Policy.create(:name => "publication_policy", :sharing_scope => Policy::EVERYONE, :access_type => Policy::VISIBLE)
+          @publication.policy = Policy.create(:name => "publication_policy", :access_type => Policy::VISIBLE)
           @publication.save
         end
         
@@ -345,10 +345,20 @@ class PublicationsController < ApplicationController
       end
     elsif doi
       begin
-        query = DoiQuery.new(Seek::Config.crossref_api_email)
+        query = DOI::Query.new(Seek::Config.crossref_api_email)
         result = query.fetch(doi)
+        if result.blank?
+          @error = "Unable to get result"
+        end
+        if result.title.blank?
+          @error = "Unable to get DOI"
+        end
+      rescue DOI::MalformedDOIException
+        @error = 'The DOI you entered appears to be malformed.'
+      rescue DOI::NotFoundException
+        @error = 'The DOI you entered could not be resolved.'
       rescue RuntimeError => exception
-        @error = "There was an problem contacting the DOI query service. Please try again later"
+        @error = 'There was an problem contacting the DOI query service. Please try again later'
         if Seek::Config.exception_notification_enabled
           ExceptionNotifier.notify_exception(exception,:data=>{:message=>"Problem accessing crossref using DOI #{doi}"})
         end
@@ -550,7 +560,7 @@ class PublicationsController < ApplicationController
       end
     end
     #Destroy asset relationship that aren't needed
-    associate_relationships = Relationship.where(["other_object_id = ? and subject_type = ?",@publication.id,asset_type]).all
+    associate_relationships = Relationship.where(other_object_id: @publication.id, subject_type: asset_type)
     associate_relationships.each do |associate_relationship|
       asset = associate_relationship.subject
       if asset.send("can_#{required_action}?") && !asset_ids.include?(asset.id.to_s)

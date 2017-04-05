@@ -28,13 +28,19 @@ class Publication < ActiveRecord::Base
            :as => :other_object,
            :dependent => :destroy
 
+  VALID_DOI_REGEX = /\A(10[.][0-9]{4,}(?:[.][0-9]+)*\/(?:(?!["&\'<>])\S)+)\z/
+  VALID_PUBMED_REGEX = /\A(([1-9])([0-9]{0,7}))\z/
+  # Note that the PubMed regex deliberately does not allow versions
+  
+  validates :doi, format: { with: VALID_DOI_REGEX , message: "is invalid"}, :allow_blank => true
+  validates :pubmed_id, :numericality => {:greater_than => 0, message: "is invalid"}, :allow_blank => true
+ 
   #validation differences between OpenSEEK and the VLN SEEK
   validates_uniqueness_of :pubmed_id , :allow_nil => true, :allow_blank => true, :if => "Seek::Config.is_virtualliver"
   validates_uniqueness_of :doi ,:allow_nil => true, :allow_blank => true, :if => "Seek::Config.is_virtualliver"
   validates_uniqueness_of :title , :if => "Seek::Config.is_virtualliver"
 
-  validate :check_uniqueness_of_identifier_within_project, :unless => "Seek::Config.is_virtualliver"
-  validate :check_uniqueness_of_title_within_project, :unless => "Seek::Config.is_virtualliver"
+  validate :check_uniqueness_within_project, :unless => "Seek::Config.is_virtualliver"
 
   after_update :update_creators_from_publication_authors
 
@@ -81,7 +87,7 @@ class Publication < ActiveRecord::Base
   end
 
   def default_policy
-    policy = Policy.new(:name => "publication_policy", :sharing_scope => Policy::EVERYONE, :access_type => Policy::VISIBLE)
+    policy = Policy.new(:name => "publication_policy", :access_type => Policy::VISIBLE)
     #add managers (authors + contributor)
     creators.each do |author|
       policy.permissions << Permissions.create(:contributor => author, :policy => policy, :access_type => Policy::MANAGING)
@@ -92,18 +98,14 @@ class Publication < ActiveRecord::Base
     policy
   end
 
-  scope :default_order, order("published_date DESC")
+  scope :default_order, -> { order("published_date DESC") }
 
   def seek_authors
     publication_authors.select{|publication_author| publication_author.person}
   end
 
   def non_seek_authors
-    publication_authors.find_all_by_person_id nil
-  end
-
-  def self.sort publications
-    publications.sort_by(&:published_date)
+    publication_authors.where(person_id: nil)
   end
 
   def contributor_credited?
@@ -129,7 +131,7 @@ class Publication < ActiveRecord::Base
     self.citation = reference.citation
   end
 
-  # @param doi_record DoiRecord
+  # @param doi_record DOI::Record
   # @see https://github.com/SysMO-DB/doi_query_tool/blob/master/lib/doi_record.rb
   def extract_doi_metadata(doi_record)
     self.title = doi_record.title
@@ -268,37 +270,17 @@ class Publication < ActiveRecord::Base
     end
   end
 
-  def check_uniqueness_of_identifier_within_project
-    if !doi.blank?
-      existing = Publication.find_all_by_doi(doi) - [self]
-      if !existing.empty?
-        matching_projects = existing.collect(&:projects).flatten.uniq & projects
-        if !matching_projects.empty?
-          self.errors[:doi] << "You cannot register the same DOI within the same project"
-          return false
+  def check_uniqueness_within_project
+    { title: 'title', doi: 'DOI', pubmed_id: 'PubMed ID' }.each do |attr, name|
+      if send(attr).present?
+        existing = Publication.where(attr => send(attr)).to_a - [self]
+        if existing.any?
+          matching_projects = existing.collect(&:projects).flatten.uniq & projects
+          if matching_projects.any?
+            self.errors[attr] << "You cannot register the same #{name} within the same project."
+            return false
+          end
         end
-      end
-    end
-    if !pubmed_id.blank?
-      existing = Publication.find_all_by_pubmed_id(pubmed_id) - [self]
-      if !existing.empty?
-        matching_projects = existing.collect(&:projects).flatten.uniq & projects
-        if !matching_projects.empty?
-          self.errors[:pubmed_id] << "You cannot register the same PubMed ID within the same project"
-          return false
-        end
-      end
-    end
-    true
-  end
-
-  def check_uniqueness_of_title_within_project
-    existing = Publication.find_all_by_title(title) - [self]
-    if !existing.empty?
-      matching_projects = existing.collect(&:projects).flatten.uniq & projects
-      if !matching_projects.empty?
-        self.errors[:title] << "You cannot register the same Title \"#{self.title}\" within the same project: \"#{matching_projects[0].title}\""
-        return false
       end
     end
   end

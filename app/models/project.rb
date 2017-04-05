@@ -28,18 +28,20 @@ class Project < ActiveRecord::Base
   has_and_belongs_to_many :samples
   has_and_belongs_to_many :sample_types
 
-  has_many :work_groups, dependent: :destroy
-  has_many :institutions, through: :work_groups, before_remove: :group_memberships_empty?
-  has_many :group_memberships, through: :work_groups
+  has_many :work_groups, dependent: :destroy, inverse_of: :project
+  has_many :institutions, through: :work_groups, before_remove: :group_memberships_empty?, inverse_of: :projects
+  has_many :group_memberships, through: :work_groups, inverse_of: :project
   # OVERRIDDEN in Seek::ProjectHierarchy if Seek::Config.project_hierarchy_enabled
-  has_many :people, through: :group_memberships, order: 'last_name ASC', uniq: true
+  has_many :people, -> { order('last_name ASC').uniq }, through: :group_memberships, inverse_of: :projects
 
   has_many :admin_defined_role_projects
 
+  has_many :openbis_endpoints
+
   belongs_to :programme
 
-  attr_accessible :project_administrator_ids, :asset_gatekeeper_ids, :pal_ids, :asset_housekeeper_ids, :title, :programme_id, :description,
-                  :web_page, :institution_ids, :parent_id, :wiki_page, :organism_ids, :default_license
+  # attr_accessible :project_administrator_ids, :asset_gatekeeper_ids, :pal_ids, :asset_housekeeper_ids, :title, :programme_id, :description,
+  #                :web_page, :institution_ids, :parent_id, :wiki_page, :organism_ids, :default_license
 
   # for handling the assignment for roles
   attr_accessor :project_administrator_ids, :asset_gatekeeper_ids, :pal_ids, :asset_housekeeper_ids
@@ -60,8 +62,8 @@ class Project < ActiveRecord::Base
   belongs_to :lineage_ancestor, class_name: 'Project', foreign_key: :ancestor_id
   has_many :lineage_descendants, class_name: 'Project', foreign_key: :ancestor_id
 
-  scope :default_order, order('title')
-  scope :without_programme, conditions: 'programme_id IS NULL'
+  scope :default_order, -> { order('title') }
+  scope :without_programme, -> { where('programme_id IS NULL') }
 
   validates :web_page, url: {allow_nil: true, allow_blank: true}
   validates :wiki_page, url: {allow_nil: true, allow_blank: true}
@@ -293,7 +295,7 @@ class Project < ActiveRecord::Base
       if asset.respond_to?(:content_blob)
         asset.content_blob.file_size || 0
       elsif asset.respond_to?(:content_blobs)
-        asset.content_blobs.sum do |blob|
+        asset.content_blobs.to_a.sum do |blob|
           blob.file_size || 0
         end
       else

@@ -37,7 +37,9 @@ module Jits
           self.sync_ignore_columns          = options[:sync_ignore_columns]  || []
 
           class_eval do
-            has_many :versions, version_association_options
+            order_opts = version_association_options.delete(:order) || ''
+            condition_ops = version_association_options.delete(:conditions) || ''
+            has_many :versions, -> { order(order_opts).where(condition_ops) }, version_association_options
 
             before_create :set_new_version
             after_create :save_version_on_create
@@ -97,7 +99,12 @@ module Jits
 
         # Finds versions of this model.  Takes an options hash like <tt>find</tt>
         def find_versions(options = {})
-          versions.find(:all, options)
+          relation = versions
+          relation = relation.where(options[:conditions]) if options[:conditions]
+          relation = relation.joins(options[:joins]) if options[:joins]
+          relation = relation.limit(options[:limit]) if options[:limit]
+          relation = relation.order(options[:order]) if options[:order]
+          relation
         end
 
         # Saves the object as a new version and also saves the original object as the new version.
