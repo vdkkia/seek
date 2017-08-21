@@ -67,23 +67,35 @@ class StudiesController < ApplicationController
   end
 
   def update
-    @study = Study.find(params[:id])
+    @study = nil
+    params_to_update = nil
+    if @is_json
+      @study=Study.find(params["data"][:id])
+      organize_policies_from_json
+      params_to_update = ActiveModelSerializers::Deserialization.jsonapi_parse(params)
+      return if !validate_person_responsible(params_to_update)
+    else
+      @study = Study.find(params[:id])
+      params_to_update = study_params
+    end
+    Rails.logger.info(params_to_update)
 
-    @study.attributes = study_params
+    if @study.present?
+      @study.attributes = params_to_update
+      update_sharing_policies @study
 
-    update_sharing_policies @study
+      respond_to do |format|
+        if @study.save
+          update_scales @study
+          update_relationships(@study, params)
 
-    respond_to do |format|
-      if @study.save
-        update_scales @study
-        update_relationships(@study, params)
-
-        flash[:notice] = "#{t('study')} was successfully updated."
-        format.html { redirect_to(@study) }
-        format.xml  { head :ok }
-      else
-        format.html { render action: 'edit' }
-        format.xml  { render xml: @study.errors, status: :unprocessable_entity }
+          flash[:notice] = "#{t('study')} was successfully updated."
+          format.html { redirect_to(@study) }
+          format.json {render json: JSONAPI::Serializer.serialize(@study)}
+        else
+          format.html { render action: 'edit' }
+          format.json { render json: {error: @study.errors, status: :unprocessable_entity}, status: :unprocessable_entity }
+        end
       end
     end
   end
@@ -103,38 +115,19 @@ class StudiesController < ApplicationController
   end
 
   def create
+    @study = nil
+    if @is_json
+      organize_policies_from_json
+      return if !validate_person_responsible(params["data"]["attributes"])
+      @study = Study.new(ActiveModelSerializers::Deserialization.jsonapi_parse(params))
+    else
+      @study = Study.new(study_params)
+    end
+    if @study.present?
+      update_sharing_policies @study
+    end
 
-    # convert params as received by json-api to (flat) rails json
-    # if params.key?("data")
-    #
-    #   params[:study] = params[:data][:attributes]
-    #
-    #   params[:study][:project_ids] = []
-    #   params[:relationships].each do |r,info|
-    #     params[:study][:project_ids] << r.capitalize.constantize.where(info[:meta]).first.id
-    #   end
-    #
-    #
-    #   investigation_title = params[:meta][:investigation_title]
-    #   person_email = params[:meta][:person_responsible]
-    #
-    #   params[:study][:investigation_id] = Investigation.where(title:  investigation_title).first[:id].to_s
-    #   params[:study][:person_responsible] = Person.where(email: person_email).first
-    #
-    #   #Creators
-    #   creators_arr = []
-    #   params[:study][:creators].each { |cr|
-    #     the_person = Person.where(email: cr).first
-    #     creators_arr << the_person
-    #   }
-    #   params[:study][:creators] = creators_arr
-    # end
-
-    @study = Study.new(study_params)
-
-    update_sharing_policies @study
-
-    if @study.save
+    if @study.present? && @study.save
       update_scales @study
       update_relationships(@study, params)
 
@@ -146,16 +139,17 @@ class StudiesController < ApplicationController
           if @study.create_from_asset == 'true'
             flash.now[:notice] << "Now you can create new #{t('assays.assay')} by clicking -Add an #{t('assays.assay')}- button".html_safe
             format.html { redirect_to study_path(id: @study, create_from_asset: @study.create_from_asset) }
+            format.json {render json: JSONAPI::Serializer.serialize(@study)}
           else
             format.html { redirect_to study_path(@study) }
-            format.xml { render xml: @study, status: :created, location: @study }
+            format.json {render json: JSONAPI::Serializer.serialize(@study)}
           end
         end
       end
     else
       respond_to do |format|
         format.html { render action: 'new' }
-        format.xml  { render xml: @study.errors, status: :unprocessable_entity }
+        format.json { render json: {error: @study.errors, status: :unprocessable_entity}, status: :unprocessable_entity }
       end
     end
   end
@@ -191,6 +185,13 @@ class StudiesController < ApplicationController
   end
 
   private
+  def validate_person_responsible(p)
+    if (!p[:person_responsible_id].nil?) && (!Person.exists?(p[:person_responsible_id]))
+      render json: {error: "Person responsible does not exist", status: :unprocessable_entity}, status: :unprocessable_entity
+      return false
+    end
+    true
+  end
 
   def study_params
     params.require(:study).permit(:title, :description, :experimentalists, :investigation_id, :person_responsible_id,
