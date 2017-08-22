@@ -186,6 +186,7 @@ class ProjectsController < ApplicationController
     end
   end
 
+
   # PUT /projects/1   , polymorphic: [:organism]
   # PUT /projects/1.xml
   def update

@@ -24,12 +24,14 @@ class ApplicationController < ActionController::Base
   around_filter :with_current_user
 
   rescue_from 'ActiveRecord::RecordNotFound', with: :render_not_found_error
+  rescue_from 'ActiveRecord::UnknownAttributeError', with: :render_unknown_attribute_error
 
   before_filter :project_membership_required, only: [:create, :new]
 
   before_filter :restrict_guest_user, only: [:new, :edit, :batch_publishing_preview]
   #before_filter :process_params, :only=>[:edit, :update, :destroy, :create, :new]
   before_filter :set_is_json   #, :only=>[:edit, :update, :destroy, :create, :new]
+  before_filter :check_illegal_id, :only=>[:create]
   # after_filter :unescape_response
 
   before_filter :convert_json_params
@@ -351,6 +353,17 @@ class ApplicationController < ActionController::Base
     false
   end
 
+  def render_unknown_attribute_error(e)
+    respond_to do |format|
+      format.json {
+        render json: {error: e.message, status: :unprocessable_entity}, status: :unprocessable_entity
+      }
+      format.all {
+        render text: e.message, status: :unprocessable_entity
+      }
+    end
+  end
+
   def is_auth?(object, action)
     if object.can_perform? action
       true
@@ -566,6 +579,66 @@ class ApplicationController < ActionController::Base
 
   def redirect_to_sign_up_when_no_user
     redirect_to signup_path if User.count == 0
+  end
+
+  def check_illegal_id
+    begin
+      if @is_json && !(params[:data][:id].nil?)
+        raise ArgumentError.new('A POST request is not allowed to specify an id')
+      end
+    rescue ArgumentError => e
+      render json: {error: e.message, status: :forbidden}, status: :forbidden
+    end
+  end
+
+  # Alan thinks this can go
+  #process JSONAPI params into params itself, so it can be used normally with create, update, etc.
+  def process_params()
+
+    resource = controller_name.singularize
+
+    #check for JSONAPI
+    if params.key?("data")
+      params[resource] = params[:data][:attributes]
+
+      #initialize
+      params[:relationships].each do |r,info|
+        params[resource][r.to_s+"_ids"] = []
+      end
+
+      #fill up related resource ids in params[resource][related_ids] from the meta section in relationships
+      #This makes sense when a user creates his own file to upload, and does not know IDs of resources, plus
+      #creating associated branches within data in JSONAPI format is adding too much complexity and user-unfriendly standards.
+      params[:relationships].each do |r,info|
+        related_entity = r.capitalize.constantize.where(info[:meta]).first
+        params[resource][r.to_s+"_ids"] << related_entity.id if related_entity
+        puts "related entity: ", related_entity
+      end
+
+      # #2nd way: fill up from associated resources (e.g. from an exported json)
+      # # TO DO: decide if this is the final input/output format
+      # # problem : not everything should exist for every resource, e.g associated people are creators of an investigation, but not a project
+      # begin
+      #   params[:data][:relationships][:associated][:data].each do |assoc_data|
+      #     puts "associated ====> ", assoc_data
+      #     key = assoc_data[:type].singularize + "_ids"
+      #     params[resource][key] = [] if (params[resource][key] == nil)
+      #     params[resource][key] << assoc_data[:id].to_i
+      #   end
+      #
+      # rescue NoMethodError
+      #   puts "no associated stuff"
+      # end
+
+
+      #Creators
+      creators_arr = []
+      params[resource][:creators].each do |cr|
+        the_person = Person.where(email: cr).first
+        creators_arr << the_person if the_person
+      end
+      params[resource][:creators] = creators_arr
+    end
   end
 
   # Non-ascii-characters are escaped, even though the response is utf-8 encoded.
