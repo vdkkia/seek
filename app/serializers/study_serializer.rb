@@ -3,4 +3,6 @@ class StudySerializer < PCSSerializer
   attribute :person_responsible_id do
     object.person_responsible_id.to_s
   end
+
+  BaseSerializer.rels(Study, StudySerializer)
 end

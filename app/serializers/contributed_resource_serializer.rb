@@ -1,6 +1,8 @@
 class ContributedResourceSerializer < PCSSerializer
+
   attributes :title, :description, :version, :license
   attribute :latest_version do
+
     if object.latest_version.nil?
       latest = {}
     else

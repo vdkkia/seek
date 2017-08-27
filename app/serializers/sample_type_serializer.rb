@@ -9,4 +9,5 @@ class SampleTypeSerializer < BaseSerializer
     serialize_annotations(object)
   end
 
+  BaseSerializer.rels(SampleType, SampleTypeSerializer)
 end
