@@ -1,3 +1,4 @@
 class DataFileSerializer < ContributedResourceSerializer
+
 end
 
