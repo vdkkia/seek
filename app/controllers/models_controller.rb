@@ -238,6 +238,11 @@ class ModelsController < ApplicationController
     end
   end
 
+  def translate_action action
+    action="view" if ["matching_data"].include?(action)
+    super action
+  end
+
   def jws_enabled
     unless Seek::Config.jws_enabled
       respond_to do |format|

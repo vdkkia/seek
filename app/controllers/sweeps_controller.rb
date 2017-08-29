@@ -177,7 +177,7 @@ class SweepsController < ApplicationController
   end
 
   def auth
-    action = Seek::Permissions::Translator.translate(action_name)
+    action = translate_action(action_name)
     unless is_auth?(@sweep, action)
       if current_user.nil?
         flash[:error] = "You are not authorized to #{action} this Sweep, you may need to login first."

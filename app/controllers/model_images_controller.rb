@@ -138,7 +138,7 @@ class ModelImagesController < ApplicationController
   end
 
   def find_model_image_auth
-    action = Seek::Permissions::Translator.translate(action_name)
+    action = translate_action(action_name)
     unless is_auth?(@model_instance, action)
       flash[:error] = "You can only #{action} images for #{t('model').pluralize} you can access"
       redirect_to root_path
