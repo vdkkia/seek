@@ -24,17 +24,17 @@ class ApplicationController < ActionController::Base
   around_filter :with_current_user
 
   rescue_from 'ActiveRecord::RecordNotFound', with: :render_not_found_error
-  rescue_from 'ActiveRecord::UnknownAttributeError', with: :render_unknown_attribute_error
 
   before_filter :project_membership_required, only: [:create, :new]
 
   before_filter :restrict_guest_user, only: [:new, :edit, :batch_publishing_preview]
   #before_filter :process_params, :only=>[:edit, :update, :destroy, :create, :new]
+
   before_filter :set_is_json   #, :only=>[:edit, :update, :destroy, :create, :new]
   before_filter :check_illegal_id, :only=>[:create]
-  # after_filter :unescape_response
 
   before_filter :convert_json_params
+  # after_filter :unescape_response
 
   helper :all
 
@@ -194,8 +194,8 @@ class ApplicationController < ActionController::Base
         end
         format.json {
           errors = [{"title": "Unauthorized", "status": "401", "detail": flash[:error].to_s}]
-          render json: errors, status: 401
-         # render json: { status: 401, error_message: flash[:error] }
+          render errors, status: 401
+          # render json: { status: 401, error_message: flash[:error] }
         }
       end
     end
@@ -243,34 +243,7 @@ class ApplicationController < ActionController::Base
     User.admin_logged_in?
   end
 
-  def translate_action(action_name)
-    case action_name
-    when 'show', 'index', 'view', 'search', 'favourite', 'favourite_delete',
-          'comment', 'comment_delete', 'comments', 'comments_timeline', 'rate',
-          'tag', 'items', 'statistics', 'tag_suggestions', 'preview', 'runs', 'new_object_based_on_existing_one',
-          'samples_table'
-      'view'
-
-    when 'download', 'named_download', 'launch', 'submit_job', 'data', 'execute', 'plot', 'explore', 'visualise',
-          'export_as_xgmml', 'download_log', 'download_results', 'input', 'output', 'download_output', 'download_input',
-          'view_result', 'compare_versions', 'simulate'
-      'download'
-
-    when 'edit', 'new', 'create', 'update', 'new_version', 'create_version',
-          'destroy_version', 'edit_version', 'update_version', 'new_item',
-          'create_item', 'edit_item', 'update_item', 'quick_add', 'resolve_link', 'describe_ports'
-      'edit'
-
-    when 'destroy', 'destroy_item', 'cancel', 'destroy_samples_confirm'
-      'delete'
-
-    when 'manage', 'notification', 'read_interaction', 'write_interaction', 'report_problem', 'storage_report',
-          'select_sample_type', 'extraction_status', 'extract_samples', 'confirm_extraction', 'cancel_extraction'
-      'manage'
-    end
-  end
-
-  # handles finding an asset, and responding when it cannot be found. If it can be found the item instance is set (e.g. @project for projects_controller)
+ # handles finding an asset, and responding when it cannot be found. If it can be found the item instance is set (e.g. @project for projects_controller)
   def find_requested_item
     name = controller_name.singularize
     object = name.camelize.constantize.find_by_id(params[:id])
@@ -281,7 +254,7 @@ class ApplicationController < ActionController::Base
         format.xml { render text: '<error>404 Not found</error>', status: :not_found }
         format.json {
           errors = [{"title": "Not found", "status": "404"}]
-          render json: errors, status: :not_found
+          render json: JSONAPI::Serializer.serialize_errors(errors), status: :not_found
         }
         format.html { redirect_to eval "#{controller_name}_path" }
       end
@@ -293,24 +266,24 @@ class ApplicationController < ActionController::Base
   # handles finding and authorizing an asset for all controllers that require authorization, and handling if the item cannot be found
   def find_and_authorize_requested_item
     name = controller_name.singularize
-    action = translate_action(action_name)
+    privilege = Seek::Permissions::Translator.translate(action_name)
 
-    return if action.nil?
+    return if privilege.nil?
 
     object = controller_name.classify.constantize.find(params[:id])
 
-    if is_auth?(object, action)
+    if is_auth?(object, privilege)
       eval "@#{name} = object"
       params.delete :policy_attributes unless object.can_manage?(current_user)
     else
       respond_to do |format|
         format.html do
-          case action
-          when 'publish', 'manage', 'edit', 'download', 'delete'
+          case privilege
+            when :publish, :manage, :edit, :download, :delete
             if current_user.nil?
-              flash[:error] = "You are not authorized to #{action} this #{name.humanize}, you may need to login first."
+              flash[:error] = "You are not authorized to #{privilege} this #{name.humanize}, you may need to login first."
             else
-              flash[:error] = "You are not authorized to #{action} this #{name.humanize}."
+              flash[:error] = "You are not authorized to #{privilege} this #{name.humanize}."
             end
             redirect_to(eval("#{controller_name.singularize}_path(#{object.id})"))
           else
@@ -321,7 +294,7 @@ class ApplicationController < ActionController::Base
         format.xml { render text: "You may not #{privilege} #{name}:#{params[:id]}", status: :forbidden }
         format.json {
           errors = [{"title": "Forbidden", "status": "403", "detail": "You may not #{privilege} #{name}:#{params[:id]}"}]
-          render json: JSONAPI::Serializer.serialize_errors(errors), status: :forbidden
+          render json: errors, status: :forbidden
         }
       end
       return false
