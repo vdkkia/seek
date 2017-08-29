@@ -317,11 +317,11 @@ class ApplicationController < ActionController::Base
             render template: 'general/landing_page_for_hidden_item', locals: { item: object }, status: :forbidden
           end
         end
-        format.rdf { render text: "You may not #{action} #{name}:#{params[:id]}", status: :forbidden }
-        format.xml { render text: "You may not #{action} #{name}:#{params[:id]}", status: :forbidden }
+        format.rdf { render text: "You may not #{privilege} #{name}:#{params[:id]}", status: :forbidden }
+        format.xml { render text: "You may not #{privilege} #{name}:#{params[:id]}", status: :forbidden }
         format.json {
-          errors = [{"title": "Forbidden", "status": "403", "detail": "You may not #{action} #{name}:#{params[:id]}"}]
-          render json: errors, status: :forbidden
+          errors = [{"title": "Forbidden", "status": "403", "detail": "You may not #{privilege} #{name}:#{params[:id]}"}]
+          render json: JSONAPI::Serializer.serialize_errors(errors), status: :forbidden
         }
       end
       return false

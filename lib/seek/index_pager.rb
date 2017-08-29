@@ -7,9 +7,11 @@ module Seek
       unless view_context.index_with_facets?(controller) && params[:user_enable_facet] == 'true'
         model_class = controller_name.classify.constantize
         objects = eval("@#{controller}")
-        @hidden = 0
-        params[:page] ||= Seek::Config.default_page(controller)
-
+        if (request.format == 'json' && params[:page].nil?)
+          params[:page] = 'all'
+        else
+          params[:page] ||= Seek::Config.default_page(controller)
+        end
         objects = model_class.paginate_after_fetch(objects, page: params[:page],
                                                             latest_limit: Seek::Config.limit_latest
                                                   ) unless objects.respond_to?('page_totals')
