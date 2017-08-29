@@ -285,7 +285,7 @@ module ApiHelper
     associated_hash = get_related_resources(object)
     to_ignore = ignore_associated_types.collect(&:name)
     associated_hash.delete_if { |k, _v| to_ignore.include?(k) }
-    associated_hash.each do |k, value|
+    associated_hash.each_value do |value|
       if (value[:items] != [])
         #puts "a value: ", value[:items]
          associated_arr += value[:items]

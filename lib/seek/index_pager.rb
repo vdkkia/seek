@@ -7,7 +7,7 @@ module Seek
       unless view_context.index_with_facets?(controller) && params[:user_enable_facet] == 'true'
         model_class = controller_name.classify.constantize
         objects = eval("@#{controller}")
-        if (request.format == 'json' && params[:page].nil?)
+        if ((request.format == 'json') || (request.format == 'xml')) && params[:page].nil?
           params[:page] = 'all'
         else
           params[:page] ||= Seek::Config.default_page(controller)
