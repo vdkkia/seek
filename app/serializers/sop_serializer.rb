@@ -1,3 +1,2 @@
 class SopSerializer < ContributedResourceSerializer
-
 end

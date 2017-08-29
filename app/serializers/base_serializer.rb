@@ -1,45 +1,33 @@
 class BaseSerializer < SimpleBaseSerializer
   include ApiHelper
+  include RelatedItemsHelper
 
-  def self.rels(c, s)
-    if c.name.blank?
-      return
-    end
-    method_hash = {}
-    begin
-      resource_klass = c
-      ['Person', 'Project', 'Institution', 'Investigation',
-       'Study','Assay', 'DataFile', 'Model', 'Sop', 'Publication', 'Presentation', 'Event',
-       'Workflow', 'TavernaPlayer::Run', 'Sweep', 'Strain', 'Sample'].each do |item_type|
-        if item_type == 'TavernaPlayer::Run'
-          method_name = 'runs'
-        else
-          method_name = item_type.underscore.pluralize
-        end
+  has_many :associated
 
-        if resource_klass.method_defined? "related_#{method_name}"
-          method_hash[item_type] = "related_#{method_name}"
-        elsif resource_klass.method_defined?  "related_#{method_name.singularize}"
-          method_hash[item_type] = "related_#{method_name.singularize}"
-        elsif resource_klass.method_defined? method_name
-          method_hash[item_type] = method_name
-          # elsif item_type != 'Person' && resource_klass.method_defined? method_name.singularize # check is to avoid Person.person
-          #   method_hash[item_type] = method_name
-        else
-          []
-        end
-      end
-    rescue
-    end
-    method_hash
-    unless  method_hash.blank?
-      method_hash.each do |k, v|
-        begin
-          s.has_many v, key: k.pluralize.downcase
-        end
-      end
-    end
+  def associated
+    associated_resources(object) # ||  { "data": [] }
+  end
 
+  # def self_link
+  #   #{base_url}//#{type}/#{id}
+  #   "/#{type}/#{id}"
+  # end
+  #
+  # def base_url
+  #   Seek::Config.site_base_host
+  # end
+  #
+  # #remove link to object/associated --> "#{self_link}/#{format_name(attribute_name)}"
+  # def relationship_self_link(attribute_name)
+  # end
+  #
+  # #remove link to object/related/associated
+  # def relationship_related_link(attribute_name)
+  # end
+
+  #avoid dash-erizing attribute names
+  def format_name(attribute_name)
+    attribute_name.to_s
   end
 
   def meta
