@@ -1,5 +1,4 @@
 class SimpleBaseSerializer < ActiveModel::Serializer
-
   def type
     object.class.name.demodulize.tableize
   end

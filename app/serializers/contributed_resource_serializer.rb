@@ -1,8 +1,6 @@
 class ContributedResourceSerializer < PCSSerializer
-
   attributes :title, :description, :version, :license
   attribute :latest_version do
-
     if object.latest_version.nil?
       latest = {}
     else
@@ -24,27 +22,30 @@ class ContributedResourceSerializer < PCSSerializer
     latest
   end
 
-  #applies only for a Model
-  has_many :content_blobs, include_data:true do
+  attribute :content_blobs do
+    blobs = []
     if defined?(object.content_blobs)
-      object.content_blobs
+      object.content_blobs.each do |cb|
+        blobs.append(make_cb_attribute(cb))
+      end
+    elsif defined?(object.content_blob)
+      blobs.append(make_cb_attribute(object.content_blob))
+     # blobs.append(object.content_blob)
     end
+    blobs
   end
 
-  #applies for the DataFile, Sop, Presentation
-  has_one :content_blob, include_data:true do
-    if defined?(object.content_blob)
-      object.content_blob
-    end
+  #leaving out asset_id, asset_type, asset_version, sha1sum, md5sum
+  def make_cb_attribute(cb)
+    {
+        content_blob_id: cb.id.to_s,
+        original_filename: cb.original_filename,
+        content_type: cb.content_type,
+        is_webpage: cb.is_webpage,
+        external_link: cb.external_link,
+        file_size: cb.file_size,
+        url: cb.url,
+        uuid: cb.uuid
+    }
   end
-  # has_many :versions, include_data:true , include_links:true do
-  #   object.versions
-  # end
-  # attribute :ver do
-  #   veri = []
-  #   object.versions.each do |version|
-  #     veri.append(version.version)
-  #   end
-  #   veri
-  # end
 end
