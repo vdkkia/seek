@@ -41,6 +41,10 @@ module Seek
       else
         found = model_class.respond_to?(:default_order) ? model_class.default_order : model_class.all
       end
+
+      @total_count = model_class.count
+      @hidden = @total_count - found.count
+
       found
     end
   end

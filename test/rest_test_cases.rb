@@ -35,6 +35,7 @@ module RestTestCases
     doc = LibXML::XML::Document.string(xml)
 
     total = doc.find('//seek:statistics/seek:total', ['seek:http://www.sysmo-db.org/2010/xml/rest']).first.content.to_i
+    puts "total: ", object.class.count, total
     assert_equal object.class.count, total
 
     if object.class.respond_to?(:all_authorized_for)
@@ -44,6 +45,7 @@ module RestTestCases
     end
 
     hidden = doc.find('//seek:statistics/seek:hidden', ['seek:http://www.sysmo-db.org/2010/xml/rest']).first.content.to_i
+    puts "hidden: ", hidden, actual_hidden
     assert_equal actual_hidden, hidden
   end
 
