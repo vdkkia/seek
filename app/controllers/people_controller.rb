@@ -61,7 +61,8 @@ class PeopleController < ApplicationController
       @people = @people.reject { |p| p.group_memberships.empty? }
       @people = apply_filters(@people).select(&:can_view?) # .select{|p| !p.group_memberships.empty?}
 
-      unless view_context.index_with_facets?('people') && params[:user_enable_facet] == 'true'
+      unless (request.format == :xml) || (request.format == :json) ||
+          (view_context.index_with_facets?('people') && params[:user_enable_facet] == 'true')
         @people = Person.paginate_after_fetch(@people,
                                               page: (params[:page] || Seek::Config.default_page('people')),
                                               reorder: false,

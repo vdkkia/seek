@@ -254,7 +254,7 @@ class ApplicationController < ActionController::Base
         format.xml { render text: '<error>404 Not found</error>', status: :not_found }
         format.json {
           errors = [{"title": "Not found", "status": "404"}]
-          render json: JSONAPI::Serializer.serialize_errors(errors), status: :not_found
+          render json: errors, status: :not_found
         }
         format.html { redirect_to eval "#{controller_name}_path" }
       end

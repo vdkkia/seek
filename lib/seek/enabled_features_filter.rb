@@ -15,7 +15,7 @@ module Seek
           format.xml { render text: '<error>'+"#{feature.capitalize} are disabled"+'</error>', status: :unprocessable_entity }
           format.json {
             errors = [{"title": "#{feature.capitalize} are disabled", "status": :unprocessable_entity}]
-            render json: JSONAPI::Serializer.serialize_errors(errors), status: :unprocessable_entity
+            render json: errors, status: :unprocessable_entity
           }
         end
 
