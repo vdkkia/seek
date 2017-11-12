@@ -22,7 +22,7 @@ class PersonCUDTest < ActionDispatch::IntegrationTest
     ['min','max'].each do |m|
       @json_mm["#{m}"]["data"].delete("id")
       @json_mm["#{m}"]["data"]["attributes"]["email"] = "#{m}_createTest@email.com"
-      @json_mm["#{m}"]["data"]["relationships"]["projects"]["data"].append({:id => a_project.id, :type => "projects"})
+      #@json_mm["#{m}"]["data"]["relationships"]["projects"]["data"].append({:id => a_project.id, :type => "projects"})
 
       assert_difference('Person.count') do
         assert_difference('NotifieeInfo.count') do
