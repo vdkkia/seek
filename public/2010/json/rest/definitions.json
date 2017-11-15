@@ -2,3158 +2,2498 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "description": "Reusable definitions",
   "definitions": {
-    "dateTimeString": {
-      "type": "string",
-      "minLength": 1,
-      "format": "date-time"
+    "dateTimeString" : {
+      "type" : "string",
+      "minLength" : 1,
+      "format" : "date-time"
     },
-    "nonEmptyString": {
-      "type": "string",
-      "minLength": 1
+    "nonEmptyString" : {
+      "type" : "string",
+      "minLength" : 1
     },
-    "nullableNonEmptyString": {
+    "nullableNonEmptyString" : {
       "oneOf": [
-        {
-          "$ref": "#/definitions/nonEmptyString"
-        },
-        {
-          "type": "null"
-        }
+        {"$ref" : "#/definitions/nonEmptyString"},
+        {"type" : "null"}
       ]
-      //    ,
-      //      "$ref" : "#/definitions/nonEmptyString",
-      //      "nullable" : true
     },
-    "nonEmptyStringList": {
-      "type": "array",
-      "minItems": 1,
-      "items": {
-        "$ref": "#/definitions/nonEmptyString"
+    "nonEmptyStringList" : {
+      "type" : "array",
+      "minItems" : 1,
+      "items" : {
+        "$ref" : "#/definitions/nonEmptyString"
       }
     },
-    "nullableNonEmptyStringList": {
+    "nullableNonEmptyStringList" : {
       "oneOf": [
-        {
-          "$ref": "#/definitions/nonEmptyStringList"
-        },
-        {
-          "type": "null"
-        }
+        {"$ref" : "#/definitions/nonEmptyStringList"},
+        {"type" : "null"}
       ]
-      //      "$ref" : "#/definitions/nonEmptyStringList"
     },
-    "uriString": {
-      "type": "string",
-      "minLength": 1,
-      "format": "uri"
+    "uriString" : {
+      "type" : "string",
+      "minLength" : 1,
+      "format" : "uri"
     },
-    "nullableUriString": {
+    "nullableUriString" : {
       "oneOf": [
-        {
-          "$ref": "#/definitions/uriString"
-        },
-        {
-          "type": "null"
-        }
-      ]
-      //      "$ref" : "#/definitions/uriString"
-    },
-    "versionNumber": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "1.0"
+        {"$ref" : "#/definitions/uriString"},
+        {"type" : "null"}
       ]
     },
-    "JsonApiVersion": {
-      "type": "object",
-      "properties": {
-        "version": {
-          "$ref": "#/definitions/versionNumber"
+    "versionNumber" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "1.0" ]
+    },
+    "JsonApiVersion" : {
+      "type" : "object",
+      "properties" : {
+        "version" : {
+          "$ref" : "#/definitions/versionNumber"
         }
       },
-      "required": [
-        "version"
-      ],
-      "additionalProperties": false
+      "required" : [ "version" ],
+      "additionalProperties" : false
     },
-    "linksType": {
-      "type": "object",
-      "properties": {
-        "self": {
-          "$ref": "#/definitions/uriString"
+    "linksType" : {
+      "type" : "object",
+      "properties" : {
+        "self" : {
+          "$ref" : "#/definitions/uriString"
         }
       },
-      "required": [
-        "self"
-      ],
-      "additionalProperties": false
+      "required" : [ "self" ],
+      "additionalProperties" : false
     },
-    "metaType": {
-      "type": "object",
-      "properties": {
-        "created": {
-          "$ref": "#/definitions/dateTimeString"
+    "metaType" : {
+      "type" : "object",
+      "properties" : {
+        "created" : {
+          "$ref" : "#/definitions/dateTimeString"
         },
-        "modified": {
-          "$ref": "#/definitions/dateTimeString"
+        "modified" : {
+          "$ref" : "#/definitions/dateTimeString"
         },
-        "uuid": {
-          "$ref": "#/definitions/nonEmptyString"
+        "uuid" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "base_url": {
-          "$ref": "#/definitions/uriString"
+        "base_url" : {
+          "$ref" : "#/definitions/uriString"
         },
         "api_version": {
-          "ref": "#/definitions/nonEmptyString"
+          "ref" : "#/definitions/nonEmptyString"
         }
       },
-      "required": [
-        "created",
-        "modified",
-        "uuid",
-        "base_url",
-        "api_version"
-      ],
-      "additionalProperties": false
+      "required" : [ "created", "modified", "uuid", "base_url", "api_version" ],
+      "additionalProperties" : false
     },
-    "baseMetaType": {
-      "type": "object",
-      "properties": {
-        "base_url": {
-          "$ref": "#/definitions/uriString"
+    "baseMetaType" : {
+      "type" : "object",
+      "properties" : {
+        "base_url" : {
+          "$ref" : "#/definitions/uriString"
         },
         "api_version": {
-          "ref": "#/definitions/nonEmptyString"
+          "ref" : "#/definitions/nonEmptyString"
         }
       },
-      "required": [
-        "base_url",
-        "api_version"
-      ],
-      "additionalProperties": false
+      "required" : [ "base_url", "api_version" ],
+      "additionalProperties" : false
     },
-    // Here is where the real definitions start
-
-    "contributedTypeAttributes": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "$ref": "#/definitions/tagsType"
+    "contributedTypeAttributes" : {
+      "type" : "object",
+      "properties" : {
+        "tags" : {
+          "$ref" : "#/definitions/tagsType"
         },
-        "title": {
-          "$ref": "#/definitions/nonEmptyString"
+        "title" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "description": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "description" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "license": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "license" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "latest_version": {
-          "type": "number"
+        "latest_version" : {
+          "type" : "number"
         },
-        "versions": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "properties": {
-              "version": {
-                "type": "number"
+        "versions" : {
+          "type" : "array",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "properties" : {
+              "version" : {
+                "type" : "number"
               },
-              "revision_comments": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "revision_comments" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "url": {
-                "$ref": "#/definitions/uriString"
+              "url" : {
+                "$ref" : "#/definitions/uriString"
               }
             },
-            "required": [
-              "version",
-              "revision_comments",
-              "url"
-            ],
-            "additionalProperties": false
+            "required" : [ "version", "revision_comments", "url" ],
+            "additionalProperties" : false
           }
         },
-        "version": {
-          "type": "number"
+        "version" : {
+          "type" : "number"
         },
-        "revision_comments": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "revision_comments" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "created_at": {
-          "type": "string",
-          "minLength": 1
+        "created_at" : {
+          "type" : "string",
+          "minLength" : 1
         },
-        "updated_at": {
-          "type": "string",
-          "minLength": 1
+        "updated_at" : {
+          "type" : "string",
+          "minLength" : 1
         },
-        "content_blobs": {
-          "type": "array",
-          "minItems": 0,
-          "uniqueItems": true,
-          "items": {
-            "properties": {
-              "original_filename": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+        "content_blobs" : {
+          "type" : "array",
+          "minItems" : 0,
+          "uniqueItems" : true,
+          "items" : {
+            "properties" : {
+              "original_filename" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "url": {
-                "$ref": "#/definitions/nullableUriString"
+              "url" : {
+                "$ref" : "#/definitions/nullableUriString"
               },
-              "md5sum": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "md5sum" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "sha1sum": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "sha1sum" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "content_type": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "content_type" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "link": {
-                "$ref": "#/definitions/uriString"
+              "link" : {
+                "$ref" : "#/definitions/uriString"
               },
-              "size": {
-                "type": "integer"
+              "size" : {
+                "type" : "integer"
               }
             },
-            "required": [
-              "original_filename",
-              "url",
-              "md5sum",
-              "sha1sum",
-              "content_type",
-              "link",
-              "size"
-            ],
-            "additionalProperties": false
+            "required" : [ "original_filename", "url", "md5sum", "sha1sum", "content_type", "link", "size" ],
+            "additionalProperties" : false
           }
         }
       },
-      "required": [
-        "title",
-        "license",
-        "latest_version",
-        "versions",
-        "version",
-        "created_at",
-        "updated_at",
-        "content_blobs"
-      ],
-      "additionalProperties": false
+      "required" : [ "title", "license", "latest_version", "versions", "version", "created_at", "updated_at", "content_blobs" ],
+      "additionalProperties" : false
     },
-    "modelTypeAttributes": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "$ref": "#/definitions/tagsType"
+    "modelAttributes" : {
+      "type" : "object",
+      "properties" : {
+        "tags" : {
+          "$ref" : "#/definitions/tagsType"
         },
-        "title": {
-          "$ref": "#/definitions/nonEmptyString"
+        "title" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "description": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "description" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "license": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "license" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "latest_version": {
-          "type": "number"
+        "latest_version" : {
+          "type" : "number"
         },
-        "versions": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "properties": {
-              "version": {
-                "type": "number"
+        "versions" : {
+          "type" : "array",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "properties" : {
+              "version" : {
+                "type" : "number"
               },
-              "revision_comments": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "revision_comments" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "url": {
-                "$ref": "#/definitions/uriString"
+              "url" : {
+                "$ref" : "#/definitions/uriString"
               }
             },
-            "required": [
-              "version",
-              "revision_comments",
-              "url"
-            ],
-            "additionalProperties": false
+            "required" : [ "version", "revision_comments", "url" ],
+            "additionalProperties" : false
           }
         },
-        "version": {
-          "type": "number"
+        "version" : {
+          "type" : "number"
         },
-        "revision_comments": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "revision_comments" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "created_at": {
-          "type": "string",
-          "minLength": 1
+        "created_at" : {
+          "type" : "string",
+          "minLength" : 1
         },
-        "updated_at": {
-          "type": "string",
-          "minLength": 1
+        "updated_at" : {
+          "type" : "string",
+          "minLength" : 1
         },
-        "content_blobs": {
-          "type": "array",
-          "minItems": 0,
-          "uniqueItems": true,
-          "items": {
-            "properties": {
-              "original_filename": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+        "content_blobs" : {
+          "type" : "array",
+          "minItems" : 0,
+          "uniqueItems" : true,
+          "items" : {
+            "properties" : {
+              "original_filename" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "url": {
-                "$ref": "#/definitions/nullableUriString"
+              "url" : {
+                "$ref" : "#/definitions/nullableUriString"
               },
-              "md5sum": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "md5sum" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "sha1sum": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "sha1sum" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "content_type": {
-                "$ref": "#/definitions/nullableNonEmptyString"
+              "content_type" : {
+                "$ref" : "#/definitions/nullableNonEmptyString"
               },
-              "link": {
-                "$ref": "#/definitions/uriString"
+              "link" : {
+                "$ref" : "#/definitions/uriString"
               },
-              "size": {
-                "type": "integer"
+              "size" : {
+                "type" : "integer"
               }
             },
-            "required": [
-              "original_filename",
-              "url",
-              "md5sum",
-              "sha1sum",
-              "content_type",
-              "link",
-              "size"
-            ],
-            "additionalProperties": false
+            "required" : [ "original_filename", "url", "md5sum", "sha1sum", "content_type", "link", "size" ],
+            "additionalProperties" : false
           }
         },
-        "model_type": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "model_type" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "model_format": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "model_format" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "environment": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "environment" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         }
       },
-      "required": [
-        "title",
-        "license",
-        "latest_version",
-        "versions",
-        "version",
-        "created_at",
-        "updated_at",
-        "content_blobs",
-        "model_type",
-        "model_format",
-        "environment"
-      ],
-      "additionalProperties": false
+      "required" : [ "title", "license", "latest_version", "versions", "version", "created_at", "updated_at", "content_blobs", "model_type", "model_format", "environment" ],
+      "additionalProperties" : false
     },
-    "anyType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "assays",
-        "content_blobs",
-        "data_files",
-        "events",
-        "models",
-        "organisms",
-        "people",
-        "presentations",
-        "programmes",
-        "projects",
-        "publications"
-        "sample_types",
-        "sops",
-        "studies"
-      ]
+    "anyType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "assays", "content_blobs", "data_files", "events", "models", "organisms", "people", "presentations", "programmes", "projects", "publications", "sample_types", "sops", "studies" ]
     },
-    "assaysType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "assays"
-      ]
+    "assayType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "assays" ]
     },
-    "assaysReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/assaysReferences"
+    "assayReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/assayReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "assaysDataType": {
-      "type": "object",
-      "properties": {
-        "tags": {
-          "$ref": "#/definitions/tagsType"
+    "assayAttributes" : {
+      "type" : "object",
+      "properties" : {
+        "tags" : {
+          "$ref" : "#/definitions/tagsType"
         },
-        "title": {
-          "$ref": "#/definitions/nonEmptyString"
+        "title" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "description": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "description" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "assay_class": {
-          "type": "object",
-          "properties": {
-            "title": {
-              "$ref": "#/definitions/nonEmptyString"
+        "assay_class" : {
+          "type" : "object",
+          "properties" : {
+            "title" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "key": {
-              "$ref": "#/definitions/nonEmptyString"
+            "key" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "description": {
-              "type": "string"
+            "description" : {
+              "type" : "string"
             }
           },
-          "required": [
-            "title",
-            "key"
-          ],
-          "additionalProperties": false
+          "required" : [ "title", "key" ],
+          "additionalProperties" : false
         },
-        "assay_type": {
-          "type": "object",
-          "properties": {
-            "label": {
-              "$ref": "#/definitions/nonEmptyString"
+        "assay_type" : {
+          "type" : "object",
+          "properties" : {
+            "label" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "uri": {
-              "$ref": "#/definitions/uriString"
+            "uri" : {
+              "$ref" : "#/definitions/uriString"
             }
           },
-          "required": [
-            "label",
-            "uri"
-          ],
-          "additionalProperties": false
+          "required" : [ "label", "uri" ],
+          "additionalProperties" : false
         },
-        "technology_type": {
-          "type": "object",
-          "properties": {
-            "label": {
-              "$ref": "#/definitions/nonEmptyString"
+        "technology_type" : {
+          "type" : "object",
+          "properties" : {
+            "label" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "uri": {
-              "$ref": "#/definitions/uriString"
+            "uri" : {
+              "$ref" : "#/definitions/uriString"
             }
           },
-          "required": [
-            "label",
-            "uri"
-          ]
+          "required" : [ "label", "uri" ]
         }
       },
-      "required": [
-        "title",
-        "description",
-        "assay_class",
-        "assay_type",
-        "technology_type"
-      ],
-      "additionalProperties": false
+      "required" : [ "title", "description", "assay_class", "assay_type", "technology_type" ],
+      "additionalProperties" : false
     },
-    "contentBlobsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "content_blobs"
-      ]
+    "contentBlobType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "content_blobs" ]
     },
-    "dataFilesType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "data_files"
-      ]
+    "dataFileType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "data_files" ]
     },
-    "dataFilesReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/dataFilesReferences"
+    "dataFileReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/dataFileReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "eventsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "events"
-      ]
+    "eventType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "events" ]
     },
-    "eventsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/eventsReferences"
+    "eventReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/eventReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "investigationsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "investigations"
-      ]
+    "investigationType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "investigations" ]
     },
-    "investigationsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/investigationsReferences"
+    "investigationReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/investigationReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "institutionsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "institutions"
-      ]
-    },
-    "institutionsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/institutionsReferences"
+    "investigationSingletonReference" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/investigationReference"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "modelsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "models"
-      ]
+    "institutionType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "institutions" ]
     },
-    "modelsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/modelsReferences"
+    "institutionReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/institutionReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "organismsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "organisms"
-      ]
+    "modelType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "models" ]
     },
-    "organismsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "modelReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/modelReferences"
+        }
+      },
+      "required" : [ "data" ],
+      "additionalProperties" : false
+    },
+    "organismType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "organisms" ]
+    },
+    "organismReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/organismsType"
+        "type" : {
+          "$ref" : "#/definitions/organismType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "organismsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/organismsReferences"
+    "organismReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/organismReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "peopleType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "people"
-      ]
+    "peopleType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "people" ]
     },
-    "peopleReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "peopleReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/peopleType"
+        "type" : {
+          "$ref" : "#/definitions/peopleType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "peopleReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/peopleReferences"
+    "peopleReferenceList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/peopleReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "presentationsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "presentations"
-      ]
+    "presentationType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "presentations" ]
     },
-    "presentationsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/presentationsReferences"
+    "presentationReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/presentationReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "programmesType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "programmes"
-      ]
+    "programmeType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "programmes" ]
     },
-    "programmesReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/programmesReferences"
+    "programmeReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/programmeReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "programmeDataType": {
-      "type": "object",
-      "properties": {
-        "avatar": {
-          "$ref": "#/definitions/nullableUriString"
+    "programmeDataType" : {
+      "type" : "object",
+      "properties" : {
+        "avatar" : {
+          "$ref" : "#/definitions/nullableUriString"
         },
-        "title": {
-          "$ref": "#/definitions/nonEmptyString"
+        "title" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "description": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "description" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "web_page": {
-          "$ref": "#/definitions/nullableUriString"
+        "web_page" : {
+          "$ref" : "#/definitions/nullableUriString"
         },
-        "funding_details": {
-          "$ref": "#/definitions/nullableNonEmptyString"
+        "funding_details" : {
+          "$ref" : "#/definitions/nullableNonEmptyString"
         },
-        "funding_codes": {
-          "$ref": "#/definitions/tagsType"
+        "funding_codes" : {
+          "$ref" : "#/definitions/tagsType"
         }
       },
-      "required": [
-        "avatar",
-        "title",
-        "description",
-        "web_page",
-        "funding_details",
-        "funding_codes"
-      ],
-      "additionalProperties": false
+      "required" : [ "avatar", "title", "description", "web_page", "funding_details", "funding_codes" ],
+      "additionalProperties" : false
     },
-    "projectsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "projects"
-      ]
+    "projectType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "projects" ]
     },
-    "projectsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/projectsReferences"
+    "projectReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/projectReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "publicationsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "publications"
-      ]
+    "publicationType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "publications" ]
     },
-    "publicationsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/publicationsReferences"
+    "publicationReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/publicationReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "samplesType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "samples"
-      ]
+    "sampleType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "samples" ]
     },
-    "samplesReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "sampleReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/samplesType"
+        "type" : {
+          "$ref" : "#/definitions/sampleType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "samplesReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/samplesReferences"
+    "sampleReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/sampleReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "sampleTypesType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "sample_types"
-      ]
+    "sampleTypeType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "sample_types" ]
     },
-    "sampleTypesReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "sampleTypeReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/sampleTypesType"
+        "type" : {
+          "$ref" : "#/definitions/sampleTypeType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "sampleTypesReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/sampleTypesReferences"
+    "sampleTypeReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/sampleTypeReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "sopsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "sops"
-      ]
+    "sopType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "sops" ]
     },
-    "sopsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/sopsReferences"
+    "sopReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/sopReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "strainsType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "strains"
-      ]
+    "strainType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "strains" ]
     },
-    "strainsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "strainReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/strainsType"
+        "type" : {
+          "$ref" : "#/definitions/strainType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "strainsReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/strainsReferences"
+    "strainReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/strainReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "studiesType": {
-      "type": "string",
-      "minLength": 1,
-      "enum": [
-        "studies"
-      ]
+    "studyType" : {
+      "type" : "string",
+      "minLength" : 1,
+      "enum" : [ "studies" ]
     },
-    "studiesReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "studyReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/studiesType"
+        "type" : {
+          "$ref" : "#/definitions/studyType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "studiesReferenceList": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/studiesReferences"
+    "studyReferencesList" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/studyReferences"
         }
       },
-      "required": [
-        "data"
-      ],
-      "additionalProperties": false
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "tagsType": {
-      "$ref": "#/definitions/nullableNonEmptyStringList"
+    "studySingletonReference" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/studyReference"
+        }
+      },
+      "required" : [ "data" ],
+      "additionalProperties" : false
     },
-    "anyReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "tagsType" : {
+      "$ref" : "#/definitions/nullableNonEmptyStringList"
+    },
+    "anyReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/anyType"
+        "type" : {
+          "$ref" : "#/definitions/anyType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "anyReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/anyReference"
+    "anyReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/anyReference"
       }
     },
-    "assaysReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "assayReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/assaysType"
+        "type" : {
+          "$ref" : "#/definitions/assayType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "assaysReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/assaysReference"
+    "assayReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/assayReference"
       }
     },
-    "dataFilesReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/dataFilesReference"
+    "dataFileReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/dataFileReference"
       }
     },
-    "dataFilesReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "dataFileReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/dataFilesType"
+        "type" : {
+          "$ref" : "#/definitions/dataFileType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "eventsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/eventsReference"
+    "eventReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/eventReference"
       }
     },
-    "eventsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "eventReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/eventsType"
+        "type" : {
+          "$ref" : "#/definitions/eventType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "investigationsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/investigationsReference"
+    "investigationReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/investigationReference"
       }
     },
-    "investigationsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "investigationReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/investigationsType"
+        "type" : {
+          "$ref" : "#/definitions/investigationType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "institutionsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/institutionsReference"
+    "institutionReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/institutionReference"
       }
     },
-    "institutionsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "institutionReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/institutionsType"
+        "type" : {
+          "$ref" : "#/definitions/institutionType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "modelsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/modelsReference"
+    "modelReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/modelReference"
       }
     },
-    "modelsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "modelReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/modelsType"
+        "type" : {
+          "$ref" : "#/definitions/modelType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "organismsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/organismsReference"
+    "organismReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/organismReference"
       }
     },
-    "peopleReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/peopleReference"
+    "peopleReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/peopleReference"
       }
     },
-    "presentationsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/presentationsReference"
+    "presentationReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/presentationReference"
       }
     },
-    "presentationsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "presentationReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/presentationsType"
+        "type" : {
+          "$ref" : "#/definitions/presentationType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "programmesReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/programmesReference"
+    "programmeReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/programmeReference"
       }
     },
-    "programmesReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "programmeReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/programmesType"
+        "type" : {
+          "$ref" : "#/definitions/programmeType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "projectsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/projectsReference"
+    "projectReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/projectReference"
       }
     },
-    "projectsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "projectReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/projectsType"
+        "type" : {
+          "$ref" : "#/definitions/projectType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "publicationsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/publicationsReference"
+    "publicationReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/publicationReference"
       }
     },
-    "publicationsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "publicationReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/publicationsType"
+        "type" : {
+          "$ref" : "#/definitions/publicationType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "samplesReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/samplesReference"
+    "sampleReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/sampleReference"
       }
     },
-    "sampleTypesReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/sampleTypesReference"
+    "sampleTypeReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/sampleTypeReference"
       }
     },
-    "sopsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/sopsReference"
+    "sopReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/sopReference"
       }
     },
-    "sopsReference": {
-      "properties": {
-        "id": {
-          "$ref": "#/definitions/nonEmptyString"
+    "sopReference" : {
+      "properties" : {
+        "id" : {
+          "$ref" : "#/definitions/nonEmptyString"
         },
-        "type": {
-          "$ref": "#/definitions/sopsType"
+        "type" : {
+          "$ref" : "#/definitions/sopType"
         }
       },
-      "required": [
-        "id",
-        "type"
-      ],
-      "additionalProperties": false
+      "required" : [ "id", "type" ],
+      "additionalProperties" : false
     },
-    "strainsReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/strainsReference"
+    "strainReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/strainReference"
       }
     },
-    "studiesReferences": {
-      "type": "array",
-      "minItems": 0,
-      "uniqueItems": true,
-      "items": {
-        "$ref": "#/definitions/studiesReference"
+    "studyReferences" : {
+      "type" : "array",
+      "minItems" : 0,
+      "uniqueItems" : true,
+      "items" : {
+        "$ref" : "#/definitions/studyReference"
       }
     },
-    "searchResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/anyReferences"
+    "searchResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/anyReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "links" : {},
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "links" : { },
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "links",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "links", "meta" ],
+      "additionalProperties" : false
     },
-    "getAssaysResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "assayResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/assaysType"
+            "type" : {
+              "$ref" : "#/definitions/assayType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "tags": {
-                  "$ref": "#/definitions/nullableNonEmptyStringList"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "tags" : {
+                  "$ref" : "#/definitions/nullableNonEmptyStringList"
                 },
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "description": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "description" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "assay_class": {
-                  "type": "object",
-                  "properties": {
-                    "title": {
-                      "$ref": "#/definitions/nonEmptyString"
+                "assay_class" : {
+                  "type" : "object",
+                  "properties" : {
+                    "title" : {
+                      "$ref" : "#/definitions/nonEmptyString"
                     },
-                    "key": {
-                      "$ref": "#/definitions/nonEmptyString"
+                    "key" : {
+                      "$ref" : "#/definitions/nonEmptyString"
                     },
-                    "description": {
-                      "$ref": "#/definitions/nullableNonEmptyString"
+                    "description" : {
+                      "$ref" : "#/definitions/nullableNonEmptyString"
                     }
                   },
-                  "required": [
-                    "title",
-                    "key"
-                  ],
-                  "additionalProperties": false
+                  "required" : [ "title", "key" ],
+                  "additionalProperties" : false
                 },
-                "assay_type": {
-                  "type": "object",
-                  "properties": {
-                    "label": {
-                      "$ref": "#/definitions/nonEmptyString"
+                "assay_type" : {
+                  "type" : "object",
+                  "properties" : {
+                    "label" : {
+                      "$ref" : "#/definitions/nonEmptyString"
                     },
-                    "uri": {
-                      "$ref": "#/definitions/uriString"
+                    "uri" : {
+                      "$ref" : "#/definitions/uriString"
                     }
                   },
-                  "required": [
-                    "label",
-                    "uri"
-                  ],
-                  "additionalProperties": false
+                  "required" : [ "label", "uri" ],
+                  "additionalProperties" : false
                 },
-                "technology_type": {
-                  "type": "object",
-                  "properties": {
-                    "label": {
-                      "$ref": "#/definitions/nonEmptyString"
+                "technology_type" : {
+                  "type" : "object",
+                  "properties" : {
+                    "label" : {
+                      "$ref" : "#/definitions/nonEmptyString"
                     },
-                    "uri": {
-                      "$ref": "#/definitions/uriString"
+                    "uri" : {
+                      "$ref" : "#/definitions/uriString"
                     }
                   },
-                  "required": [
-                    "label",
-                    "uri"
-                  ],
-                  "additionalProperties": false
+                  "required" : [ "label", "uri" ],
+                  "additionalProperties" : false
                 }
               },
-              "required": [
-                "title",
-                "assay_class",
-                "assay_type",
-                "technology_type"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "assay_class", "assay_type", "technology_type" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "organisms": {
-                  "$ref": "#/definitions/organismsReferenceList"
+                "organisms" : {
+                  "$ref" : "#/definitions/organismReferencesList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigation": {
-                  "data": {
-                    "$ref": "#/definitions/investigationsReference"
-                  }
+                "investigation" : {
+                  "$ref" : "#/definitions/investigationSingletonReference"
                 },
-                "study": {
-                  "data": {
-                    "$ref": "#/definitions/studiesReference"
-                  }
+                "study" : {
+                  "$ref" : "#/definitions/studySingletonReference"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "sops": {
-                  "$ref": "#/definitions/sopsReferenceList"
+                "sops" : {
+                  "$ref" : "#/definitions/sopReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "strains": {
-                  "$ref": "#/definitions/strainsReferenceList"
+                "strains" : {
+                  "$ref" : "#/definitions/strainReferencesList"
                 },
-                "samples": {
-                  "$ref": "#/definitions/samplesReferenceList"
+                "samples" : {
+                  "$ref" : "#/definitions/sampleReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "organisms",
-                "people",
-                "projects",
-                "investigation",
-                "study",
-                "data_files",
-                "models",
-                "sops",
-                "publications",
-                "strains",
-                "samples"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "organisms", "people", "projects", "investigation", "study", "data_files", "models", "sops", "publications", "strains", "samples" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getContentBlobsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "getContentBlobsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/nonEmptyString"
+            "type" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "original_filename": {
-                  "$ref": "#/definitions/nonEmptyString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "original_filename" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "url": {
-                  "$ref": "#/definitions/nullableUriString"
+                "url" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "md5sum": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "md5sum" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "sha1sum": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "sha1sum" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "content_type": {
-                  "$ref": "#/definitions/contentBlobsType"
+                "content_type" : {
+                  "$ref" : "#/definitions/contentBlobType"
                 }
               },
-              "required": [
-                "original_filename",
-                "md5sum",
-                "sha1sum",
-                "content_type"
-              ],
-              "additionalProperties": false
+              "required" : [ "original_filename", "md5sum", "sha1sum", "content_type" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getDataFilesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "dataFileResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/dataFilesType"
+            "type" : {
+              "$ref" : "#/definitions/dataFileType"
             },
-            "attributes": {
-              "$ref": "#/definitions/contributedTypeAttributes"
+            "attributes" : {
+              "$ref" : "#/definitions/contributedTypeAttributes"
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "events": {
-                  "$ref": "#/definitions/eventsReferenceList"
+                "events" : {
+                  "$ref" : "#/definitions/eventReferencesList"
                 },
-                "samples": {
-                  "$ref": "#/definitions/samplesReferenceList"
+                "samples" : {
+                  "$ref" : "#/definitions/sampleReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "people",
-                "projects",
-                "investigations",
-                "studies",
-                "assays",
-                "publications",
-                "events",
-                "samples"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "people", "projects", "investigations", "studies", "assays", "publications", "events", "samples" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getEventsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "eventResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/eventsType"
+            "type" : {
+              "$ref" : "#/definitions/eventType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "description": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "description" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "url": {
-                  "$ref": "#/definitions/nullableUriString"
+                "url" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "address": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "address" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "city": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "city" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "country": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "country" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "start_date": {
-                  "$ref": "#/definitions/dateTimeString"
+                "start_date" : {
+                  "$ref" : "#/definitions/dateTimeString"
                 },
-                "end_date": {
-                  "$ref": "#/definitions/dateTimeString"
+                "end_date" : {
+                  "$ref" : "#/definitions/dateTimeString"
                 }
               },
-              "required": [
-                "title",
-                "description",
-                "start_date",
-                "end_date"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "description", "start_date", "end_date" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "presentations": {
-                  "$ref": "#/definitions/presentationsReferenceList"
+                "presentations" : {
+                  "$ref" : "#/definitions/presentationReferencesList"
                 }
               },
-              "required": [
-                "projects",
-                "data_files",
-                "publications",
-                "presentations"
-              ],
-              "additionalProperties": false
+              "required" : [ "projects", "data_files", "publications", "presentations" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getInstitutionsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "institutionResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/institutionsType"
+            "type" : {
+              "$ref" : "#/definitions/institutionType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "avatar": {
-                  "$ref": "#/definitions/nullableUriString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "avatar" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "country": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "country" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "city": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "city" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "address": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "address" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "web_page": {
-                  "$ref": "#/definitions/nullableUriString"
+                "web_page" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 }
               },
-              "required": [
-                "title",
-                "country",
-                "city",
-                "address",
-                "web_page"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "country", "city", "address", "web_page" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 }
               },
-              "required": [
-                "people",
-                "projects"
-              ],
-              "additionalProperties": false
+              "required" : [ "people", "projects" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getInvestigationsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "investigationResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/investigationsType"
+            "type" : {
+              "$ref" : "#/definitions/investigationType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "tags": {
-                  "$ref": "#/definitions/nullableNonEmptyStringList"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "tags" : {
+                  "$ref" : "#/definitions/nullableNonEmptyStringList"
                 },
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "description": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "description" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 }
               },
-              "required": [
-                "title"
-              ],
-              "additionalProperties": false
+              "required" : [ "title" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "sops": {
-                  "$ref": "#/definitions/sopsReferenceList"
+                "sops" : {
+                  "$ref" : "#/definitions/sopReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "people",
-                "projects",
-                "studies",
-                "assays",
-                "data_files",
-                "models",
-                "sops",
-                "publications"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "people", "projects", "studies", "assays", "data_files", "models", "sops", "publications" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getModelsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "modelResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/modelsType"
+            "type" : {
+              "$ref" : "#/definitions/modelType"
             },
-            "attributes": {
-              "$ref": "#/definitions/modelTypeAttributes"
+            "attributes" : {
+              "$ref" : "#/definitions/modelAttributes"
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "people",
-                "projects",
-                "investigations",
-                "studies",
-                "assays",
-                "publications"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "people", "projects", "investigations", "studies", "assays", "publications" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getOrganismsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "organismResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/organismsType"
+            "type" : {
+              "$ref" : "#/definitions/organismType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "concept_uri": {
-                  "$ref": "#/definitions/uriString"
+                "concept_uri" : {
+                  "$ref" : "#/definitions/uriString"
                 },
-                "ontology_id": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "ontology_id" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 }
               },
-              "required": [
-                "title",
-                "concept_uri",
-                "ontology_id"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "concept_uri", "ontology_id" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "strains": {
-                  "$ref": "#/definitions/strainsReferenceList"
+                "strains" : {
+                  "$ref" : "#/definitions/strainReferencesList"
                 },
-                "samples": {
-                  "$ref": "#/definitions/samplesReferenceList"
+                "samples" : {
+                  "$ref" : "#/definitions/sampleReferencesList"
                 }
               },
-              "required": [
-                "projects",
-                "assays",
-                "models",
-                "strains",
-                "samples"
-              ],
-              "additionalProperties": false
+              "required" : [ "projects", "assays", "models", "strains", "samples" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getPeopleResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "personResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/peopleType"
+            "type" : {
+              "$ref" : "#/definitions/peopleType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "avatar": {
-                  "$ref": "#/definitions/nullableUriString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "avatar" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "description": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "description" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "first_name": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "first_name" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "last_name": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "last_name" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "web_page": {
-                  "$ref": "#/definitions/nullableUriString"
+                "web_page" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "orcid": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "orcid" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "email": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "mbox_sha1sum" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "expertise": {
-                  "$ref": "#/definitions/nullableNonEmptyStringList"
+                "expertise" : {
+                  "$ref" : "#/definitions/nullableNonEmptyStringList"
                 },
-                "tools": {
-                  "$ref": "#/definitions/nullableNonEmptyStringList"
+                "tools" : {
+                  "$ref" : "#/definitions/nullableNonEmptyStringList"
                 }
               },
-              "required": [
-                "title",
-                "first_name",
-                "last_name",
-                "email"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "first_name", "last_name", "mbox_sha1sum" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "institutions": {
-                  "$ref": "#/definitions/institutionsReferenceList"
+                "institutions" : {
+                  "$ref" : "#/definitions/institutionReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "sops": {
-                  "$ref": "#/definitions/sopsReferenceList"
+                "sops" : {
+                  "$ref" : "#/definitions/sopReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "presentations": {
-                  "$ref": "#/definitions/presentationsReferenceList"
+                "presentations" : {
+                  "$ref" : "#/definitions/presentationReferencesList"
                 },
-                "events": {
-                  "$ref": "#/definitions/eventsReferenceList"
+                "events" : {
+                  "$ref" : "#/definitions/eventReferencesList"
                 },
-                "samples": {
-                  "$ref": "#/definitions/samplesReferenceList"
+                "samples" : {
+                  "$ref" : "#/definitions/sampleReferencesList"
                 }
               },
-              "required": [
-                "projects",
-                "institutions",
-                "investigations",
-                "studies",
-                "assays",
-                "data_files",
-                "models",
-                "sops",
-                "publications",
-                "presentations",
-                "events",
-                "samples"
-              ],
-              "additionalProperties": false
+              "required" : [ "projects", "institutions", "investigations", "studies", "assays", "data_files", "models", "sops", "publications", "presentations", "events", "samples" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getPresentationsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "presentationResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/presentationsType"
+            "type" : {
+              "$ref" : "#/definitions/presentationType"
             },
-            "attributes": {
-              "$ref": "#/definitions/contributedTypeAttributes"
+            "attributes" : {
+              "$ref" : "#/definitions/contributedTypeAttributes"
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "events": {
-                  "$ref": "#/definitions/eventsReferenceList"
+                "events" : {
+                  "$ref" : "#/definitions/eventReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "people",
-                "projects",
-                "investigations",
-                "studies",
-                "assays",
-                "publications",
-                "events"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "people", "projects", "investigations", "studies", "assays", "publications", "events" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getProgrammesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "programmeResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/programmesType"
+            "type" : {
+              "$ref" : "#/definitions/programmeType"
             },
-            "attributes": {
-              "$ref": "#/definitions/programmeDataType"
+            "attributes" : {
+              "$ref" : "#/definitions/programmeDataType"
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "institutions": {
-                  "$ref": "#/definitions/institutionsReferenceList"
+                "institutions" : {
+                  "$ref" : "#/definitions/institutionReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "sops": {
-                  "$ref": "#/definitions/sopsReferenceList"
+                "sops" : {
+                  "$ref" : "#/definitions/sopReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "presentations": {
-                  "$ref": "#/definitions/presentationsReferenceList"
+                "presentations" : {
+                  "$ref" : "#/definitions/presentationReferencesList"
                 },
-                "events": {
-                  "$ref": "#/definitions/eventsReferenceList"
+                "events" : {
+                  "$ref" : "#/definitions/eventReferencesList"
                 }
               },
-              "required": [
-                "people",
-                "projects",
-                "institutions",
-                "investigations",
-                "studies",
-                "assays",
-                "data_files",
-                "models",
-                "sops",
-                "publications",
-                "presentations",
-                "events"
-              ],
-              "additionalProperties": false
+              "required" : [ "people", "projects", "institutions", "investigations", "studies", "assays", "data_files", "models", "sops", "publications", "presentations", "events" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getProjectsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "projectResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/projectsType"
+            "type" : {
+              "$ref" : "#/definitions/projectType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "avatar": {
-                  "$ref": "#/definitions/nullableUriString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "avatar" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "description": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "description" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "web_page": {
-                  "$ref": "#/definitions/nullableUriString"
+                "web_page" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "wiki_page": {
-                  "$ref": "#/definitions/nullableUriString"
+                "wiki_page" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 }
               },
-              "required": [
-                "title",
-                "description",
-                "web_page",
-                "wiki_page"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "description", "web_page", "wiki_page" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "organisms": {
-                  "$ref": "#/definitions/organismsReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "organisms" : {
+                  "$ref" : "#/definitions/organismReferencesList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "institutions": {
-                  "$ref": "#/definitions/institutionsReferenceList"
+                "institutions" : {
+                  "$ref" : "#/definitions/institutionReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "sops": {
-                  "$ref": "#/definitions/sopsReferenceList"
+                "sops" : {
+                  "$ref" : "#/definitions/sopReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "presentations": {
-                  "$ref": "#/definitions/presentationsReferenceList"
+                "presentations" : {
+                  "$ref" : "#/definitions/presentationReferencesList"
                 },
-                "events": {
-                  "$ref": "#/definitions/eventsReferenceList"
+                "events" : {
+                  "$ref" : "#/definitions/eventReferencesList"
                 },
-                "strains": {
-                  "$ref": "#/definitions/strainsReferenceList"
+                "strains" : {
+                  "$ref" : "#/definitions/strainReferencesList"
                 },
-                "samples": {
-                  "$ref": "#/definitions/samplesReferenceList"
+                "samples" : {
+                  "$ref" : "#/definitions/sampleReferencesList"
                 },
-                "programmes": {
-                  "$ref": "#/definitions/programmesReferenceList"
+                "programmes" : {
+                  "$ref" : "#/definitions/programmeReferencesList"
                 }
               },
-              "required": [
-                "organisms",
-                "people",
-                "institutions",
-                "investigations",
-                "studies",
-                "assays",
-                "data_files",
-                "models",
-                "sops",
-                "publications",
-                "presentations",
-                "events",
-                "strains",
-                "samples",
-                "programmes"
-              ],
-              "additionalProperties": false
+              "required" : [ "organisms", "people", "institutions", "investigations", "studies", "assays", "data_files", "models", "sops", "publications", "presentations", "events", "strains", "samples", "programmes" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getPublicationsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "publicationResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/publicationsType"
+            "type" : {
+              "$ref" : "#/definitions/publicationType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "journal": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "journal" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "published_date": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "published_date" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "doi": {
-                  "$ref": "#/definitions/nullableUriString"
+                "doi" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "pubmed_id": {
-                  "type": "number"
+                "pubmed_id" : {
+                  "type" : "number"
                 },
-                "abstract": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "abstract" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "citation": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "citation" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "link_to_pub": {
-                  "$ref": "#/definitions/nullableUriString"
+                "link_to_pub" : {
+                  "$ref" : "#/definitions/nullableUriString"
                 },
-                "authors": {
-                  "$ref": "#/definitions/nullableNonEmptyStringList"
+                "authors" : {
+                  "$ref" : "#/definitions/nullableNonEmptyStringList"
                 }
               },
-              "required": [
-                "title",
-                "journal",
-                "published_date",
-                "pubmed_id",
-                "citation",
-                "link_to_pub"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "journal", "published_date", "pubmed_id", "citation", "link_to_pub" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 },
-                "presentations": {
-                  "$ref": "#/definitions/presentationsReferenceList"
+                "presentations" : {
+                  "$ref" : "#/definitions/presentationReferencesList"
                 },
-                "events": {
-                  "$ref": "#/definitions/eventsReferenceList"
+                "events" : {
+                  "$ref" : "#/definitions/eventReferencesList"
                 }
               },
-              "required": [
-                "people",
-                "projects",
-                "investigations",
-                "studies",
-                "assays",
-                "data_files",
-                "models",
-                "publications",
-                "presentations",
-                "events"
-              ],
-              "additionalProperties": false
+              "required" : [ "people", "projects", "investigations", "studies", "assays", "data_files", "models", "publications", "presentations", "events" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getSopsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "sopResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/sopsType"
+            "type" : {
+              "$ref" : "#/definitions/sopType"
             },
-            "attributes": {
-              "$ref": "#/definitions/contributedTypeAttributes"
+            "attributes" : {
+              "$ref" : "#/definitions/contributedTypeAttributes"
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigations": {
-                  "$ref": "#/definitions/investigationsReferenceList"
+                "investigations" : {
+                  "$ref" : "#/definitions/investigationReferencesList"
                 },
-                "studies": {
-                  "$ref": "#/definitions/studiesReferenceList"
+                "studies" : {
+                  "$ref" : "#/definitions/studyReferencesList"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "people",
-                "projects",
-                "investigations",
-                "studies",
-                "assays",
-                "publications"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "people", "projects", "investigations", "studies", "assays", "publications" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "getStudiesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "$ref": "#/definitions/nonEmptyString"
+    "studyResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "type" : "object",
+          "properties" : {
+            "id" : {
+              "$ref" : "#/definitions/nonEmptyString"
             },
-            "type": {
-              "$ref": "#/definitions/studiesType"
+            "type" : {
+              "$ref" : "#/definitions/studyType"
             },
-            "attributes": {
-              "type": "object",
-              "properties": {
-                "tags": {
-                  "$ref": "#/definitions/nullableNonEmptyStringList"
+            "attributes" : {
+              "type" : "object",
+              "properties" : {
+                "tags" : {
+                  "$ref" : "#/definitions/nullableNonEmptyStringList"
                 },
-                "title": {
-                  "$ref": "#/definitions/nonEmptyString"
+                "title" : {
+                  "$ref" : "#/definitions/nonEmptyString"
                 },
-                "description": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "description" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "experimentalists": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "experimentalists" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 },
-                "person_responsible_id": {
-                  "$ref": "#/definitions/nullableNonEmptyString"
+                "person_responsible_id" : {
+                  "$ref" : "#/definitions/nullableNonEmptyString"
                 }
               },
-              "required": [
-                "title",
-                "person_responsible_id"
-              ],
-              "additionalProperties": false
+              "required" : [ "title", "person_responsible_id" ],
+              "additionalProperties" : false
             },
-            "relationships": {
-              "type": "object",
-              "properties": {
-                "creators": {
-                  "$ref": "#/definitions/peopleReferenceList"
+            "relationships" : {
+              "type" : "object",
+              "properties" : {
+                "creators" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "submitter": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "submitter" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "people": {
-                  "$ref": "#/definitions/peopleReferenceList"
+                "people" : {
+                  "$ref" : "#/definitions/peopleReferenceList"
                 },
-                "projects": {
-                  "$ref": "#/definitions/projectsReferenceList"
+                "projects" : {
+                  "$ref" : "#/definitions/projectReferencesList"
                 },
-                "investigation": {
-                  "data": {
-                    "$ref": "#/definitions/investigationsReference"
-                  }
+                "investigation" : {
+                  "$ref" : "#/definitions/investigationSingletonReference"
                 },
-                "assays": {
-                  "$ref": "#/definitions/assaysReferenceList"
+                "assays" : {
+                  "$ref" : "#/definitions/assayReferencesList"
                 },
-                "data_files": {
-                  "$ref": "#/definitions/dataFilesReferenceList"
+                "data_files" : {
+                  "$ref" : "#/definitions/dataFileReferencesList"
                 },
-                "models": {
-                  "$ref": "#/definitions/modelsReferenceList"
+                "models" : {
+                  "$ref" : "#/definitions/modelReferencesList"
                 },
-                "sops": {
-                  "$ref": "#/definitions/sopsReferenceList"
+                "sops" : {
+                  "$ref" : "#/definitions/sopReferencesList"
                 },
-                "publications": {
-                  "$ref": "#/definitions/publicationsReferenceList"
+                "publications" : {
+                  "$ref" : "#/definitions/publicationReferencesList"
                 }
               },
-              "required": [
-                "creators",
-                "submitter",
-                "people",
-                "projects",
-                "investigation",
-                "assays",
-                "data_files",
-                "models",
-                "sops",
-                "publications"
-              ],
-              "additionalProperties": false
+              "required" : [ "creators", "submitter", "people", "projects", "investigation", "assays", "data_files", "models", "sops", "publications" ],
+              "additionalProperties" : false
             },
-            "links": {
-              "$ref": "#/definitions/linksType"
+            "links" : {
+              "$ref" : "#/definitions/linksType"
             },
-            "meta": {
-              "$ref": "#/definitions/metaType"
+            "meta" : {
+              "$ref" : "#/definitions/metaType"
             }
           },
-          "required": [
-            "id",
-            "type",
-            "attributes",
-            "relationships",
-            "links",
-            "meta"
-          ],
-          "additionalProperties": false
+          "required" : [ "id", "type", "attributes", "relationships", "links", "meta" ],
+          "additionalProperties" : false
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         }
       },
-      "required": [
-        "data",
-        "jsonapi"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi" ],
+      "additionalProperties" : false
     },
-    "indexAssaysResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/assaysReferences"
+    "assaysResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/assayReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexDataFilesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/dataFilesReferences"
+    "dataFilesResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/dataFileReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexEventsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/eventsReferences"
+    "eventsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/eventReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexInstitutionsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/institutionsReferences"
+    "institutionsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/institutionReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexInvestigationsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/investigationsReferences"
+    "investigationsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/investigationReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexModelsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/modelsReferences"
+    "modelsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/modelReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexOrganismsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/organismsReferences"
+    "organismsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/organismReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexPeopleResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/peopleReferences"
+    "peopleResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/peopleReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexPresentationsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/presentationsReferences"
+    "presentationsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/presentationReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexProgrammesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/programmesReferences"
+    "programmesResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/programmeReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexProjectsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/projectsReferences"
+    "projectsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/projectReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexPublicationsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/publicationsReferences"
+    "publicationsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/publicationReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexSopsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/sopsReferences"
+    "sopsResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/sopReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexSampleTypesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/sampleTypesReferences"
+    "sampleTypesResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/sampleTypeReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexStrainsResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/strainsReferences"
+    "studiesResponse" : {
+      "type" : "object",
+      "properties" : {
+        "data" : {
+          "$ref" : "#/definitions/studyReferences"
         },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
+        "jsonapi" : {
+          "$ref" : "#/definitions/JsonApiVersion"
         },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
+        "meta" : {
+          "$ref" : "#/definitions/baseMetaType"
         }
       },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
+      "required" : [ "data", "jsonapi", "meta" ],
+      "additionalProperties" : false
     },
-    "indexStudiesResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/studiesReferences"
-        },
-        "jsonapi": {
-          "$ref": "#/definitions/JsonApiVersion"
-        },
-        "meta": {
-          "$ref": "#/definitions/baseMetaType"
-        }
-      },
-      "required": [
-        "data",
-        "jsonapi",
-        "meta"
-      ],
-      "additionalProperties": false
-    },
-    "ErrorResponse": {
-      "required": [
-        "message"
-      ],
-      "additionalProperties": false,
-      "properties": {
-        "message": {
-          "type": "string"
+    "ErrorResponse" : {
+      "required" : [ "message" ],
+      "additionalProperties" : false,
+      "properties" : {
+        "message" : {
+          "type" : "string"
         }
       }
     }
