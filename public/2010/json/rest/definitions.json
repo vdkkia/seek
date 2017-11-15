@@ -273,23 +273,50 @@
             "additionalProperties" : false
           }
         },
-        "model_type" : {
-          "$ref" : "#/definitions/nullableNonEmptyString"
+        "model_type": {
+          "$ref": "#/definitions/nullableNonEmptyString"
         },
-        "model_format" : {
-          "$ref" : "#/definitions/nullableNonEmptyString"
+        "model_format": {
+          "$ref": "#/definitions/nullableNonEmptyString"
         },
-        "environment" : {
-          "$ref" : "#/definitions/nullableNonEmptyString"
+        "environment": {
+          "$ref": "#/definitions/nullableNonEmptyString"
         }
       },
-      "required" : [ "title", "license", "latest_version", "versions", "version", "created_at", "updated_at", "content_blobs", "model_type", "model_format", "environment" ],
-      "additionalProperties" : false
+      "required": [
+        "title",
+        "license",
+        "latest_version",
+        "versions",
+        "version",
+        "created_at",
+        "updated_at",
+        "content_blobs",
+        "model_type",
+        "model_format",
+        "environment"
+      ],
+      "additionalProperties": false
     },
-    "anyType" : {
-      "type" : "string",
-      "minLength" : 1,
-      "enum" : [ "assays", "content_blobs", "data_files", "events", "models", "organisms", "people", "presentations", "programmes", "projects", "publications", "sample_types", "sops", "studies" ]
+    "anyType": {
+      "type": "string",
+      "minLength": 1,
+      "enum": [
+        "assays",
+        "content_blobs",
+        "data_files",
+        "events",
+        "models",
+        "organisms",
+        "people",
+        "presentations",
+        "programmes",
+        "projects",
+        "publications",
+        "sample_types",
+        "sops",
+        "studies"
+      ]
     },
     "assayType" : {
       "type" : "string",
