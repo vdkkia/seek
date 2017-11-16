@@ -94,7 +94,7 @@ module RestTestCases
       errors = JSON::Validator.fully_validate_json(definitions_path,
                                                    @response.body,
                                                    {:fragment => fragment,
-                                                    :strict => true})
+                                                         :strict => true})
       unless errors.empty?
         msg = ""
         errors.each do |e|
@@ -105,35 +105,31 @@ module RestTestCases
     end
   end
 
-  def test_AAA_show_json(object = rest_api_test_object)
-    className = object.class.name.dup
-    className[0] = className[0].downcase
-    fragment = '#/definitions/' + className + 'Response'
+  def test_show_json(object = rest_api_test_object)
+    clz = @controller.controller_name.classify.constantize
     get :show, id: object, format: 'json'
-
+    
     if check_for_501_read_return
       assert_response :not_implemented
     else
       perform_jsonapi_checks
-      validate_json_against_fragment fragment
+      validate_json_against_fragment ("#/definitions/get#{@controller.class.name.sub('Controller', 'Response')}")
     end
-    # rescue ActionController::UrlGenerationError
-    #   skip("unable to test read JSON for #{clz}")
+  # rescue ActionController::UrlGenerationError
+  #   skip("unable to test read JSON for #{clz}")
   end
 
-  def test_AABindex_json
-    className = @controller.class.name.dup
-    className[0] = className[0].downcase
-    fragment = '#/definitions/' + className.gsub('Controller','Response')
+  def test_index_json
+    clz = @controller.controller_name.classify.constantize
     get :index, format: 'json'
     if check_for_501_index_return
       assert_response :not_implemented
     else
-      perform_jsonapi_checks
-      validate_json_against_fragment fragment
+    perform_jsonapi_checks
+    validate_json_against_fragment ("#/definitions/index#{@controller.class.name.sub('Controller', 'Response')}")
     end
-    # rescue ActionController::UrlGenerationError
-    #   skip("unable to test index JSON for #{clz}")
+  # rescue ActionController::UrlGenerationError
+  #   skip("unable to test index JSON for #{clz}")
   end
 
   def test_response_code_for_not_accessible
@@ -165,7 +161,7 @@ module RestTestCases
     check_for_json_type_skip
     ['min','max'].each do |m|
       object = get_test_object(m)
-      json_file = File.join(Rails.root, 'public', '2010', 'json', 'content_compare',
+      json_file = File.join(Rails.root, 'test', 'fixtures', 'files', 'json', 'content_compare',
                             "#{m}_#{@controller.controller_name.classify.downcase}.json")
       #parse such that backspace is eliminated and null turns to nil
       json_to_compare = JSON.parse(File.read(json_file))
@@ -185,17 +181,17 @@ module RestTestCases
   def check_content_diff(json1, json2)
     plural_obj = @controller.controller_name.pluralize
     base = json2["data"]["meta"]["base_url"]
-    diff = JsonDiff.diff(json1, json2)
+    diff = JsonDiff.diff(json1, json2, moves: false)
 
     diff.reverse_each do |el|
       #the self link must start with the pluralized controller's name (e.g. /people)
       if (el["path"] =~ /self/)
         assert_match /^\/#{plural_obj}/, el["value"]
-        # url in version, e.g.  base_url/data_files/877365356?version=1
+      # url in version, e.g.  base_url/data_files/877365356?version=1
       elsif (el["path"] =~ /versions\/\d+\/url/)
         assert_match /#{base}\/#{plural_obj}\/\d+\?version=\d+/, el["value"]
         diff.delete(el)
-        # link in content blob, e.g.  base_url/data_files/877365356/content_blobs/343567275
+      # link in content blob, e.g.  base_url/data_files/877365356/content_blobs/343567275
       elsif (el["path"] =~ /content_blobs\/\d+\/link/)
         assert_match /#{base}\/#{plural_obj}\/\d+\/content_blobs\/\d+/, el["value"]
         diff.delete(el)

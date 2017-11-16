@@ -92,7 +92,7 @@ class ProjectsController < ApplicationController
       format.html # show.html.erb
       format.rdf { render template: 'rdf/show' }
       format.xml
-      format.json {render json: @project }
+      format.json {render json: @project}
     end
   end
 

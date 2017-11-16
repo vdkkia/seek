@@ -41,6 +41,7 @@ class ApplicationController < ActionController::Base
 
   layout Seek::Config.main_layout
 
+
   def with_current_user
     User.with_current_user current_user do
       yield

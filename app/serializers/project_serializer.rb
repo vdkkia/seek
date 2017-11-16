@@ -1,44 +1,7 @@
 class ProjectSerializer < AvatarObjSerializer
-
-  include PolicyHelper
-
   # class ProjectSerializer < ActiveModel::Serializer
   attributes :title, :description,
              :web_page, :wiki_page
-  attribute :default_policy, if: :administerable?
-
-  def default_policy
-    { 'access' => default_access,
-    'permissions' => permits }
-  end
-
-  def default_access
-    return access_type_key object.default_policy.access_type
-  end
-
-  def permits
-    result = []
-    object.default_policy.permissions.each do |p|
-    result.append ({'resource_type' => p.contributor_type.downcase.pluralize,
-                    'resource_id' => p.contributor_id,
-                    'access' => explicit_access(p.access_type) } )
-    end
-    return result
-  end
-
-  def administerable?
-    answer = false
-    begin
-      answer = object.can_be_administered_by?(current_user)
-    rescue
-    end
-    return answer
-  end
-
-  def explicit_access access_type
-    return access_type_key access_type
-  end
-
   has_many :organisms,  include_data: true
 
   has_many :people
