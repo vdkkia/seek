@@ -49,7 +49,6 @@
         "default" : "data_files"
       } ],
       "get" : {
-        "operationId" : "search",
         "description" : "Search for resources\n* of the specified type\n* that are visible to the authenticated user, and\n* contain the specified test\n",
         "tags" : [ "search" ],
         "responses" : {
@@ -64,7 +63,6 @@
     },
     "/assays" : {
       "get" : {
-        "operationId" : "assays",
         "description" : "List references to the assays that are visible to the authenticated user",
         "tags" : [ "experiments" ],
         "responses" : {
@@ -96,7 +94,6 @@
         "default" : 267
       } ],
       "get" : {
-        "operationId" : "assay",
         "description" : "Return the specified assay",
         "tags" : [ "experiments" ],
         "responses" : {
@@ -129,7 +126,6 @@
     },
     "/data_files" : {
       "get" : {
-        "operationId" : "dataFiles",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -159,7 +155,6 @@
         "default" : 1152
       } ],
       "get" : {
-        "operationId" : "dataFile",
         "parameters" : [ {
           "name" : "version",
           "in" : "query",
@@ -212,7 +207,6 @@
         "default" : 1831
       } ],
       "get" : {
-        "operationId" : "downloadDataFile",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -226,7 +220,6 @@
     },
     "/events" : {
       "get" : {
-        "operationId" : "events",
         "tags" : [ "activities" ],
         "responses" : {
           "200" : {
@@ -256,7 +249,6 @@
         "default" : 75
       } ],
       "get" : {
-        "operationId" : "event",
         "tags" : [ "activities" ],
         "responses" : {
           "200" : {
@@ -286,7 +278,6 @@
     },
     "/institutions" : {
       "get" : {
-        "operationId" : "institutions",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -316,7 +307,6 @@
         "default" : 142
       } ],
       "get" : {
-        "operationId" : "institution",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -346,7 +336,6 @@
     },
     "/investigations" : {
       "get" : {
-        "operationId" : "investigations",
         "tags" : [ "experiments" ],
         "responses" : {
           "200" : {
@@ -376,7 +365,6 @@
         "default" : 56
       } ],
       "get" : {
-        "operationId" : "investigation",
         "tags" : [ "experiments" ],
         "responses" : {
           "200" : {
@@ -406,7 +394,6 @@
     },
     "/models" : {
       "get" : {
-        "operationId" : "models",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -436,7 +423,6 @@
         "default" : 139
       } ],
       "get" : {
-        "operationId" : "model",
         "parameters" : [ {
           "name" : "version",
           "in" : "query",
@@ -489,7 +475,6 @@
         "default" : 1850
       } ],
       "get" : {
-        "operationId" : "downloadModel",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -503,7 +488,6 @@
     },
     "/organisms" : {
       "get" : {
-        "operationId" : "organisms",
         "tags" : [ "samples" ],
         "responses" : {
           "200" : {
@@ -533,7 +517,6 @@
         "default" : 1933753696
       } ],
       "get" : {
-        "operationId" : "organism",
         "tags" : [ "samples" ],
         "responses" : {
           "200" : {
@@ -563,7 +546,6 @@
     },
     "/people" : {
       "get" : {
-        "operationId" : "people",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -593,7 +575,6 @@
         "default" : 433
       } ],
       "get" : {
-        "operationId" : "person",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -623,7 +604,6 @@
     },
     "/presentations" : {
       "get" : {
-        "operationId" : "presentations",
         "tags" : [ "activities" ],
         "responses" : {
           "200" : {
@@ -653,7 +633,6 @@
         "default" : 253
       } ],
       "get" : {
-        "operationId" : "presentation",
         "parameters" : [ {
           "name" : "version",
           "in" : "query",
@@ -706,7 +685,6 @@
         "default" : 3215
       } ],
       "get" : {
-        "operationId" : "downloadPresentation",
         "tags" : [ "activities" ],
         "responses" : {
           "200" : {
@@ -720,7 +698,6 @@
     },
     "/programmes" : {
       "get" : {
-        "operationId" : "programmes",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -750,7 +727,6 @@
         "default" : 3
       } ],
       "get" : {
-        "operationId" : "programme",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -781,7 +757,6 @@
     "/projects" : {
       "get" : {
         "tags" : [ "yellow pages" ],
-        "operationId" : "projects",
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -810,7 +785,6 @@
         "default" : 17
       } ],
       "get" : {
-        "operationId" : "project",
         "tags" : [ "yellow pages" ],
         "responses" : {
           "200" : {
@@ -840,7 +814,6 @@
     },
     "/publications" : {
       "get" : {
-        "operationId" : "publications",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -870,7 +843,6 @@
         "default" : 240
       } ],
       "get" : {
-        "operationId" : "publication",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -900,7 +872,6 @@
     },
     "/sample_types" : {
       "get" : {
-        "operationId" : "sampleTypes",
         "tags" : [ "samples" ],
         "responses" : {
           "200" : {
@@ -914,7 +885,6 @@
     },
     "/sops" : {
       "get" : {
-        "operationId" : "sops",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -944,7 +914,6 @@
         "default" : 203
       } ],
       "get" : {
-        "operationId" : "sop",
         "parameters" : [ {
           "name" : "version",
           "in" : "query",
@@ -997,7 +966,6 @@
         "default" : 1806
       } ],
       "get" : {
-        "operationId" : "downloadSop",
         "tags" : [ "assets" ],
         "responses" : {
           "200" : {
@@ -1011,7 +979,6 @@
     },
     "/studies" : {
       "get" : {
-        "operationId" : "studies",
         "tags" : [ "experiments" ],
         "responses" : {
           "200" : {
@@ -1041,7 +1008,6 @@
         "default" : 138
       } ],
       "get" : {
-        "operationId" : "study",
         "tags" : [ "experiments" ],
         "responses" : {
           "200" : {
