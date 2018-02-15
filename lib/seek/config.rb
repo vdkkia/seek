@@ -306,13 +306,17 @@ module Seek
 
     if Settings.table_exists?
       def get_value(setting, conversion = nil)
-        val = Settings.global[setting]
-        val = val.send(conversion) if conversion && val
-        val
+        cache(setting) do
+          val = Settings.global[setting]
+          val = val.send(conversion) if conversion && val
+          val
+        end
       end
 
       def set_value(setting, val, conversion = nil)
         val = val.send(conversion) if conversion && val
+        clear_cache(setting)
+        cache(setting) { val }
         Settings.global[setting] = val
       end
     else
@@ -327,9 +331,16 @@ module Seek
     end
 
     def merge!(var, value)
-      result = Settings.merge! var, value
+      raise ArgumentError unless value.is_a?(Hash)
+
+      old_value = get_value(var) || {}
+      raise TypeError, "Existing value is not a hash, can't merge!" unless old_value.is_a?(Hash)
+
+      new_value = old_value.merge(value)
+      set_value(var, new_value) if new_value != old_value
+
       send "#{var}_propagate" if respond_to? "#{var}_propagate"
-      result
+      new_value
     end
 
     def setting(setting, options = {})
@@ -369,6 +380,22 @@ module Seek
 
     def encrypted_setting?(setting)
       encrypted_settings.include?(setting.to_sym)
+    end
+
+    def cache(setting, &block)
+      @@cache = Rails.cache.fetch("settings_#{Settings.global.maximum(:updated_at).to_i}") do
+        {}
+      end
+
+      if @@cache.key?(setting.to_sym)
+        @@cache[setting.to_sym]
+      else
+        @@cache[setting.to_sym] = block.call
+      end
+    end
+
+    def clear_cache(setting)
+      @@cache.delete(setting.to_sym) if defined? @@cache
     end
   end
 

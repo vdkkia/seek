@@ -75,18 +75,6 @@ class Settings < ActiveRecord::Base
     value
   end
 
-  def self.merge!(var_name, hash_value)
-    raise ArgumentError unless hash_value.is_a?(Hash)
-
-    old_value = self[var_name] || {}
-    raise TypeError, "Existing value is not a hash, can't merge!" unless old_value.is_a?(Hash)
-
-    new_value = old_value.merge(hash_value)
-    self[var_name] = new_value if new_value != old_value
-
-    new_value
-  end
-
   #get the value field, YAML decoded
   alias_method :attr_enc_value, :value
   def value
