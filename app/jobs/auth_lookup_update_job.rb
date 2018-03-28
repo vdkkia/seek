@@ -1,4 +1,6 @@
 class AuthLookupUpdateJob < SeekJob
+  MAX_CONCURRENT_JOBS = 10 # TODO: Make less arbitrary... 1 job per worker?
+
   def add_items_to_queue(items, time = default_delay.from_now, priority = 0, queuepriority = default_priority)
     if Seek::Config.auth_lookup_enabled
 
@@ -9,7 +11,7 @@ class AuthLookupUpdateJob < SeekJob
         items.uniq.each do |item|
           add_item_to_queue(item, queuepriority)
         end
-        queue_job(priority, time)
+        queue_job(priority, time) unless count >= MAX_CONCURRENT_JOBS # Don't flood jobs table
       end
     end
   end
