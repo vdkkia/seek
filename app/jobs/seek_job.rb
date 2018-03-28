@@ -11,12 +11,12 @@ class SeekJob
         Timeout.timeout(timelimit) do
           perform_job(item)
         end
-      rescue Exception => exception
-        raise exception if Rails.env.test?
-        unless item.destroyed?
+      rescue StandardError => exception
+        unless item.destroyed? || Rails.env.test?
           report_exception(exception, item)
           retry_item(item)
         end
+        raise exception unless Rails.env.production? # Re-raise exception so it is logged in the jobs table
       end
     end
     if follow_on_job?
