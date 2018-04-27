@@ -2,13 +2,13 @@
 
 . "$HOME/.rvm/scripts/rvm"
 
-RUBY_VERSION=$(cat .ruby-version)
-GEMSET=$(cat .ruby-gemset)
+# RUBY_VERSION=$(cat .ruby-version)
+# GEMSET=$(cat .ruby-gemset)
 
 # force 2.2.7 for now - problem compiling 2.2.8 on Debian Stretch
-RUBY_VERSION="ruby-2.4"
+# RUBY_VERSION="ruby-2.4"
 
-rvm use "$RUBY_VERSION@$GEMSET"
+# rvm use "$RUBY_VERSION@$GEMSET"
 
 set -e
 
