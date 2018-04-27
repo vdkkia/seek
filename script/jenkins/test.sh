@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 . "$HOME/.rvm/scripts/rvm"
 
