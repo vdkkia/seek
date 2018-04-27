@@ -1,6 +1,6 @@
 #!/bin/sh
 
-source "$HOME/.rvm/scripts/rvm"
+. "$HOME/.rvm/scripts/rvm"
 
 RUBY_VERSION=$(cat .ruby-version)
 GEMSET=$(cat .ruby-gemset)
