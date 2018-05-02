@@ -25,7 +25,7 @@ module Seek
       module BaseExtensions
         def self.included(base)
           base.extend ClassMethods
-          base.before_save :changes_authorized?
+          base.validate :changes_authorized?
           base.before_destroy :destroy_authorized?
         end
 
