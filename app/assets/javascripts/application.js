@@ -73,4 +73,5 @@
 //= require bives
 //= require asset_report
 //= require uri
+//= require runs
 //= require_tree ./templates

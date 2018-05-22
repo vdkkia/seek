@@ -16,7 +16,7 @@ module TavernaPlayer
     before_filter :auth_workflow, :only => :new
 
     def update
-      @run.update_attributes(params[:run])
+      @run.update_attributes(run_params)
 
       update_sharing_policies @run
 
@@ -25,7 +25,7 @@ module TavernaPlayer
 
     # POST /runs
     def create
-      @run = Run.new(params[:run])
+      @run = Run.new(run_params)
       # Need to set workflow and workflow_version incase the create fails and redirects to 'new'
       @workflow = @run.workflow
       @workflow_version = @run.executed_workflow
@@ -175,10 +175,18 @@ module TavernaPlayer
     end
 
     def check_project_membership_unless_embedded
-      unless (params[:run] && params[:run][:embedded] == 'true') || (params[:embedded] && params[:embedded] == 'true')
+      unless (run_params && run_params[:embedded] == 'true') || (params[:embedded] && params[:embedded] == 'true')
         project_membership_required
       end
     end
 
+    def setup_new_asset
+      super
+      @run.name = "#{@workflow_version.title} (v#{@workflow_version.version}) run " + Time.now.utc.strftime('%e %b %Y %H:%M:%S %Z')
+    end
+
+    def run_params
+      params.require(:run).permit!
+    end
   end
 end

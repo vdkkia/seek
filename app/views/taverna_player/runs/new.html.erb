@@ -30,7 +30,7 @@
 
     <div class="form-group">
       <%= f.label :name, "Run name"  %>
-      <%= f.text_field :name, :value => "#{@workflow_version.title} (v#{@workflow_version.version}) run " + Time.now.utc.strftime('%e %b %Y %H:%M:%S %Z'), :class => 'form-control' %>
+      <%= f.text_field :name, :class => 'form-control' %>
     </div>
 
     <!-- Data inputs -->

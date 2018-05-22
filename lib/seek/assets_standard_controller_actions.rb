@@ -12,13 +12,14 @@ module Seek
 
     def show
       asset = determine_asset_from_controller
-      # store timestamp of the previous last usage
-      @last_used_before_now = asset.last_used_at
+      if asset.respond_to?(:last_used_at)
+        # store timestamp of the previous last usage
+        @last_used_before_now = asset.last_used_at
 
-      # update timestamp in the current record
-      # (this will also trigger timestamp update in the corresponding Asset)
-      asset.just_used
-      asset_version = find_display_asset asset
+        # update timestamp in the current record
+        # (this will also trigger timestamp update in the corresponding Asset)
+        asset.just_used
+      end
       respond_to do |format|
         format.html
         format.xml
@@ -66,12 +67,12 @@ module Seek
 
     # i.e. Model, or DataFile according to the controller name
     def class_for_controller_name
-      controller_name.classify.constantize
+      controller_path.classify.constantize
     end
 
     # i.e. @model = item, or @data_file = item - according to the item class name
     def set_shared_item_variable(item)
-      eval("@#{item.class.name.underscore}=item")
+      instance_variable_set("@#{item.class.name.underscore.split('/').last}", item)
     end
 
     # the standard response block after created a new asset
