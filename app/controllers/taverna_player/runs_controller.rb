@@ -175,7 +175,7 @@ module TavernaPlayer
     end
 
     def check_project_membership_unless_embedded
-      unless (run_params && run_params[:embedded] == 'true') || (params[:embedded] && params[:embedded] == 'true')
+      unless (params[:run] && params[:run][:embedded] == 'true') || (params[:embedded] && params[:embedded] == 'true')
         project_membership_required
       end
     end
