@@ -1,7 +1,7 @@
 module TavernaPlayer
   class RunsController < TavernaPlayer::ApplicationController
-    include TavernaPlayer::Concerns::Controllers::RunsController
     include Seek::AssetsStandardControllerActions
+    include TavernaPlayer::Concerns::Controllers::RunsController
 
     before_filter :workflows_enabled?
 
