@@ -137,5 +137,9 @@ module TavernaPlayer
     def inherit_sweep_policy
       self.policy_id = sweep.policy_id unless sweep.nil?
     end
+
+    def authorization_checks_enabled
+      false # FIXME!
+    end
   end
 end
