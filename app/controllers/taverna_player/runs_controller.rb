@@ -77,7 +77,7 @@ module TavernaPlayer
     private
 
     def find_workflow_and_version
-      @workflow = @run.workflow || TavernaPlayer.workflow_proxy.class_name.find(params[:workflow_id])
+      @workflow = TavernaPlayer.workflow_proxy.class_name.constantize.find(params[:workflow_id])
       @workflow_version = params[:version].blank? ? @workflow.latest_version : @workflow.find_version(params[:version])
     end
 
@@ -180,9 +180,11 @@ module TavernaPlayer
       end
     end
 
-    def setup_new_asset
-      super
-      @run.name = "#{@workflow_version.title} (v#{@workflow_version.version}) run " + Time.now.utc.strftime('%e %b %Y %H:%M:%S %Z')
+    alias_method :old_setup_new_run, :setup_new_run
+    def setup_new_run
+      @run = Run.new(:workflow_id => @workflow.id)
+      @run.embedded = true if params[:embedded] == "true"
+      @run.name = "#{@run.workflow.title} (v#{params[:version]}) run " + Time.now.utc.strftime('%e %b %Y %H:%M:%S %Z')
     end
 
     def run_params
