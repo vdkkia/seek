@@ -28,7 +28,7 @@ jQuery("#embedded-run-button").replaceWith('<%= escape_javascript(render("tavern
 <% end %>
 
 <% if @run.complete? %>
-  jQuery("#run-outputs .foldContent").html('<%= escape_javascript(render(:partial => "taverna_player/runs/embedded/outputs", :locals => { :run => @run })) %>');
+  jQuery("#run-outputs .panel-body").html('<%= escape_javascript(render(:partial => "taverna_player/runs/embedded/outputs", :locals => { :run => @run })) %>');
   jQuery("#run-outputs").show();
   verticallyAlign();
 <% else %>
