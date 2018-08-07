@@ -3,7 +3,7 @@ require 'zip'
 # Investigation "snapshot"
 class Snapshot < ActiveRecord::Base
   belongs_to :resource, polymorphic: true
-  has_one :content_blob, as: :asset, foreign_key: :asset_id
+  has_one :content_blob, as: :asset, foreign_key: :asset_id, required: true
 
   before_create :set_snapshot_number
   after_save :reindex_parent_resource

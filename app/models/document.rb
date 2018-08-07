@@ -11,7 +11,8 @@ class Document < ActiveRecord::Base
   scope :default_order, -> { order("title") }
 
   #don't add a dependent=>:destroy, as the content_blob needs to remain to detect future duplicates
-  has_one :content_blob, -> (r) { where('content_blobs.asset_version = ?', r.version) }, :as => :asset, :foreign_key => :asset_id
+  has_one :content_blob, -> (r) { where('content_blobs.asset_version =?', r.version) },
+          as: :asset, foreign_key: :asset_id, required: true
 
   explicit_versioning(:version_column => "version") do
     acts_as_doi_mintable(proxy: :parent)
@@ -19,7 +20,7 @@ class Document < ActiveRecord::Base
     acts_as_favouritable
 
     has_one :content_blob, -> (r) { where('content_blobs.asset_version = ? AND content_blobs.asset_type = ?', r.version, r.parent.class.name) },
-            primary_key: :document_id, foreign_key: :asset_id
+            primary_key: :document_id, foreign_key: :asset_id, required: true
   end
 
   def use_mime_type_for_avatar?

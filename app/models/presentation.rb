@@ -8,15 +8,16 @@ class Presentation < ActiveRecord::Base
 
    scope :default_order, -> { order("title") }
 
-   has_one :content_blob, -> (r) { where('content_blobs.asset_version =?', r.version) }, :as => :asset, :foreign_key => :asset_id
+   has_one :content_blob, -> (r) { where('content_blobs.asset_version = ?', r.version) },
+           as: :asset, foreign_key: :asset_id, required: true
 
    validates :projects, presence: true, projects: { self: true }, unless: Proc.new {Seek::Config.is_virtualliver }
 
    explicit_versioning(:version_column => "version") do
      acts_as_versioned_resource
      acts_as_favouritable
-     has_one :content_blob, -> (r) { where('content_blobs.asset_version =? AND content_blobs.asset_type =?', r.version, r.parent.class.name) },
-             :primary_key => :presentation_id,:foreign_key => :asset_id
+     has_one :content_blob, -> (r) { where('content_blobs.asset_version = ? AND content_blobs.asset_type = ?', r.version, r.parent.class.name) },
+             primary_key: :presentation_id, foreign_key: :asset_id, required: true
   end
 
    if Seek::Config.events_enabled
