@@ -22,7 +22,7 @@ class DataFile < ActiveRecord::Base
   # allow same titles, but only if these belong to different users
   # validates_uniqueness_of :title, :scope => [ :contributor_id, :contributor_type ], :message => "error - you already have a Data file with such title."
 
-  has_one :content_blob, -> (r) { where('content_blobs.asset_version = ?', r.version) },
+  has_one :content_blob, -> (r) { where(asset_version: r.version) },
           as: :asset, foreign_key: :asset_id, required: true
 
   has_many :studied_factors, -> (r) { where('studied_factors.data_file_version =?', r.version) }
@@ -38,7 +38,7 @@ class DataFile < ActiveRecord::Base
     acts_as_versioned_resource
     acts_as_favouritable
 
-    has_one :content_blob, -> (r) { where('content_blobs.asset_version = ? AND content_blobs.asset_type = ?', r.version, r.parent.class.name) },
+    has_one :content_blob, -> (r) { where(asset_version: r.version, asset_type: r.parent.class.name) },
             primary_key: :data_file_id, foreign_key: :asset_id, required: true
 
     has_many :studied_factors, -> (r) { where('studied_factors.data_file_version = ?', r.version) },

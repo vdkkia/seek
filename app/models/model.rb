@@ -32,7 +32,7 @@ class Model < ActiveRecord::Base
   has_many :model_images, inverse_of: :model
   belongs_to :model_image, inverse_of: :model
 
-  has_many :content_blobs, -> (r) { where('content_blobs.asset_version =?', r.version) }, as: :asset, foreign_key: :asset_id
+  has_many :content_blobs, -> (r) { where(asset_version: r.version) }, as: :asset, foreign_key: :asset_id
   validates :content_blobs, presence: true
 
   belongs_to :organism
@@ -52,7 +52,7 @@ class Model < ActiveRecord::Base
     belongs_to :model_type
     belongs_to :model_format
 
-    has_many :content_blobs, -> (r) { where('content_blobs.asset_version = ? AND content_blobs.asset_type = ?', r.version, r.parent.class.name) },
+    has_many :content_blobs, -> (r) { where(asset_version: r.version, asset_type: r.parent.class.name) },
             primary_key: :model_id, foreign_key: :asset_id
     validates :content_blobs, presence: true
 
