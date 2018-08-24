@@ -37,11 +37,16 @@ class DocumentTest < ActiveSupport::TestCase
   end
 
   test 'validation' do
-    asset = Document.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    asset = Document.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy),
+                         content_blob: Factory(:content_blob)
     assert asset.valid?
 
-    asset = Document.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
-    assert !asset.valid?
+    asset = Document.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    refute asset.valid?
+
+    asset = Document.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy),
+                         content_blob: Factory(:content_blob)
+    refute asset.valid?
   end
 
   test 'assay association' do
