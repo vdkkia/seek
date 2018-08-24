@@ -2,26 +2,14 @@
 Factory.define(:sop) do |f|
   f.title 'This Sop'
   f.with_project_contributor
-
-  f.after_create do |sop|
-    if sop.content_blob.blank?
-      sop.content_blob = Factory.create(:content_blob, original_filename: 'sop.pdf',
-                                        content_type: 'application/pdf', asset: sop, asset_version: sop.version)
-    else
-      sop.content_blob.asset = sop
-      sop.content_blob.asset_version = sop.version
-      sop.content_blob.save
-    end
-  end
+  f.association :content_blob, factory: :content_blob, original_filename: 'sop.pdf', content_type: 'application/pdf'
 end
 
 Factory.define(:min_sop, class: Sop) do |f|
   f.with_project_contributor
   f.title 'A Minimal Sop'
   f.projects { [Factory.build(:min_project)] }
-  f.after_create do |sop|
-    sop.content_blob = Factory.create(:min_content_blob, content_type: 'application/pdf', asset: sop, asset_version: sop.version)
-  end
+  f.association :content_blob, factory: :min_content_blob, content_type: 'application/pdf'
 end
 
 Factory.define(:max_sop, class: Sop) do |f|
@@ -31,9 +19,7 @@ Factory.define(:max_sop, class: Sop) do |f|
   f.projects { [Factory.build(:max_project)] }
   f.assays {[Factory.build(:max_assay, policy: Factory(:public_policy))]}
   f.relationships {[Factory(:relationship, predicate: Relationship::RELATED_TO_PUBLICATION, other_object: Factory(:publication))]}
-  f.after_create do |sop|
-    sop.content_blob = Factory.create(:min_content_blob, content_type: 'application/pdf', asset: sop, asset_version: sop.version)
-  end
+  f.association :content_blob, factory: :min_content_blob, content_type: 'application/pdf'
   f.other_creators 'Blogs, Joe'
 end
 
@@ -58,27 +44,16 @@ end
 Factory.define(:sop_version, class: Sop::Version) do |f|
   f.association :sop
   f.projects { sop.projects }
-  f.after_create do |sop_version|
-    sop_version.sop.version += 1
-    sop_version.sop.save
-    sop_version.version = sop_version.sop.version
-    sop_version.title = sop_version.sop.title
-    sop_version.save
+  f.version { sop.version + 1 }
+  f.title { sop.title }
+  f.content_blob { Factory(:pdf_content_blob, asset_version: version, asset_type: parent.class.name) }
+  f.after_create do |v|
+    v.sop.update_column(:version, v.version)
   end
 end
 
 Factory.define(:sop_version_with_blob, parent: :sop_version) do |f|
-  f.after_create do |sop_version|
-    if sop_version.content_blob.blank?
-      sop_version.content_blob = Factory.create(:pdf_content_blob,
-                                                asset: sop_version.sop,
-                                                asset_version: sop_version.version)
-    else
-      sop_version.content_blob.asset = sop_version.sop
-      sop_version.content_blob.asset_version = sop_version.version
-      sop_version.content_blob.save
-    end
-  end
+  f.content_blob { Factory(:pdf_content_blob, asset_version: version, asset_type: parent.class.name) }
 end
 
 # ExperimentalCondition

@@ -139,15 +139,18 @@ class ModelTest < ActiveSupport::TestCase
   end
 
   test 'validation' do
-    asset = Model.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    asset = Model.new(title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy), content_blobs: [Factory(:content_blob)])
     assert asset.valid?
 
-    asset = Model.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
-    assert !asset.valid?
+    asset = Model.new(title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy))
+    refute asset.valid?
+
+    asset = Model.new(projects: [projects(:sysmo_project)], policy: Factory(:private_policy), content_blobs: [Factory(:content_blob)])
+    refute asset.valid?
 
     # VL only: allow no projects
     as_virtualliver do
-      asset = Model.new title: 'fred', policy: Factory(:private_policy)
+      asset = Model.new title: 'fred', policy: Factory(:private_policy), content_blobs: [Factory(:content_blob)]
       assert asset.valid?
     end
   end
@@ -180,7 +183,7 @@ class ModelTest < ActiveSupport::TestCase
   test 'cache_remote_content' do
     mock_remote_file "#{Rails.root}/test/fixtures/files/Teusink.xml", 'http://mockedlocation.com/teusink.xml'
 
-    model = Factory.build :model
+    model = Factory.build(:model, content_blobs: [])
     model.content_blobs.build(data: nil, url: 'http://mockedlocation.com/teusink.xml',
                               original_filename: 'teusink.xml')
     model.save!

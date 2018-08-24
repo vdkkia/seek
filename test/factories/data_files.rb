@@ -2,25 +2,14 @@
 Factory.define(:data_file) do |f|
   f.with_project_contributor
   f.sequence(:title) { |n| "A Data File_#{n}" }
-
-  f.after_create do |data_file|
-    if data_file.content_blob.blank?
-      data_file.content_blob = Factory.create(:pdf_content_blob, asset: data_file, asset_version: data_file.version)
-    else
-      data_file.content_blob.asset = data_file
-      data_file.content_blob.asset_version = data_file.version
-      data_file.content_blob.save
-    end
-  end
+  f.association :content_blob, factory: :pdf_content_blob
 end
 
 Factory.define(:min_datafile, class: DataFile) do |f|
   f.with_project_contributor
   f.title 'A Minimal DataFile'
   f.projects { [Factory.build(:min_project)] }
-  f.after_create do |data_file|
-    data_file.content_blob = Factory.create(:pdf_content_blob, asset: data_file, asset_version: data_file.version)
-  end
+  f.association :content_blob, factory: :pdf_content_blob
 end
 
 Factory.define(:max_datafile, class: DataFile) do |f|
@@ -31,9 +20,7 @@ Factory.define(:max_datafile, class: DataFile) do |f|
   f.assays {[Factory.build(:max_assay, policy: Factory(:public_policy))]}
   f.events {[Factory.build(:event, policy: Factory(:public_policy))]}
   f.relationships {[Factory(:relationship, predicate: Relationship::RELATED_TO_PUBLICATION, other_object: Factory(:publication))]}
-  f.after_create do |data_file|
-    data_file.content_blob = Factory.create(:pdf_content_blob, asset: data_file, asset_version: data_file.version)
-  end
+  f.association :content_blob, factory: :pdf_content_blob
   f.other_creators 'Blogs, Joe'
 end
 
@@ -75,16 +62,6 @@ Factory.define(:jerm_data_file, class: DataFile) do |f|
   f.contributor nil
   f.projects { [Factory.build(:project)] }
   f.association :content_blob, factory: :url_content_blob
-
-  f.after_create do |data_file|
-    if data_file.content_blob.blank?
-      data_file.content_blob = Factory.create(:pdf_content_blob, asset: data_file, asset_version: data_file.version)
-    else
-      data_file.content_blob.asset = data_file
-      data_file.content_blob.asset_version = data_file.version
-      data_file.content_blob.save
-    end
-  end
 end
 
 Factory.define(:subscribable, parent: :data_file) {}
@@ -93,27 +70,16 @@ Factory.define(:subscribable, parent: :data_file) {}
 Factory.define(:data_file_version, class: DataFile::Version) do |f|
   f.association :data_file
   f.projects { data_file.projects }
-  f.after_create do |data_file_version|
-    data_file_version.data_file.version += 1
-    data_file_version.data_file.save
-    data_file_version.version = data_file_version.data_file.version
-    data_file_version.title = data_file_version.data_file.title
-    data_file_version.save
+  f.version { data_file.version + 1 }
+  f.title { data_file.title }
+  f.content_blob { Factory(:pdf_content_blob, asset_version: version, asset_type: parent.class.name) }
+  f.after_create do |v|
+    v.data_file.update_column(:version, v.version)
   end
 end
 
 Factory.define(:data_file_version_with_blob, parent: :data_file_version) do |f|
-  f.after_create do |data_file_version|
-    if data_file_version.content_blob.blank?
-      Factory.create(:pdf_content_blob,
-                     asset: data_file_version.data_file,
-                     asset_version: data_file_version.version)
-    else
-      data_file_version.content_blob.asset = data_file_version.data_file
-      data_file_version.content_blob.asset_version = data_file_version.version
-      data_file_version.content_blob.save
-    end
-  end
+  f.content_blob { Factory(:pdf_content_blob, asset_version: version, asset_type: parent.class.name) }
 end
 
 Factory.define(:api_pdf_data_file, parent: :data_file) do |f|

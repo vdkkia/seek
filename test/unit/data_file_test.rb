@@ -15,6 +15,19 @@ class DataFileTest < ActiveSupport::TestCase
     assert_equal blob, datafile.content_blob
   end
 
+  test 'content blob version matches data file version' do
+    df = Factory(:min_datafile)
+    version = df.version
+    assert_equal version, df.content_blob.asset_version
+
+    dfv = Factory(:data_file_version)
+    assert_equal version + 1, dfv.version
+    assert_equal dfv.version, dfv.content_blob.asset_version
+
+    df.reload
+    assert_equal version, df.content_blob.asset_version
+  end
+
   test 'content blob search terms' do
     check_for_soffice
     df = Factory :data_file, content_blob: Factory(:doc_content_blob, original_filename: 'word.doc')
@@ -62,18 +75,21 @@ class DataFileTest < ActiveSupport::TestCase
   end
 
   test 'validation' do
-    asset = DataFile.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    asset = DataFile.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy), content_blob: Factory(:content_blob)
     assert asset.valid?
 
-    asset = DataFile.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
-    assert !asset.valid?
+    asset = DataFile.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    refute asset.valid?
+
+    asset = DataFile.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy), content_blob: Factory(:content_blob)
+    refute asset.valid?
 
     # VL only:allow no projects
     as_virtualliver do
-      asset = DataFile.new title: 'fred', policy: Factory(:private_policy)
+      asset = DataFile.new title: 'fred', policy: Factory(:private_policy), content_blob: Factory(:content_blob)
       assert asset.valid?
 
-      asset = DataFile.new title: 'fred', projects: [], policy: Factory(:private_policy)
+      asset = DataFile.new title: 'fred', projects: [], policy: Factory(:private_policy), content_blob: Factory(:content_blob)
       assert asset.valid?
     end
   end

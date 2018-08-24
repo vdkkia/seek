@@ -42,13 +42,14 @@ class SopTest < ActiveSupport::TestCase
   end
 
   test 'validation' do
-    asset = Sop.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    asset = Sop.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy), content_blob: Factory(:content_blob)
     assert asset.valid?
 
-    asset = Sop.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
-    assert !asset.valid?
+    asset = Sop.new title: 'fred', projects: [projects(:sysmo_project)], policy: Factory(:private_policy)
+    refute asset.valid?
 
-
+    asset = Sop.new projects: [projects(:sysmo_project)], policy: Factory(:private_policy), content_blob: Factory(:content_blob)
+    refute asset.valid?
   end
 
   test 'virtual liver allows blank projects' do
