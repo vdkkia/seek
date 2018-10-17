@@ -4,6 +4,7 @@
 <% if can_browse_openbis?(item) %>
     <%= button_link_to("Browse openBIS", :openbis_square, browse_project_openbis_endpoints_path(item),{icon_options:{height:'18px'}}) %>
 <% end %>
+<%= button_link_to('Overview', 'graph_nodes', overview_project_path(item)) -%>
 <% if item.try(:has_member?,current_user) %>
     <%= button_link_to("Dashboard", 'project_dashboard', dashboard_project_stats_path(item)) -%>
 <% end -%>
