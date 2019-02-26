@@ -10,11 +10,11 @@
 <div data-role="seek-swappable-select-group">
   <%# This is the visible select, which by default holds the `select_options` %>
   <%= select_tag nil, select_options,
-                 options.merge('data-role' => 'seek-swappable-select') -%>
+                 options.merge('data-seek-swappable-select' => 'select') -%>
 
   <%# This is the hidden select, which serves as a container to hold the swappable options %>
   <%= select_tag nil, alternative_select_options,
-                 options.except(:id, :class).merge('data-role' => 'seek-swappable-select-alt',
+                 options.except(:id, :class).merge('data-seek-swappable-select' => 'alt',
                                                    style: 'display: none;') %>
 
   <label>

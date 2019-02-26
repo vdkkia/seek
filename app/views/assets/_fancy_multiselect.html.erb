@@ -8,10 +8,12 @@
                                          class: 'form-control',
                                          prompt: select_prompt,
                                          autocomplete: 'off',
-                                         'data-associations-list-id' => collection_id
+                                         data: { role: 'seek-fancy-multiselect' }
                                        })
   title ||= association_text.pluralize
   title += '<span class="required">*</span>'.html_safe if required
+
+  intro ||= "The following #{association_text.pluralize} are associated with this #{object_type_text.downcase}:"
 
   if with_new_link
     new_association_path = eval "new_#{association.to_s.singularize}_path(:parent_name=>'#{controller_name.underscore.singularize}')"
@@ -28,11 +30,11 @@
     unscoped_select_options = options_for_select(unscoped_possibilities.map(&p))
   end
 
-  existing_json = associations_json_from_relationship(selected, fieldName: name)
+  block ||= nil
 %>
 
 <%= folding_panel(title, hidden, id: "add_#{association}_form",
-                  data: { role: 'seek-fancy-multiselect' },
+                  data: { role: 'seek-fancy-multiselect-panel' },
                   help_text: "Here you can associate the #{object_type_text} with specific #{association_text.pluralize}.") do %>
   <div class="row">
     <div class="col-md-<%= preview_disabled ? '12' : '8'-%>">
@@ -43,7 +45,8 @@
         value of the parameter will be ["","1","2","3"]. This is compatible with the rails
         association association_ids= methods, which reject 'blank' values automatically.%>
       <%= hidden_field_tag "#{name}[]", "" %>
-      <%= associations_list(collection_id, 'associations/general', existing_json, 'data-field-name' => name, empty_text: "No #{association.to_s}") %>
+      <%= associations_list(collection_id, handlebars_template, send(json_method, selected, fieldName: name),
+                            'data-field-name' => name, empty_text: "No #{association_text.pluralize}") %>
 
       <div class="association_step">
         <% if with_new_link  %>
@@ -52,7 +55,7 @@
           </p>
         <% end  %>
         <%# The JavaScript that handles adding items to the list is bound to elemnts with the 'data-association-list-id' property %>
-        <div class="form-group">
+        <div class="form-group" data-role="seek-association-form" data-associations-list-id="<%= collection_id -%>">
           <% if other_projects_checkbox && unscoped_possibilities.any? %>
             <%= render partial: 'assets/swappable_selects',
                        locals: { select_options: select_options,
@@ -64,6 +67,9 @@
           <% else %>
             <%= select_tag nil, select_options, possibilities_options -%>
           <% end %>
+
+          <% block.call if block %>
+
         </div>
       </div>
     </div>

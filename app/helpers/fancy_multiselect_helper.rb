@@ -1,5 +1,5 @@
 module FancyMultiselectHelper
-  def fancy_multiselect(object, association, options = {})
+  def fancy_multiselect(object, association, options = {}, &block)
     # override default values with options passed in to the method
     options.reverse_merge! default_fancy_multi_select_options(association, object, options)
 
@@ -13,6 +13,8 @@ module FancyMultiselectHelper
           url_for({ action: 'preview', controller: association, element: "#{association}_preview" })
     end
 
+    options[:block] = block if block_given?
+
     render(partial: 'assets/fancy_multiselect', locals: options) # - Base
   end
 
@@ -20,7 +22,7 @@ module FancyMultiselectHelper
 
   def set_defaults_with_reflection(association, object, options)
     if reflection = object.class.reflect_on_association(association)
-      required_access = reflection.options[:required_access] || :can_view?
+      required_access = reflection.options[:required_access] || options[:association_required_access]
       # get 'view' from :can_view?
       access = required_access.to_s.split('_').last.delete('?')
       association_class = options.delete(:association_class) || reflection.klass
@@ -40,11 +42,10 @@ module FancyMultiselectHelper
 
     hidden = object.send(association).blank?
     object_type_text = options[:object_type_text] || t(object.class.name.underscore)
-    association_text = t(association.to_s.singularize)
+    association_text = t(association.to_s.singularize, raise: false)
     association_controller = "#{association.to_s.classify.pluralize}Controller".constantize rescue nil
 
     {
-        intro: "The following #{association_text.pluralize} are associated with this #{object_type_text.downcase}:",
         name: "#{object.class.name.underscore}[#{association.to_s.singularize}_ids]",
         possibilities: nil,
         unscoped_possibilities: [],
@@ -55,6 +56,7 @@ module FancyMultiselectHelper
         object_type_text: object_type_text,
         association_text: association_text,
         association: association,
+        association_required_access: :can_view?,
         other_projects_checkbox: false,
         object_type: object.class.name,
         possibilities_options: {},
@@ -62,7 +64,9 @@ module FancyMultiselectHelper
         required: false,
         title: nil,
         preview_disabled: association_controller.nil? || !association_controller.method_defined?(:preview),
-        sort_by: :title
+        sort_by: :title,
+        json_method: :associations_json_from_relationship,
+        handlebars_template: 'associations/general'
     }
   end
 end

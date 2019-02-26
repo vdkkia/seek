@@ -1,4 +1,46 @@
 <%
+  return if resource.is_a?(Model) && !Seek::Config.modelling_analysis_enabled
+  return unless Seek::Config.assays_enabled
+  return if resource.is_a?(Workflow)
+  return if resource.is_a?(Node)
+
+  show_relationships = resource.is_a?(DataFile)
+%>
+
+<%= fancy_multiselect resource, :assay_assets,
+                      name: "#{resource.class.name.underscore}[assay_assets_attributes]",
+                      association_text: 'Assay',
+                      association_required_access: Seek::Config.is_virtualliver ? :can_view? : :can_edit?,
+                      association_class: Assay,
+                      other_projects_checkbox: true,
+                      group_options_by: ->(a) { a.study.try(:title) },
+                      json_method: :associations_json_from_assays,
+                      handlebars_template: 'associations/assay' do %>
+  <% if show_relationships -%>
+    <div id="relationship" style="display: none;" class="form-group">
+      <%= label_tag "How is the data used in this #{t('assays.modelling_analysis')}" %>
+      <%= select_tag :relationship_type, options_for_select(RelationshipType.all.map { |r| [r.title,r.id] }),
+                     data: { role: 'seek-association-common-field' },
+                     include_blank: 'None', class: 'form-control' %>
+    </div>
+  <% end %>
+<% end %>
+
+<%
+
+
+
+
+
+
+
+
+
+
+
+
+  # Delete this
+  if false
    return if resource.is_a?(Model) && !Seek::Config.modelling_analysis_enabled
    return unless Seek::Config.assays_enabled
    return if resource.is_a?(Workflow)
@@ -45,8 +87,10 @@
 
   collapsed = associated_assays.blank? if collapsed.nil?
   assay_asset_json = associations_json_from_assay_assets(resource.assay_assets, type: resource.class.name.underscore)
+    end
 %>
 
+  <% if false %>
 <%= folding_panel(assay_class_text, collapsed, :body_options => {:id => 'associate_assay_fold_content'},
                   :help_text => "Here you can associate #{assay_class_text} in SEEK to this #{resource_text}. You can only associate #{assay_class_text} you are authorized to edit.") do %>
     <div class="row">
@@ -162,3 +206,4 @@
         associationList.onRemove = updateAssaySelectors;
     });
 </script>
+<% end %>

@@ -206,8 +206,8 @@ $j(document).ready(function () {
     // Swap select contents when a checkbox is checked
     $j('[data-role="seek-swappable-select-toggle"]').change(function () {
         var group = $j(this).parents('[data-role="seek-swappable-select-group"]');
-        var select = $j('[data-role="seek-swappable-select"]', group);
-        var alt = $j('[data-role="seek-swappable-select-alt"]', group);
+        var select = $j('[data-seek-swappable-select="select"]', group);
+        var alt = $j('[data-seek-swappable-select="alt"]', group);
 
         var temp = select.html();
         select.html(alt.html());
@@ -234,26 +234,34 @@ $j(document).ready(function () {
     });
 
     // Handle adding an item from a fancy_multiselect dropdown.
-    $j('[data-role="seek-fancy-multiselect"] select[data-associations-list-id]').change(function () {
-        var listElement = $j('#' + $j(this).data('associationsListId'));
-        var listObject = listElement.data('associationList');
-        var selectedOption = $j('option:selected', $j(this));
-        if (!selectedOption.val()) {
-            return;
-        }
-        var item = { id: parseInt(selectedOption.val()),
-            title: selectedOption.text() };
+    $j('[data-role="seek-fancy-multiselect-panel"]').each(function () {
+        var formElement = $j('[data-role="seek-association-form"]', $j(this));
+        var listElement = $j('[data-role="seek-associations-list"]', $j(this));
 
-        // Load preview
-        if ($j(this).data('previewUrl')) {
-            $j.get($j(this).data('previewUrl'), { id: item.id });
-        }
+        $j('[data-role="seek-fancy-multiselect"]', formElement).change(function () {
+            var formObject = formElement.data('associationForm');
+            var listObject = listElement.data('associationList');
 
-        if (!listObject.exists(function (i) { return i.id === item.id })) {
-            listObject.add(item);
-        } else {
-            // Highlight existing item if its already there
-            $j('[value=' + item.id + ']', listElement).parent().highlight('blue');
-        }
+            var selectedOption = $j('option:selected', $j(this));
+            if (!selectedOption.val()) {
+                return;
+            }
+
+            var item = { id: parseInt(selectedOption.val()),
+                         title: selectedOption.text() };
+
+            // Load preview
+            if ($j(this).data('previewUrl')) {
+                $j.get($j(this).data('previewUrl'), { id: item.id });
+            }
+
+            if (!listObject.exists(function (i) { return i.id === item.id })) {
+                formObject.selectedItems.push(item);
+                formObject.submit();
+            } else {
+                // Highlight existing item if its already there
+                $j('[value=' + item.id + ']', listElement).parent().highlight('blue');
+            }
+        });
     });
 });
