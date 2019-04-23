@@ -6,6 +6,28 @@
   view = params[:graph_view] || default_view
   is_full_screen = params.key?(:fullscreen).present?
 %>
+
+<style>
+  #cy {
+    flex: 0 0 auto;
+    /* only manually resize */
+
+  }
+
+  .splitter {
+    flex: 0 0 auto;
+    width: 18px;
+    background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/vsizegrip.png) center center no-repeat #535353;
+    min-height: 200px;
+    cursor: col-resize;
+  }
+
+  #jstree {
+    flex: 1 1 auto;
+
+  }
+</style>
+
 <div style="float:right"><%= help_link :isa_overview, include_icon: true, link_text:'Help' %></div>
 <div class="row">
   <div class="col-sm-12 hidden-xs">
@@ -47,7 +69,7 @@
         <%= render partial: 'general/jstree', locals: { hash: hash, root_item: root_item } %>
       </div>
     </div>
-    <span id="ruler" style="visibility: hidden"></span>
+
   </div>
 
 </div>
@@ -81,6 +103,7 @@
             $j('#show-all-nodes-btn').hide();
             $j('#export-png-btn').hide();
             $j('#reset-nodes-btn').hide();
+            ISA.resizableGraph(false);
             ISA.view.current = 'tree';
             return false;
         },
@@ -92,6 +115,8 @@
             $j('#show-all-nodes-btn').show();
             $j('#export-png-btn').show();
             $j('#reset-nodes-btn').show();
+            $j('#cy').css('width', '100%');
+            ISA.resizableGraph(false);
             cy.fit(ISA.defaults.padding);
             cy.resize();
             ISA.view.current = 'graph';
@@ -105,7 +130,9 @@
             $j('#show-all-nodes-btn').show();
             $j('#export-png-btn').show();
             $j('#reset-nodes-btn').show();
-            $j('#jstree').css('width', '300px');
+            $j('#cy').css('width', '50%');
+            $j('#jstree').css('width', '50%');
+            ISA.resizableGraph(true);
             cy.fit(ISA.defaults.padding);
             cy.resize();
             ISA.view.current = 'split';
@@ -148,7 +175,11 @@
         });
 
         $j('#reset-nodes-btn').click(function() {
+            ISA.resizableGraph(false);
             drawInitialState();
+            if (ISA.view.current == 'split') {
+                ISA.resizableGraph(true);
+            }
 
             //stop the all nodes button being out of sync if selected
             if (ISA.isShowGraphNodesActive()) {
@@ -186,6 +217,11 @@
                 ISA.fullscreen(false);
             }
         });
+
+
+
+
+
 
     });
 </script>

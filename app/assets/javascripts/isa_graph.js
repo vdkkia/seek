@@ -403,5 +403,21 @@ var ISA = {
                 cy.resize();
             }
         });
+    },
+
+    resizableGraph: function(switchOn) {
+        if (switchOn) {
+            $j("#cy").resizable({
+                handleSelector: ".splitter",
+                resizeHeight: false,
+                stop: function(event, ui) {
+                    cy.fit(ISA.defaults.padding);
+                    cy.resize();
+                }
+            });
+        }
+        else if ($j('#cy').is('.ui-resizable')) {
+            $j("#cy").resizable('destroy');
+        }
     }
 };
