@@ -16,9 +16,6 @@
 
   .splitter {
     flex: 0 0 auto;
-    width: 18px;
-    background: url(https://raw.githubusercontent.com/RickStrahl/jquery-resizable/master/assets/vsizegrip.png) center center no-repeat #535353;
-    min-height: 200px;
     cursor: col-resize;
   }
 
@@ -103,7 +100,7 @@
             $j('#show-all-nodes-btn').hide();
             $j('#export-png-btn').hide();
             $j('#reset-nodes-btn').hide();
-            ISA.resizableGraph(false);
+            ISA.resizableGraphElement(false);
             ISA.view.current = 'tree';
             return false;
         },
@@ -116,7 +113,7 @@
             $j('#export-png-btn').show();
             $j('#reset-nodes-btn').show();
             $j('#cy').css('width', '100%');
-            ISA.resizableGraph(false);
+            ISA.resizableGraphElement(false);
             cy.fit(ISA.defaults.padding);
             cy.resize();
             ISA.view.current = 'graph';
@@ -130,9 +127,8 @@
             $j('#show-all-nodes-btn').show();
             $j('#export-png-btn').show();
             $j('#reset-nodes-btn').show();
-            $j('#cy').css('width', '50%');
-            $j('#jstree').css('width', '50%');
-            ISA.resizableGraph(true);
+            $j('#cy').css('width', '70%');
+            ISA.resizableGraphElement(true);
             cy.fit(ISA.defaults.padding);
             cy.resize();
             ISA.view.current = 'split';
@@ -175,10 +171,10 @@
         });
 
         $j('#reset-nodes-btn').click(function() {
-            ISA.resizableGraph(false);
+            $j('#cy').resizable('destroy');
             drawInitialState();
             if (ISA.view.current == 'split') {
-                ISA.resizableGraph(true);
+                ISA.resizableGraphElement(true);
             }
 
             //stop the all nodes button being out of sync if selected
