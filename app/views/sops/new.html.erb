@@ -7,7 +7,7 @@
       <%= render :partial=>"assets/upload_box",:locals=>{:resource=>@sop} -%>
 
       <div class="form-group">
-        <label>Title <span class="required">*</span></label>
+        <label class="required">Title</label>
         <% sop_title_value = (params[:sop].blank? || params[:sop][:title].blank?) ? nil : params[:sop][:title] -%>
         <%= text_field_tag 'sop[title]', sop_title_value, :class=>"form-control" -%>
       </div>
@@ -27,11 +27,12 @@
       <%= fields_for(@sop) { |f| render :partial=>"assets/asset_form_bottom", :locals=> {:show_publications=>false, :f => f} }-%>
 
       <%= render :partial => "assays/associate_assays", :locals=>{:resource => @sop} -%>
+      <%= fancy_multiselect @sop, :workflows, { other_projects_checkbox: false } -%>
 
       <div>
         <%= preview_permission_popup_link(@sop)-%>
         <%= create_button :id => "sop_submit_btn",
-                       :onclick => "validateResourceFields(true,'sop',true); return(false);",
+                       :onclick => "return validateResourceFields('sop')",
                        :class => 'btn btn-primary' -%>
         or <%= cancel_button(sops_path) -%>
       </div>

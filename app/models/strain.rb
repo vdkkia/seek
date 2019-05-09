@@ -1,4 +1,4 @@
-class Strain < ActiveRecord::Base
+class Strain < ApplicationRecord
 
   include Seek::Rdf::RdfGeneration
   include Seek::ActsAsCachedTree
@@ -98,6 +98,10 @@ class Strain < ActiveRecord::Base
     new_object.phenotypes = self.phenotypes
 
     return new_object
+  end
+
+  def related_people
+    [contributor]
   end
 
 end

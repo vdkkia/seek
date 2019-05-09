@@ -19,15 +19,62 @@ class ProjectTest < ActiveSupport::TestCase
     assert_nil WorkGroup.find_by_id(wg.id)
   end
 
+  test 'validate title and decription length' do
+    long_desc = ('a' * 65536).freeze
+    ok_desc = ('a' * 65535).freeze
+    long_title = ('a' * 256).freeze
+    ok_title = ('a' * 255).freeze
+    p = Factory(:project)
+    assert p.valid?
+    p.title = long_title
+    refute p.valid?
+    p.title = ok_title
+    assert p.valid?
+    p.description = long_desc
+    refute p.valid?
+    p.description = ok_desc
+    assert p.valid?
+    disable_authorization_checks {p.save!}
+  end
+
+  test 'validate start and end date' do
+    # if start and end date are defined, then the end date must be later
+    p = Factory(:project,start_date:nil, end_date:nil)
+    assert p.valid?
+
+    #just an end date
+    p.end_date = DateTime.now
+    assert p.valid?
+
+    #start date in the future
+    p.start_date = DateTime.now + 1.day
+    refute p.valid?
+
+    #start date in the past
+    p.start_date = 1.day.ago
+    assert p.valid?
+
+    # no end date
+    p.start_date = DateTime.now + 1.day
+    p.end_date = nil
+    assert p.valid?
+
+    # future start and end dates are fine as long as end is later
+    p.start_date = DateTime.now + 1.day
+    p.end_date = DateTime.now + 2.day
+    assert p.valid?
+  end
+
   test 'to_rdf' do
     object = Factory :project, web_page: 'http://www.sysmo-db.org',
                                organisms: [Factory(:organism), Factory(:organism)]
     person = Factory(:person,project:object)
-    Factory :data_file, projects: [object], contributor:person
+    df = Factory :data_file, projects: [object], contributor:person
     Factory :data_file, projects: [object], contributor:person
     Factory :model, projects: [object], contributor:person
     Factory :sop, projects: [object], contributor:person
-    Factory :presentation, projects: [object], contributor:person
+    presentation = Factory :presentation, projects: [object], contributor:person
+    doc = Factory :document, projects: [object], contributor:person
     i = Factory :investigation, projects: [object], contributor:person
     s = Factory :study, investigation: i, contributor:person
     Factory :assay, study: s, contributor:person
@@ -39,8 +86,17 @@ class ProjectTest < ActiveSupport::TestCase
     RDF::Reader.for(:rdfxml).new(rdf) do |reader|
       assert reader.statements.count > 1
       assert_equal RDF::URI.new("http://localhost:3000/projects/#{object.id}"), reader.statements.first.subject
+
+      #check includes the data file due to bug OPSK-1919
+      refute_nil reader.statements.detect{|s| s.object == RDF::URI.new("http://localhost:3000/data_files/#{df.id}") && s.predicate == RDF::URI("http://jermontology.org/ontology/JERMOntology#hasItem")}
+
+      #document and presentation shouldn't be present (see OPSK-1920)
+      assert_nil reader.statements.detect{|s| s.object == RDF::URI.new("http://localhost:3000/presentations/#{presentation.id}") && s.predicate == RDF::URI("http://jermontology.org/ontology/JERMOntology#hasItem")}
+      assert_nil reader.statements.detect{|s| s.object == RDF::URI.new("http://localhost:3000/documents/#{doc.id}") && s.predicate == RDF::URI("http://jermontology.org/ontology/JERMOntology#hasItem")}
     end
   end
+
+
 
   test 'rdf for web_page - existing or blank or nil' do
     object = Factory :project, web_page: 'http://google.com'
@@ -440,14 +496,89 @@ class ProjectTest < ActiveSupport::TestCase
     project = Factory(:project)
     work_group = Factory(:work_group, project: project)
     a_person = Factory(:person, group_memberships: [Factory(:group_membership, work_group: work_group)])
-    assert !project.work_groups.collect(&:people).flatten.empty?
-    assert !project.can_delete?(user)
+    refute project.work_groups.collect(&:people).flatten.empty?
+    refute project.can_delete?(user)
 
     # can delete if admin and workgroups are empty
     work_group.group_memberships.delete_all
     assert project.work_groups.reload.collect(&:people).flatten.empty?
     assert user.is_admin?
     assert project.can_delete?(user)
+
+    # cannot delete if there are assets, even if no people
+    user = Factory(:admin).user
+    project = Factory(:project)
+    assert_empty project.people
+    assert project.can_delete?(user)
+    Factory(:investigation, projects:[project])
+    project.work_groups.clear # FactoryGirl - with_project_contributor automatically adds the contributor to the project
+    project.reload
+    assert_empty project.people
+    refute_empty project.investigations
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:study, investigation: Factory(:investigation, projects:[project]))
+    project.work_groups.clear
+    project.reload
+    refute_empty project.studies
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:assay, study: Factory(:study, investigation: Factory(:investigation, projects:[project])))
+    project.work_groups.clear
+    project.reload
+    refute_empty project.assays
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:sop, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.sops
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:workflow, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.workflows
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:workflow, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.workflows
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:node, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.nodes
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:sample, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.samples
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:simple_sample_type, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.sample_types
+    refute project.can_delete?(user)
+
+    project = Factory(:project)
+    Factory(:publication, projects:[project])
+    project.work_groups.clear
+    project.reload
+    refute_empty project.publications
+    refute project.can_delete?(user)
   end
 
   test 'gatekeepers' do
@@ -849,5 +980,28 @@ class ProjectTest < ActiveSupport::TestCase
 
     project.nels_enabled = 'yes please'
     assert_equal true, project.reload.nels_enabled
+  end
+
+  test 'funding code' do
+    person = Factory(:project_administrator)
+    proj = person.projects.first
+    User.with_current_user person.user do
+      proj.funding_codes='fish'
+      assert_equal ['fish'],proj.funding_codes.sort
+      proj.save!
+      proj=Project.find(proj.id)
+      assert_equal ['fish'],proj.funding_codes.sort
+
+      proj.funding_codes='1,2,3'
+      assert_equal ['1','2','3'],proj.funding_codes.sort
+      proj.save!
+      proj=Project.find(proj.id)
+      assert_equal ['1','2','3'],proj.funding_codes.sort
+
+      proj.update_attribute(:funding_codes,'a,b')
+      assert_equal ['a','b'],proj.funding_codes.sort
+    end
+
+
   end
 end

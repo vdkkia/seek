@@ -1,3 +1,5 @@
+require 'simplecov'
+SimpleCov.start 'rails'
 ENV['RAILS_ENV'] ||= 'test'
 
 require File.expand_path(File.dirname(__FILE__) + '/../config/environment')
@@ -16,11 +18,10 @@ require 'authenticated_test_helper'
 require 'mock_helper'
 require 'html_helper'
 require 'nels_test_helper'
-require 'upload_helper'
-require 'password_helper'
 require 'minitest/reporters'
 require 'minitest'
 require 'ostruct'
+require 'pry'
 
 Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new]
 
@@ -35,39 +36,7 @@ module ActionView
   end
 end
 
-include UploadHelper
-include PasswordHelper
-
-FactoryGirl.define do
-  trait :with_project_contributor do
-    contributor { nil }
-    after_build do |resource|
-      if resource.contributor.nil?
-        if resource.projects.none?
-          resource.projects = [Factory(:project)]
-        end
-        resource.contributor = Factory(:person, project: resource.projects.first)
-      elsif resource.projects.none?
-        resource.projects = [resource.contributor.projects.first]
-      end
-    end
-  end
-end
-
 FactoryGirl.find_definitions # It looks like requiring factory_girl _should_ do this automatically, but it doesn't seem to work
-
-FactoryGirl.class_eval do
-  def self.create_with_privileged_mode(*args)
-    disable_authorization_checks { create_without_privileged_mode(*args) }
-  end
-
-  def self.build_with_privileged_mode(*args)
-    disable_authorization_checks { build_without_privileged_mode(*args) }
-  end
-
-  class_alias_method_chain :create, :privileged_mode
-  class_alias_method_chain :build, :privileged_mode
-end
 
 Kernel.class_eval do
   def as_virtualliver
@@ -121,14 +90,8 @@ class ActiveSupport::TestCase
   setup :clear_rails_cache, :create_initial_person
   teardown :clear_current_user
 
-  def file_for_upload(options = {})
-    default = { filename: 'little_file_v2.txt', content_type: 'text/plain', tempfile_fixture: 'files/little_file_v2.txt' }
-    options = default.merge(options)
-    ActionDispatch::Http::UploadedFile.new({
-                                             filename: options[:filename],
-                                             content_type: options[:content_type],
-                                             tempfile: fixture_file_upload(options[:tempfile_fixture])
-                                           })
+  def file_for_upload
+    fixture_file_upload('files/little_file_v2.txt', 'text/plain')
   end
 
   def check_for_soffice
@@ -199,7 +162,7 @@ class ActiveSupport::TestCase
   # The only drawback to using transactional fixtures is when you actually
   # need to test transactions.  Since your test is bracketed by a transaction,
   # any transactions started in your code will be automatically rolled back.
-  self.use_transactional_fixtures = true
+  self.use_transactional_tests = true
 
   # Instantiated fixtures are slow, but give you @david where otherwise you
   # would need people(:david).  If you don't want to migrate your existing
@@ -296,6 +259,14 @@ class ActiveSupport::TestCase
     f.flush
     f.close
     puts "Written @response.body to #{f.path}"
+  end
+
+  def clear_flash(target = nil)
+    if target.nil?
+      @request.session.delete('flash')
+    elsif request.session['flash'] && request.session['flash']['flashes']
+      @request.session['flash']['flashes'].delete(target.to_s)
+    end
   end
 end
 

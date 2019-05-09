@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class EventsControllerTest < ActionController::TestCase
+
   include AuthenticatedTestHelper
   include RestTestCases
   include GeneralAuthorizationTestCases
@@ -25,6 +26,15 @@ class EventsControllerTest < ActionController::TestCase
     get :index
     assert_response :success
     assert_not_nil assigns(:events)
+  end
+
+  test 'should return 406 when requesting RDF' do
+    event = Factory :event, contributor: User.current_user.person
+    assert event.can_view?
+
+    get :show, params: { id: event, format: :rdf }
+
+    assert_response :not_acceptable
   end
 
   test 'should have no avatar element in list' do
@@ -52,27 +62,21 @@ class EventsControllerTest < ActionController::TestCase
 
   test "shouldn't show hidden items in index" do
     login_as(:aaron)
-    get :index, page: 'all'
+    get :index, params: { page: 'all' }
     assert_response :success
     assert_equal assigns(:events).sort_by(&:id), Event.authorize_asset_collection(assigns(:events), 'view', users(:aaron)).sort_by(&:id), "events haven't been authorized properly"
     assert assigns(:events).count < Event.count # fails if all events are assigned to @events
   end
 
-  test 'xml for projectless event' do
-    id = Factory(:event, policy: Factory(:public_policy)).id
-    get :show, id: id, format: 'xml'
-    perform_api_checks
-  end
-
   test 'should show event' do
-    get :show, id: events(:event_with_no_files).id
+    get :show, params: { id: events(:event_with_no_files).id }
     assert_response :success
   end
 
   fixtures :all
   test 'should destroy Event' do
     assert_difference('Event.count', -1) do
-      delete :destroy, id: events(:event_with_no_files)
+      delete :destroy, params: { id: events(:event_with_no_files) }
     end
   end
 
@@ -91,13 +95,13 @@ class EventsControllerTest < ActionController::TestCase
 
   test 'should create valid event' do
     assert_difference('Event.count', 1) do
-      post :create, event: valid_event, sharing: valid_sharing
+      post :create, params: { event: valid_event, sharing: valid_sharing }
     end
   end
 
   test 'should not create invalid event' do
     assert_difference('Event.count', 0) do
-      post :create, event: { title: nil }
+      post :create, params: { event: { title: nil } }
     end
   end
 
@@ -105,7 +109,7 @@ class EventsControllerTest < ActionController::TestCase
     event = valid_event
     event[:url] = '--'
     assert_difference('Event.count', 0) do
-      post :create, event: event
+      post :create, params: { event: event }
     end
   end
 
@@ -114,22 +118,22 @@ class EventsControllerTest < ActionController::TestCase
   end
 
   test 'should get edit' do
-    get :edit, id: events(:event_with_no_files)
+    get :edit, params: { id: events(:event_with_no_files) }
     assert_response :success
     assert_select 'h1', /Editing #{I18n.t('event')}:/
   end
 
   test 'should update events title' do
     before = events(:event_with_no_files)
-    put :update, id: before.id, event: valid_event
+    put :update, params: { id: before.id, event: valid_event }
     after = assigns :event
     assert_not_equal before.title, after.title
     assert_equal after.title, valid_event[:title]
   end
 
   # test "should not add invisible data_file" do
-  #  e = Factory :event, :contributor => User.current_user
-  #  df = Factory :data_file, :contributor => Factory(:user), :policy => Factory(:private_policy)
+  #  e = Factory :event, :contributor => User.current_user.person
+  #  df = Factory :data_file, :contributor => Factory(:person), :policy => Factory(:private_policy)
   #  put :update, :id => e.id, :data_file_ids => ["#{df.id}"], :event => {}
   #
   #  assert_redirected_to e
@@ -147,12 +151,11 @@ class EventsControllerTest < ActionController::TestCase
 
   test 'should create and show event without end_date' do
     assert_difference('Event.count', 1) do
-      post :create, event: { title: 'Barn Raising', start_date: DateTime.now, project_ids: [@project.id] },
-                    sharing: valid_sharing
+      post :create, params: { event: { title: 'Barn Raising', start_date: DateTime.now, project_ids: [@project.id] }, sharing: valid_sharing }
     end
     assert_redirected_to assigns(:event)
 
-    get :show, id: assigns(:event).id
+    get :show, params: { id: assigns(:event).id }
     assert_response :success
 
     get :index
@@ -165,7 +168,7 @@ class EventsControllerTest < ActionController::TestCase
     event = Factory(:event, projects: programme.projects, policy: Factory(:public_policy))
     event2 = Factory(:event, policy: Factory(:public_policy))
 
-    get :index, programme_id: programme.id
+    get :index, params: { programme_id: programme.id }
 
     assert_response :success
     assert_select 'div.list_item_title' do
@@ -177,10 +180,44 @@ class EventsControllerTest < ActionController::TestCase
   test 'should create event with associated data file' do
     data_file = Factory(:data_file)
     assert_difference('Event.count', 1) do
-      post :create, event: valid_event.merge(data_file_ids: [data_file.id]), sharing: valid_sharing
+      post :create, params: { event: valid_event.merge(data_file_ids: [data_file.id]), sharing: valid_sharing }
     end
 
     assert_includes assigns(:event).data_files, data_file
   end
+
+  test 'should create event and link to document' do
+    person = User.current_user.person
+    doc = Factory(:document, contributor:person)
+
+    assert_difference('Event.count', 1) do
+      post :create, params: { event: valid_event.merge(document_ids: [doc.id.to_s]), sharing: valid_sharing }
+    end
+
+    assert event = assigns(:event)
+    assert_equal [doc],event.documents
+  end
+
+  test 'should not create event with link to none visible document' do
+    doc = Factory(:document)
+    refute doc.can_view?
+
+    assert_no_difference('Event.count') do
+      post :create, params: { event: valid_event.merge(document_ids: [doc.id.to_s]), sharing: valid_sharing }
+    end
+
+  end
+
+  test 'should update with link to document' do
+    person = User.current_user.person
+    doc = Factory(:document, contributor:person)
+    event = Factory(:event,documents:[Factory(:document,contributor:person)],contributor:person)
+    refute_empty event.documents
+    refute_includes event.documents, doc
+    put :update, params: { id: event.id, event: {document_ids:[doc.id.to_s]} }
+    assert event = assigns(:event)
+    assert_equal [doc],event.documents
+  end
+
 
 end

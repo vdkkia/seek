@@ -1,6 +1,6 @@
 require 'libxml'
 
-class Publication < ActiveRecord::Base
+class Publication < ApplicationRecord
   include Seek::Rdf::RdfGeneration
 
   alias_attribute :description, :abstract
@@ -29,6 +29,7 @@ class Publication < ActiveRecord::Base
   has_many :presentations, through: :related_relationships, source: :subject, source_type: 'Presentation'
 
   acts_as_asset
+  validates :title, length: { maximum: 65_535 }
 
   has_many :publication_authors, dependent: :destroy, autosave: true
   has_many :persons, through: :publication_authors
@@ -41,11 +42,11 @@ class Publication < ActiveRecord::Base
   validates :pubmed_id, numericality: { greater_than: 0, message: 'is invalid' }, allow_blank: true
 
   # validation differences between OpenSEEK and the VLN SEEK
-  validates_uniqueness_of :pubmed_id, allow_nil: true, allow_blank: true, if: 'Seek::Config.is_virtualliver'
-  validates_uniqueness_of :doi, allow_nil: true, allow_blank: true, if: 'Seek::Config.is_virtualliver'
-  validates_uniqueness_of :title, if: 'Seek::Config.is_virtualliver'
+  validates_uniqueness_of :pubmed_id, allow_nil: true, allow_blank: true, if: -> { Seek::Config.is_virtualliver }
+  validates_uniqueness_of :doi, allow_nil: true, allow_blank: true, if: -> { Seek::Config.is_virtualliver }
+  validates_uniqueness_of :title, if: -> { Seek::Config.is_virtualliver }
 
-  validate :check_uniqueness_within_project, unless: 'Seek::Config.is_virtualliver'
+  validate :check_uniqueness_within_project, unless: -> { Seek::Config.is_virtualliver }
 
   attr_writer :refresh_policy
   before_save :refresh_policy, on: :update
@@ -227,9 +228,7 @@ class Publication < ActiveRecord::Base
 
   # returns a list of related organisms, related through either the assay or the model
   def related_organisms
-    organisms = assays.collect(&:organisms).flatten
-    organisms |= models.collect(&:organism).flatten
-    organisms.uniq.compact
+    (assays.collect(&:organisms).flatten | models.collect(&:organism).flatten).uniq
   end
 
   def self.subscribers_are_notified_of?(action)

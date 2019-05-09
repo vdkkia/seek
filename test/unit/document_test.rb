@@ -86,16 +86,21 @@ class DocumentTest < ActiveSupport::TestCase
   end
 
   test 'version created for new document' do
-    document = Factory(:document)
+    person = Factory(:person)
 
-    assert document.save
+    User.with_current_user(person.user) do
+      document = Factory(:document, contributor:person)
 
-    document = Document.find(document.id)
+      assert document.save
 
-    assert_equal 1, document.version
-    assert_equal 1, document.versions.size
-    assert_equal document, document.versions.last.document
-    assert_equal document.title, document.versions.first.title
+      document = Document.find(document.id)
+
+      assert_equal 1, document.version
+      assert_equal 1, document.versions.size
+      assert_equal document, document.versions.last.document
+      assert_equal document.title, document.versions.first.title
+    end
+
   end
 
   test 'create new version' do
@@ -140,14 +145,16 @@ class DocumentTest < ActiveSupport::TestCase
   test 'assign projects' do
     person = Factory(:person)
     project = person.projects.first
-    document = Factory(:document, projects: [project],contributor:person)
-    person.add_to_project_and_institution(Factory(:project),person.institutions.first)
-    projects = person.projects
-    assert_equal 2,projects.count
-    document.update_attributes(project_ids: projects.map(&:id))
-    document.save!
-    document.reload
-    assert_equal projects.sort, document.projects.sort
+    User.with_current_user(person.user) do
+      document = Factory(:document, projects: [project],contributor:person)
+      person.add_to_project_and_institution(Factory(:project),person.institutions.first)
+      projects = person.projects
+      assert_equal 2,projects.count
+      document.update_attributes(project_ids: projects.map(&:id))
+      document.save!
+      document.reload
+      assert_equal projects.sort, document.projects.sort
+    end
   end
 
   test 'versions destroyed as dependent' do
@@ -179,5 +186,34 @@ class DocumentTest < ActiveSupport::TestCase
     assert document.contributor
     assert_equal document.contributor.user, document.contributing_user
     assert_equal document.contributor.user, document.latest_version.contributing_user
+  end
+
+  test 'link to events' do
+    person = Factory(:person)
+    User.with_current_user(person.user) do
+      doc = Factory(:document, contributor:person)
+      assert_empty doc.events
+      event = Factory(:event, contributor:person)
+      doc = Factory(:document, events:[event], contributor:person)
+      refute_empty doc.events
+      assert_equal [event],doc.events
+    end
+  end
+
+  test 'fails to link to none visible events' do
+    person = Factory(:person)
+    User.with_current_user(person.user) do
+      event = Factory(:event)
+      refute event.can_view?
+      doc = Factory.build(:document,events:[event], contributor:person)
+
+      refute doc.save
+
+      doc = Factory(:document, contributor:person)
+
+      doc.events << event
+
+      refute doc.save
+    end
   end
 end

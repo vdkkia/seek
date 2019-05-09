@@ -1,24 +1,23 @@
 require 'seek/custom_exception'
 
 class ProjectsController < ApplicationController
-  include WhiteListHelper
   include Seek::IndexPager
   include CommonSweepers
   include Seek::DestroyHandling
   include ApiHelper
 
-  before_filter :find_requested_item, only: %i[show admin edit update destroy asset_report admin_members
-                                               admin_member_roles update_members storage_report request_membership]
-  before_filter :find_assets, only: [:index]
-  before_filter :auth_to_create, only: %i[new create]
-  before_filter :is_user_admin_auth, only: %i[manage destroy]
-  before_filter :editable_by_user, only: %i[edit update]
-  before_filter :administerable_by_user, only: %i[admin admin_members admin_member_roles update_members storage_report]
-  before_filter :member_of_this_project, only: [:asset_report], unless: :admin_logged_in?
-  before_filter :login_required, only: [:request_membership]
-  before_filter :allow_request_membership, only: [:request_membership]
+  before_action :find_requested_item, only: %i[show admin edit update destroy asset_report admin_members
+                                               admin_member_roles update_members storage_report request_membership overview]
+  before_action :find_assets, only: [:index]
+  before_action :auth_to_create, only: %i[new create]
+  before_action :is_user_admin_auth, only: %i[manage destroy]
+  before_action :editable_by_user, only: %i[edit update]
+  before_action :administerable_by_user, only: %i[admin admin_members admin_member_roles update_members storage_report]
+  before_action :member_of_this_project, only: [:asset_report], unless: :admin_logged_in?
+  before_action :login_required, only: [:request_membership]
+  before_action :allow_request_membership, only: [:request_membership]
 
-  skip_before_filter :project_membership_required
+  skip_before_action :project_membership_required
 
   cache_sweeper :projects_sweeper, only: %i[update create destroy]
   include Seek::BreadCrumbs
@@ -310,6 +309,10 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def overview
+
+  end
+
   private
 
   def project_role_params
@@ -326,7 +329,7 @@ class ProjectsController < ApplicationController
   def project_params
     permitted_params = [:title, :web_page, :wiki_page, :description, :programme_id, { organism_ids: [] },
                         { institution_ids: [] }, :default_license, :site_root_uri, :site_username, :site_password,
-                        :parent_id, :use_default_policy, :nels_enabled]
+                        :parent_id, :use_default_policy, :nels_enabled, :start_date, :end_date, :funding_codes]
 
     if action_name == 'update'
       restricted_params =
@@ -380,6 +383,8 @@ class ProjectsController < ApplicationController
           left_at = params[:memberships_to_flag][membership.id.to_s][:time_left_at]
           membership.update_attributes(time_left_at: left_at)
         end
+        member = Person.find(membership.person_id)
+        Rails.cache.delete_matched("rli_title_#{member.cache_key}_.*")
       end
     end
   end

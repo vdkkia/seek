@@ -1,17 +1,18 @@
 class NelsController < ApplicationController
 
-  before_filter :project_membership_required, except: :callback
-  before_filter :find_and_authorize_assay, except: :callback
-  before_filter :oauth_client
-  before_filter :nels_oauth_session, except: :callback
-  before_filter :rest_client, except: :callback
+  before_action :nels_enabled?
+  before_action :project_membership_required, except: :callback
+  before_action :find_and_authorize_assay, except: :callback
+  before_action :oauth_client
+  before_action :nels_oauth_session, except: :callback
+  before_action :rest_client, except: :callback
 
   rescue_from RestClient::Unauthorized, :with => :unauthorized_response
   rescue_from RestClient::InternalServerError, :with => :nels_error_response
 
   include Seek::BreadCrumbs
 
-  skip_before_filter :add_breadcrumbs, only: :callback
+  skip_before_action :add_breadcrumbs, only: :callback
 
   def callback
     hash = @oauth_client.get_token(params[:code])
@@ -66,7 +67,8 @@ class NelsController < ApplicationController
     title = [dataset['name'], params[:subtype_name]].reject(&:blank?).join(' - ')
 
     @data_file = DataFile.new(title: title)
-    @content_blob = @data_file.create_content_blob(url: url.chomp)
+    @content_blob = @data_file.build_content_blob(url: url.chomp)
+    @content_blob.save
 
     session[:uploaded_content_blob_id] = @content_blob.id
     session[:processed_datafile] = @data_file
@@ -82,12 +84,6 @@ class NelsController < ApplicationController
 
     unless @assay.can_edit?
       flash[:error] = 'You are not authorized to add NeLS data to this assay.'
-      redirect_to @assay
-      return false
-    end
-
-    unless Seek::Config.nels_enabled
-      flash[:error] = 'NeLS integration is not enabled on this SEEK instance.'
       redirect_to @assay
       return false
     end
@@ -112,8 +108,7 @@ class NelsController < ApplicationController
   end
 
   def rest_client
-    client_class = Nels::Rest::Client
-    @rest_client = client_class.new(@oauth_session.access_token)
+    @rest_client = Nels::Rest.client_class.new(@oauth_session.access_token)
   end
 
   def unauthorized_response

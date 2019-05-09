@@ -16,6 +16,7 @@ SEEK::Application.configure do
       Settings.defaults[:jws_online_root] = "http://jws.sysmo-db.org"
       Settings.defaults[:internal_help_enabled] = false
       Settings.defaults[:external_help_url] = "http://seek4science.github.io/seek/help"
+      Settings.defaults[:workflows_enabled] = true
 
       Settings.defaults[:email_enabled] = true
       Settings.defaults[:solr_enabled] = false
@@ -49,7 +50,6 @@ SEEK::Application.configure do
       Settings.defaults[:header_image_enabled] = true
       Settings.defaults[:header_image_title] =  "SysMO-DB"
       Settings.defaults[:header_image_link] = "http://www.sysmo-db.org"
-      Settings.defaults[:header_image] = 'sysmo-db-logo_smaller.png'
       Settings.defaults[:bioportal_api_key]="fish"
 
       Settings.defaults[:technology_type_ontology_file] = "file:#{Rails.root}/test/fixtures/files/JERM-test.rdf"
@@ -67,14 +67,6 @@ SEEK::Application.configure do
       Seek::Config.fixed :css_prepended,''
       Seek::Config.fixed :css_appended,''
       Seek::Config.fixed :main_layout,'application'
-
-      #force back to using the defaults
-      ActionView::Renderer.clear_alternative({:controller=>:homes,:seek_template=>:index})
-      ActionView::Renderer.clear_alternative({:seek_partial=>"people/resource_list_item"})
-      ActionView::Renderer.clear_alternative({:seek_partial=>"projects/resource_list_item"})
-      ActionView::Renderer.clear_alternative({:seek_partial=>"sharing/form"})
-      ActionView::Renderer.clear_alternative({:controller=>:people,:seek_partial=>"general/items_related_to"})
-
 
       Settings.defaults[:faceted_browsing_enabled] = false
       Settings.defaults[:facet_enable_for_pages] = {:people => true, :projects => false, :institutions => false, :programmes => false, :investigations => false,:studies => false, :assays => true, :data_files => true, :models => true,:sops => true, :publications => true,:events => false, :strains => false, :presentations => false}
@@ -102,12 +94,18 @@ SEEK::Application.configure do
       Settings.defaults[:session_store_timeout] = 30.minutes
 
       Settings.defaults[:default_all_visitors_access_type] = Policy::NO_ACCESS
+      Settings.defaults[:max_all_visitors_access_type] = Policy::MANAGING
+
       Settings.defaults[:openbis_enabled] = true
+      Settings.defaults[:openbis_debug] = false
+      Settings.defaults[:openbis_autosync] = true
+      Settings.defaults[:openbis_check_new_arrivals] = true
 
       Settings.defaults[:nels_enabled] = true
       Settings.defaults[:nels_api_url] = 'https://test-fe.cbu.uib.no/nels-api'
       Settings.defaults[:nels_oauth_url] = 'https://test-fe.cbu.uib.no/oauth2'
       Settings.defaults[:nels_permalink_base] = 'https://test-fe.cbu.uib.no/nels/pages/sbi/sbi.xhtml'
+      Settings.defaults[:nels_use_dummy_client] = false
     end
   end
 end

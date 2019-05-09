@@ -5,6 +5,8 @@ module Seek
     # NOTE: the provided params collection will not be affected.
     # Instead, a new hash will be returned.
     def self.remove_rails_special_params_from(params, additional_to_remove = [])
+      # TODO: Refactor me to use strong param filtering
+      params = params.to_unsafe_h if params.is_a?(ActionController::Parameters)
       return {} if params.blank?
 
       special_params = %w[id format controller action commit].concat(additional_to_remove)
@@ -30,7 +32,7 @@ module Seek
     def self.persistent_classes
       cache('persistent_classes') do
         ensure_models_loaded
-        ActiveRecord::Base.descendants
+        filter_disabled(ApplicationRecord.descendants)
       end
     end
 
@@ -57,7 +59,7 @@ module Seek
       # FIXME: hard-coded extra types - are are these items now user_creatable?
       # FIXME: remove the reliance on user-creatable, partly by respond_to?(:reindex) but also take into account if it has been enabled or not
       #- could add a searchable? method
-      extras = [Person, Programme, Project, Institution]
+      extras = [Person, Programme, Project, Institution, Organism]
       extras.delete(Programme) unless Seek::Config.programmes_enabled
       cache('searchable_types') { (user_creatable_types | extras).sort_by(&:name) }
     end
@@ -72,10 +74,7 @@ module Seek
 
     def self.rdf_capable_types
       cache('rdf_capable_types') do
-        types = persistent_classes.select do |c|
-          c.included_modules.include?(Seek::Rdf::RdfGeneration)
-        end
-        types - [Sample] # SAMPLE is not yet fully supported
+        Seek::Rdf::JERMVocab.defined_types.keys
       end
     end
 
@@ -95,7 +94,7 @@ module Seek
 
     def self.inline_viewable_content_types
       # FIXME: needs to be discovered rather than hard-code classes here
-      [DataFile, Document, Model, Presentation, Sop]
+      [DataFile, Document, Model, Presentation, Sop, Workflow]
     end
 
     def self.multi_files_asset_types
@@ -111,6 +110,12 @@ module Seek
     def self.doiable_asset_types
       cache('doiable_types') do
         persistent_classes.select(&:supports_doi?).sort_by(&:name)
+      end
+    end
+
+    def self.uuid_types
+      cache('uuid_types') do
+        persistent_classes.select { |c| c.method_defined?(:uuid) }.sort_by(&:name)
       end
     end
 
@@ -154,5 +159,19 @@ module Seek
         @@cache[name] ||= block.call
       end
     end
+
+    def self.filter_disabled(types)
+      disabled = %w[workflow event programme publication sample].collect do |setting|
+        unless Seek::Config.send("#{setting.pluralize}_enabled")
+          setting.classify.constantize
+        end
+      end.compact
+
+      # special case
+      disabled += [Node] unless Seek::Config.workflows_enabled
+
+      types - disabled
+    end
+    
   end
 end

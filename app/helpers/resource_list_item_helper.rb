@@ -1,4 +1,7 @@
 module ResourceListItemHelper
+
+  include RelatedItemsHelper
+
   def get_list_item_content_partial(resource)
     get_original_model_name(resource).pluralize.underscore + '/resource_list_item'
   end
@@ -23,6 +26,9 @@ module ResourceListItemHelper
   end
 
   def list_item_title(resource, options = {})
+
+    html = nil
+
     cache_key = "rli_title_#{resource.cache_key}_#{resource.authorization_supported? && resource.can_manage?}"
     result = Rails.cache.fetch(cache_key) do
       title = options[:title]
@@ -45,6 +51,27 @@ module ResourceListItemHelper
       end
       html << '</div>'
     end
+
+    if [Person, Project].include?(resource.class)
+      if !@project.nil?
+        project_id = @project.id.to_s
+      elsif !params[:project_id].nil?
+        project_id = params[:project_id]
+      end
+    end
+
+    # remove '</div>'
+    result = result[0..-7]
+    if resource.class.name.split('::')[0] == 'Person'
+      unless project_id.blank?
+        result << get_person_status(resource, project_id)
+        Rails.logger.debug("member status = #{result}")
+      end
+    elsif resource.class.name.split('::')[0] == 'Project' && controller_name == "people"
+      result << get_project_status(resource)
+    end
+
+    result << '</div>'
     visibility = resource.authorization_supported? && resource.can_manage? ? list_item_visibility(resource) : ''
     result = result.gsub('#item_visibility', visibility)
     result.html_safe
@@ -73,7 +100,8 @@ module ResourceListItemHelper
     end
   end
 
-  def list_item_simple_list(items, attribute)
+  def list_item_simple_list(items, attribute, hide_if_blank=false)
+    return '' if hide_if_blank && items.blank?
     html = "<p class=\"list_item_attribute\"><b>#{attribute}:</b> "
     if items.empty?
       html << "<span class='none_text'>Not specified</span>"
@@ -134,7 +162,9 @@ module ResourceListItemHelper
     html.html_safe
   end
 
-  def list_item_description(text, auto_link = true, length = 500)
+  def list_item_description(text, auto_link = true, length = 500, hide_if_blank=false)
+    return '' if hide_if_blank && text.blank?
+    text = strip_tags(text) if text && text.length > length
     content_tag :div, class: 'list_item_desc' do
       text_or_not_specified(text, description: true, auto_link: auto_link, length: length)
     end.html_safe
@@ -155,27 +185,33 @@ module ResourceListItemHelper
   end
 
   def list_item_expandable_text(attribute, text, length = 200)
-    full_text  = text_or_not_specified(text, description: false, auto_link: false)
-    trunc_text = text_or_not_specified(text, description: false, auto_link: false, length: length)
-    # Don't bother with fancy stuff if not enough text to expand
-    if full_text == trunc_text
-      html = (attribute ? "<p class=\"list_item_attribute\"><b>#{attribute}</b>:</p>" : '') + '<div class="list_item_desc">'
-      html << trunc_text
-      html << '</div>'
-      html.html_safe
-    else
-      html = "<script type=\"text/javascript\">\n"
-      html << "fullResourceListItemExpandableText[#{text.object_id}] = '#{escape_javascript(full_text)}';\n"
-      html << "truncResourceListItemExpandableText[#{text.object_id}]  = '#{escape_javascript(trunc_text)}';\n"
-      html << "</script>\n"
-      html << (attribute ? "<p class=\"list_item_attribute\"><b>#{attribute}</b> " : '')
-      html << (link_to '(Expand)', '#', id: "expandableLink#{text.object_id}", onClick: "expandResourceListItemExpandableText(#{text.object_id});return false;")
-      html << '</p>'
-      html << "<div class=\"list_item_desc\"><div id=\"expandableText#{text.object_id}\">"
-      html << trunc_text
-      html << '</div>'
-      html << '</div>'
-      html.html_safe
+    full_text = text_or_not_specified(text, description: false, auto_link: false)
+
+    content_tag(:div, data: { role: 'seek-expandable' }) do
+      if attribute
+        html = content_tag(:p, class: 'list_item_attribute') do
+          content_tag(:b, attribute) +
+              (text.length <= length ? '' :  (' ' + link_to('(Expand)', '#', data: { role: 'seek-expandable-link' })).html_safe)
+        end
+      else
+        html = ''
+      end
+
+      # Don't bother with fancy stuff if not enough text to expand
+      if text.length <= length
+        (html + content_tag(:div, full_text, class: 'list_item_desc')).html_safe
+      else
+        truncated = truncate_without_splitting_words(text, length, false)
+        remainder = text[truncated.length..-1]
+        trunc_text = text_or_not_specified(truncated, description: false, auto_link: false)
+        remainder_text = text_or_not_specified(remainder, description: false, auto_link: false)
+
+        (html + content_tag(:div, class: 'list_item_desc') do
+          trunc_text +
+          content_tag(:span, " &hellip;".html_safe, data: { role: 'seek-expandable-ellipsis'}) +
+          content_tag(:span, remainder_text, data: { role: 'seek-expandable-hidden' }, style: 'display: none;')
+        end).html_safe
+      end
     end
   end
 
@@ -186,7 +222,7 @@ module ResourceListItemHelper
 
     case policy.access_type
     when Policy::NO_ACCESS
-      if policy.permissions.empty?
+      if policy.private?
         title = 'Private'
         html << image('lock', title: title, class: css_class)
       else
@@ -213,7 +249,17 @@ module ResourceListItemHelper
     other_html = ''
     content_tag(:p, class: 'list_item_attribute') do
       html << content_tag(:b, "#{contributor_count == 1 ? key : key.pluralize}: ")
-      html << contributors.map { |c| link_to truncate(c.title, length: 75), show_resource_path(c), title: get_object_title(c) }.join(', ')
+      if (key == 'Author')
+        html << contributors.map do |author|
+          if author.person && author.person.can_view?
+            link_to get_object_title(author.person), show_resource_path(author.person)
+          else
+            author.full_name
+          end
+        end.join(', ')
+      else
+        html << contributors.map {|c| link_to truncate(c.title, length: 75), show_resource_path(c), title: get_object_title(c)}.join(', ')
+      end
       unless other_contributors.blank?
         other_html << ', ' unless contributors.empty?
         other_html << other_contributors
@@ -224,9 +270,7 @@ module ResourceListItemHelper
   end
 
   def list_item_author_list(all_authors)
-    authors = all_authors.select { |a| a.person && a.person.can_view? }
-    other_authors = all_authors.select { |a| a.person.nil? }.map { |a| a.last_name + ' ' + a.first_name }.join(',')
-    list_item_person_list(authors.map(&:person), other_authors, 'Author')
+    list_item_person_list(all_authors, nil, 'Author')
   end
 
   def list_item_doi(resource)
@@ -240,5 +284,47 @@ module ResourceListItemHelper
 
   def list_item_orcid(person)
     orcid_identifier(person) if person.orcid.present?
+  end
+
+  private
+
+  def get_person_status(resource, project_id)
+    html =''
+    project = Project.find(project_id)
+    unless project_id.nil?
+      unless resource.current_projects.include?(project)
+        html << ": inactive since " #Todo hu add icon
+        html << "#{get_left_time(resource,project_id)}"
+      end
+    end
+    html
+  end
+
+  def get_project_status(resource)
+    html =''
+    person_id = get_person_id
+    project = Project.find(resource.id)
+    unless person_id.nil?
+      person = Person.find(person_id)
+      unless person.current_projects.include?(project)
+        html << ": inactive since " #Todo hu add icon
+        html << "#{get_left_time(person,resource.id.to_s)}"
+      end
+    end
+    html
+  end
+
+  def get_left_time(person,project_id)
+    left_time = nil
+    group_memberships = person.group_memberships
+    group_memberships.each do |group_membership|
+      if project_id == group_membership.work_group.project_id.to_s
+        unless group_membership.time_left_at.nil?
+        left_time = group_membership.time_left_at.to_date.to_s
+        break
+        end
+      end
+    end
+    left_time
   end
 end

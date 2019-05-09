@@ -2,10 +2,10 @@ module AssociationsHelper
 
   def associations_list(id, template_name, existing, options = {})
     empty_text = options.delete(:empty_text) || 'No items'
-    options.reverse_merge!(:id => id, 'data-role' => 'seek-associations-list', 'data-template-name' => template_name)
+    options.reverse_merge!(:id => id, 'data-role' => 'seek-associations-list', 'data-template-name' => template_name,class:'box_editing_inner')
 
     content_tag(:div, options) do
-      content_tag(:ul, '', class: 'associations-list') +
+      content_tag(:ul, '', class: 'associations-list related_asset_list') +
         content_tag(:span, empty_text, class: 'none_text no-item-text') +
         content_tag(:script, existing.html_safe, :type => 'application/json', 'data-role' => 'seek-existing-associations')
     end
@@ -85,6 +85,20 @@ module AssociationsHelper
     end.to_json
   end
 
+  def associations_json_from_scales(object, scales, extra_data = {})
+    scales.map do |scale|
+      scale_params = object.fetch_additional_scale_info(scale.id)
+      if scale_params.any?
+        scale_params.map do |info|
+          { id: scale.id, title: scale.title,
+            extraParams: info.merge(stringified: info.to_json.to_s) }.reverse_merge(extra_data)
+        end
+      else
+        { id: scale.id, title: scale.title }.reverse_merge(extra_data)
+      end
+    end.flatten.to_json
+  end
+
   def associations_json_from_params(model, association_params)
     association_params.map do |association|
       item = model.find(association[:id])
@@ -99,5 +113,25 @@ module AssociationsHelper
 
       hash
     end.to_json
+  end
+
+  def associations_json_from_assay_organisms(assay_organisms, extra_data = {})
+    assay_organisms.map do |o|
+      ao = {
+          organism_id:  o.organism.id,
+          organism_title:  escape_javascript(o.organism.title)
+      }
+      if o.strain
+        ao[:strain_info] = o.strain.info
+        ao[:strain_id] = o.strain.id
+      end
+      ao[:culture_growth] = o.culture_growth_type.title if o.culture_growth_type
+      if o.tissue_and_cell_type
+        ao[:tissue_and_cell_type_id] = o.tissue_and_cell_type_id
+        ao[:tissue_and_cell_type_title] = escape_javascript(o.tissue_and_cell_type.title)
+      end
+
+      ao.reverse_merge(extra_data)
+    end.flatten.to_json
   end
 end

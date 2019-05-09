@@ -10,21 +10,20 @@ class DataFilesController < ApplicationController
 
   include Seek::AssetsCommon
 
-  before_filter :find_assets, only: [:index]
-  before_filter :find_and_authorize_requested_item, except: [:index, :new, :upload_for_tool, :upload_from_email, :create, :create_content_blob,
+  before_action :find_assets, only: [:index]
+  before_action :find_and_authorize_requested_item, except: [:index, :new, :upload_for_tool, :upload_from_email, :create, :create_content_blob,
                                                              :request_resource, :preview, :test_asset_url, :update_annotations_ajax, :rightfield_extraction_ajax, :provide_metadata]
-  before_filter :find_display_asset, only: [:show, :explore, :download, :matching_models]
-  skip_before_filter :verify_authenticity_token, only: [:upload_for_tool, :upload_from_email]
-  before_filter :xml_login_only, only: [:upload_for_tool, :upload_from_email]
-  before_filter :get_sample_type, only: :extract_samples
-  before_filter :check_already_extracted, only: :extract_samples
-  before_filter :forbid_new_version_if_samples, :only => :new_version
+  before_action :find_display_asset, only: [:show, :explore, :download]
+  before_action :xml_login_only, only: [:upload_for_tool, :upload_from_email]
+  before_action :get_sample_type, only: :extract_samples
+  before_action :check_already_extracted, only: :extract_samples
+  before_action :forbid_new_version_if_samples, :only => :new_version
 
-  before_filter :oauth_client, only: :retrieve_nels_sample_metadata
-  before_filter :nels_oauth_session, only: :retrieve_nels_sample_metadata
-  before_filter :rest_client, only: :retrieve_nels_sample_metadata
+  before_action :oauth_client, only: :retrieve_nels_sample_metadata
+  before_action :nels_oauth_session, only: :retrieve_nels_sample_metadata
+  before_action :rest_client, only: :retrieve_nels_sample_metadata
 
-  before_filter :login_required, only: [:create, :create_content_blob, :create_metadata, :rightfield_extraction_ajax, :provide_metadata]
+  before_action :login_required, only: [:create, :create_content_blob, :create_metadata, :rightfield_extraction_ajax, :provide_metadata]
 
   # has to come after the other filters
   include Seek::Publishing::PublishingCommon
@@ -101,10 +100,10 @@ class DataFilesController < ApplicationController
         Mailer.file_uploaded(current_user, Person.find(params[:recipient_id]), @data_file).deliver_later
 
         flash.now[:notice] = "#{t('data_file')} was successfully uploaded and saved." if flash.now[:notice].nil?
-        render text: flash.now[:notice]
+        render plain: flash.now[:notice]
       else
         errors = (@data_file.errors.map { |e| e.join(' ') }.join("\n"))
-        render text: errors, status: 500
+        render plain: errors, status: 500
       end
     end
   end
@@ -119,15 +118,15 @@ class DataFilesController < ApplicationController
           if @data_file.save
             @data_file.creators = [User.current_user.person]
             flash.now[:notice] = "#{t('data_file')} was successfully uploaded and saved." if flash.now[:notice].nil?
-            render text: flash.now[:notice]
+            render plain: flash.now[:notice]
           else
             errors = (@data_file.errors.map { |e| e.join(' ') }.join("\n"))
-            render text: errors, status: 500
+            render plain: errors, status: 500
           end
         end
       end
     else
-      render text: 'This user is not permitted to act on behalf of other users', status: :forbidden
+      render plain: 'This user is not permitted to act on behalf of other users', status: :forbidden
     end
   end
 
@@ -178,27 +177,13 @@ class DataFilesController < ApplicationController
     end
   end
 
-  def data
-    @data_file =  DataFile.find(params[:id])
-    sheet = params[:sheet] || 1
-    trim = params[:trim] || false
-    content_blob = @data_file.content_blob
-    file = open(content_blob.filepath)
-    mime_extensions = mime_extensions(content_blob.content_type)
-    if !(%w(xls xlsx) & mime_extensions).empty?
-      respond_to do |format|
-        format.html # currently complains about a missing template, but we don't want people using this for now - its purely XML
-        format.xml { render xml: spreadsheet_to_xml(file, memory_allocation = Seek::Config.jvm_memory_allocation) }
-      end
-    else
-      respond_to do |format|
-        flash[:error] = 'Unable to view contents of this data file'
-        format.html { redirect_to @data_file, format: 'html' }
+  def explore
+    #drop invalid explore params
+    [:page_rows, :page, :sheet].each do |param|
+      if params[param].present? && (params[param] =~ /\A\d+\Z/).nil?
+        params.delete(param)
       end
     end
-  end
-
-  def explore
     if @display_data_file.contains_extractable_spreadsheet?
       respond_to do |format|
         format.html
@@ -211,21 +196,6 @@ class DataFilesController < ApplicationController
     end
   end
 
-  def matching_models
-    # FIXME: should use the correct version
-    @matching_model_items = @data_file.matching_models
-    # filter authorization
-    ids = @matching_model_items.collect(&:primary_key)
-    models = Model.where(id: ids)
-    authorised_ids = Model.authorize_asset_collection(models, 'view').collect(&:id)
-    @matching_model_items = @matching_model_items.select { |mdf| authorised_ids.include?(mdf.primary_key.to_i) }
-
-    flash.now[:notice] = "#{@matching_model_items.count} #{t('model').pluralize}  were found that may be relevant to this #{t('data_file')} "
-    respond_to do |format|
-      format.html
-    end
-  end
-
   def filter
     scope = DataFile
     scope = scope.joins(:projects).where(projects: { id: current_user.person.projects }) unless (params[:all_projects] == 'true')
@@ -233,7 +203,7 @@ class DataFilesController < ApplicationController
     scope = scope.with_extracted_samples if (params[:with_samples] == 'true')
 
     @data_files = DataFile.authorize_asset_collection(
-      scope.where('data_files.title LIKE ?', "%#{params[:filter]}%").uniq, 'view'
+      scope.where('data_files.title LIKE ?', "%#{params[:filter]}%").distinct, 'view'
     ).first(20)
 
     respond_to do |format|
@@ -364,6 +334,7 @@ class DataFilesController < ApplicationController
   # @assay
   def rightfield_extraction_ajax
     @data_file = DataFile.new
+    @assay = Assay.new
     @warnings = nil
     critical_error_msg = nil
     session.delete :extraction_exception_message
@@ -378,10 +349,7 @@ class DataFilesController < ApplicationController
         critical_error_msg = "The file that was requested to be processed doesn't match that which had been uploaded"
       end
     rescue Exception => e
-      ExceptionNotifier.notify_exception(e, data: {
-          message: "Problem attempting to extract from RightField for content blob #{params[:content_blob_id]}",
-          current_logged_in_user: current_user
-      })
+      Seek::Errors::ExceptionForwarder.send_notification(e, data:{message: "Problem attempting to extract from RightField for content blob #{params[:content_blob_id]}"})
       session[:extraction_exception_message] = e.message
     end
 
@@ -391,9 +359,9 @@ class DataFilesController < ApplicationController
 
     respond_to do |format|
       if critical_error_msg
-        format.js { render text: critical_error_msg, status: :unprocessable_entity }
+        format.js { render plain: critical_error_msg, status: :unprocessable_entity }
       else
-        format.js { render text: 'done', status: :ok }
+        format.js { render plain: 'done', status: :ok }
       end
     end
   end
@@ -404,14 +372,23 @@ class DataFilesController < ApplicationController
     @data_file ||= session[:processed_datafile]
     @assay ||= session[:processed_assay]
 
-    #this perculiar line avoids a no method error when calling super later on, when there are no assays in the database
+    #this peculiar line avoids a no method error when calling super later on, when there are no assays in the database
     # this I believe is caused by accessing the unmarshalled @assay before the Assay class has been encountered. Adding this line
     # avoids the error
     Assay.new
     @warnings ||= session[:processing_warnings] || []
     @exception_message ||= session[:extraction_exception_message]
-    @create_new_assay = @assay && @assay.new_record?
+    @create_new_assay = @assay && @assay.new_record? && !@assay.title.blank?
     @data_file.assay_assets.build(assay_id: @assay.id) if @assay.persisted?
+
+    # associate any assays passed through with :assay_ids param
+    if params[:assay_ids]
+      assays = Assay.authorize_asset_collection(Assay.find(params[:assay_ids]),:edit)
+      assays.each do |assay|
+        @data_file.assay_assets.build(assay_id: assay.id)
+      end
+    end
+
     respond_to do |format|
       format.html
     end
@@ -469,7 +446,7 @@ class DataFilesController < ApplicationController
       end
 
     else
-      @data_file.errors[:base] = "The file uploaded doesn't match" unless uploaded_blob_matches
+      @data_file.errors.add(:base, "The file uploaded doesn't match") unless uploaded_blob_matches
 
       # this helps trigger the complete validation error messages, as not both may be validated in a single action
       # - want the avoid the user fixing one set of validation only to be presented with a new set
@@ -558,7 +535,6 @@ class DataFilesController < ApplicationController
   end
 
   def rest_client
-    client_class = Nels::Rest::Client
-    @rest_client = client_class.new(@oauth_session.access_token)
+    @rest_client = Nels::Rest.client_class.new(@oauth_session.access_token)
   end
 end

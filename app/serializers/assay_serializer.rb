@@ -1,4 +1,4 @@
-class AssaySerializer < PCSSerializer
+class AssaySerializer < SnapshottableSerializer
   attributes :title, :description, :other_creators
   attribute :assay_class do
     { title: object.assay_class.title,
@@ -14,6 +14,10 @@ class AssaySerializer < PCSSerializer
   attribute :technology_type do
     { label: object.technology_type_label,
       uri: object.technology_type_uri }
+  end
+
+  attribute :tags do
+    serialize_annotations(object, context = 'tag')
   end
 
   has_many :organisms

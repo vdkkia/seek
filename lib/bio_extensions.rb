@@ -1,14 +1,12 @@
 # reformat the authors
-class Bio::MEDLINE
-  def reference_with_additional_fields
-    reference = reference_without_additional_fields
+module BioMedlineExtensions
+  def reference
+    reference = super
     reference.published_date = published_date
     reference.citation = citation
     reference.error = error
     reference
   end
-
-  alias_method_chain :reference, :additional_fields
 
   def citation
     @pubmed['SO']
@@ -16,20 +14,36 @@ class Bio::MEDLINE
 
   def published_date
     published_date = nil
-    # first parse published date on PHST - Publication History Status Date
-    history_status_date = @pubmed['PHST']
-    unless history_status_date.blank?
-      # Publication History Status Date: 2012/07/19 [received] 2013/03/05 [accepted] 2013/03/16 [aheadofprint]
-      publish_status = ['epublish', 'ppublish', 'aheadofprint', 'entrez,', 'pubmed', 'medline']
-      publish_status.each do |status|
-        next unless history_status_date.include?(status)
-        published_date_index = history_status_date.index(status) - 12
-        published_date = history_status_date[published_date_index, 10]
-        break
+    pub_date_array = nil
+    published_date_dp = @pubmed['DP'].delete!("\n")
+
+    # first check date on DP
+    if !published_date_dp.blank? && published_date_dp.split(" ").count == 3
+      published_date = Date::strptime(published_date_dp, "%Y %b %d")
+    else
+      #first parse published date on PHST - Publication History Status Date
+      history_status_date = @pubmed['PHST']
+      unless history_status_date.blank?
+        # Publication History Status Date: "2018/07/19 00:00 [received]\n2018/11/02 00:00 [accepted]\n2018/11/17 06:00 [entrez]\n2018/11/18 06:00 [pubmed]\n2018/11/18 06:00 [medline]\n"
+        publish_status = ['epublish', 'ppublish', 'aheadofprint', 'medline', 'entrez', 'pubmed']
+
+        pub_date_array = history_status_date.split("\n").map do |pair|
+          k, v = pair.split(' ')[2][1..-2], pair.split(' ')[0]
+          {k => v}
+        end
+
+        pub_date_array.each do |date|
+          next unless publish_status.include?(date.keys[0])
+          published_date = Date::strptime(date[date.keys[0]], "%Y/%m/%d")
+          break
+        end
+      end
+
+      # if not found then parse on EDAT - Entrez Date, the date the citation was added to PubMed
+      if !@pubmed['EDAT'].blank? && published_date.blank?
+        published_date = Date::strptime(@pubmed['EDAT'].split(" ")[0], "%Y/%m/%d")
       end
     end
-    # if not found then parse on EDAT - Entrez Date, the date the citation was added to PubMed
-    published_date = @pubmed['EDAT'][0, 10] if published_date.blank?
     published_date
   end
 
@@ -40,9 +54,9 @@ class Bio::MEDLINE
   end
 end
 
-class Bio::Reference
-  def authors_with_reformat
-    authors_array = authors_without_reformat
+module BioReferenceExtensions
+  def authors
+    authors_array = super
     reformat_authors = []
     authors_array.each do |author|
       # Petzold, A.
@@ -53,7 +67,6 @@ class Bio::Reference
     end
     reformat_authors
   end
-  alias_method_chain :authors, :reformat
 
   attr_accessor :published_date, :citation, :error
 end
@@ -75,4 +88,12 @@ class Author
   def to_s
     last_name + ', ' + first_name
   end
+end
+
+Bio::MEDLINE.class_eval do
+  prepend BioMedlineExtensions
+end
+
+Bio::Reference.class_eval do
+  prepend BioReferenceExtensions
 end

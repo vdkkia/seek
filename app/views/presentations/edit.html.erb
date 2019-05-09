@@ -6,7 +6,7 @@
       <%= f.error_messages %>
 
       <div class="form-group">
-        <label>Title <span class="required">*</span></label>
+        <label class="required">Title</label>
         <%= f.text_field :title, :class=>"form-control" -%>
       </div>
 
@@ -30,13 +30,13 @@
       <% if current_user_authorized_to_manage -%>
           <%= render :partial=>"assets/asset_form_bottom", :locals=> {:f => f} -%>
 
-          <%= fancy_multiselect @presentation, :events, { other_projects_checkbox: true } if Seek::Config.events_enabled %>
+          <%= fancy_multiselect @presentation, :events, { other_projects_checkbox: true, sort_by: :start_date } if Seek::Config.events_enabled %>
       <% end -%>
 
       <div>
         <%= preview_permission_popup_link(@presentation)-%>
         <%= f.submit "Update", :id => "presentation_submit_btn",
-            :onclick => "javascript: validateResourceFields(false, 'presentation', #{current_user_authorized_to_manage});  return(false);",
+            :onclick => "return validateResourceFields('presentation')",
             :class => 'btn btn-primary' -%>
         or <%= cancel_button(presentation_path(@presentation)) -%>
       </div>

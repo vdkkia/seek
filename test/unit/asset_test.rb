@@ -1,7 +1,7 @@
 require 'test_helper'
-require 'time_test_helper'
 
 class AssetTest < ActiveSupport::TestCase
+
   fixtures :all
   include ApplicationHelper
 
@@ -52,7 +52,7 @@ class AssetTest < ActiveSupport::TestCase
     model = Factory :model
     t = 1.day.ago
     assert_not_equal t.to_i, model.last_used_at.to_i
-    pretend_now_is(t) do
+    travel_to(t) do
       model.just_used
     end
     assert_equal t.to_i, model.last_used_at.to_i
@@ -391,6 +391,96 @@ class AssetTest < ActiveSupport::TestCase
       refute item.has_jerm_contributor?
       assert item2.has_jerm_contributor?
     end
+  end
+
+  test 'validate title lengths' do
+    long_title = ('a' * 256).freeze
+    ok_title = ('a' * 255).freeze
+    assert long_title.length > 255
+    assert_equal 255, ok_title.length
+    assets = %i[data_file sop model presentation document event assay investigation study]
+    User.with_current_user(Factory(:user)) do
+      assets.each do |asset_key|
+        item = Factory(asset_key, contributor:User.current_user.person)
+        assert item.valid?, "#{asset_key} should be valid"
+        item.title = long_title
+        refute item.valid?, "#{asset_key} should be not be valid with too long title length"
+        item.title=ok_title
+        assert item.valid?, "#{asset_key} should be valid with max title length"
+        item.save!
+      end
+    end
+  end
+
+  test 'validate description lengths' do
+    long_desc = ('a' * 65536).freeze
+    ok_desc = ('a' * 65535).freeze
+    assert long_desc.length > 65535
+    assert_equal 65535, ok_desc.length
+    assets = %i[data_file sop model presentation document event assay investigation study]
+    User.with_current_user(Factory(:user)) do
+      assets.each do |asset_key|
+        item = Factory(asset_key, contributor:User.current_user.person)
+        assert item.valid?, "#{asset_key} should be valid"
+        item.description = long_desc
+        refute item.valid?, "#{asset_key} should be not be valid with too long description length"
+        item.description=ok_desc
+        assert item.valid?, "#{asset_key} should be valid with max description length"
+        item.save!
+      end
+    end
+  end
+
+  test 'projects_accessible?' do
+    project1 = Factory(:project)
+    project2 = Factory(:project)
+
+    df = Factory(:data_file, policy:Factory(:public_policy))
+    assert df.projects_accessible?(project1)
+
+    assay = Factory(:assay, policy:Factory(:public_policy))
+    assert assay.projects_accessible?(project1)
+
+    df = Factory(:data_file, policy:Factory(:private_policy, permissions:[Factory(:permission, access_type:Policy::VISIBLE,contributor:project1)]))
+    refute df.projects_accessible?(project1)
+
+    assay = Factory(:assay, policy:Factory(:private_policy, permissions:[Factory(:permission, access_type:Policy::VISIBLE,contributor:project1)]))
+    assert assay.projects_accessible?(project1)
+    refute assay.projects_accessible?(project2)
+
+    df = Factory(:data_file, policy:Factory(:private_policy, permissions:[Factory(:permission, access_type:Policy::ACCESSIBLE,contributor:project1)]))
+    assert df.projects_accessible?(project1)
+    refute df.projects_accessible?(project2)
+
+    df = Factory(:data_file, policy:Factory(:private_policy, permissions:[Factory(:permission, access_type:Policy::EDITING,contributor:project1)]))
+    assert df.projects_accessible?(project1)
+    refute df.projects_accessible?(project2)
+
+    df = Factory(:data_file, policy:Factory(:private_policy, permissions:[Factory(:permission, access_type:Policy::MANAGING,contributor:project1)]))
+    assert df.projects_accessible?(project1)
+    refute df.projects_accessible?(project2)
+    refute df.projects_accessible?([project1,project2])
+
+    df.policy.permissions.create(contributor:project2, access_type:Policy::ACCESSIBLE)
+    assert df.projects_accessible?(project2)
+    assert df.projects_accessible?([project1,project2])
+    refute refute df.projects_accessible?([project1,project2, Factory(:project)])
+  end
+
+  test 'update_timestamps with new version' do
+    contributor = Factory(:person)
+    User.with_current_user(contributor.user) do
+      df = Factory(:data_file, contributor:contributor)
+      t = DateTime.now + 5.days
+      travel_to(t) do
+        df.save_as_new_version
+        assert_equal 2,df.version
+        version = df.latest_version
+        assert_in_delta t,DateTime.parse(version.updated_at.to_s),0.1.second
+        assert_in_delta t,DateTime.parse(df.updated_at.to_s),0.1.second
+      end
+    end
+
   end
 
 end

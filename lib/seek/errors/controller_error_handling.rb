@@ -7,7 +7,6 @@ module Seek
         ActionController::RoutingError => 404,
         ActionController::UrlGenerationError => 404,
         ::AbstractController::ActionNotFound => 404,
-        ActionController::UnknownController => 404,
         ActionController::UnknownFormat => 406,
         ActiveRecord::RecordNotFound => 404,
         RSolr::Error::ConnectionRefused => 503
@@ -25,7 +24,7 @@ module Seek
         exception_notification(status, exception)
         respond_to do |format|
           format.html { render template: "errors/error_#{status}", layout: 'layouts/errors', status: status, locals: {exception: exception} }
-          format.all { render nothing: true, status: status }
+          format.all { head status }
         end
       end
 
@@ -34,15 +33,11 @@ module Seek
       end
 
       def exception_notification(status, exception)
-        unless !Seek::Config.exception_notification_enabled || [404, 406].include?(status)
-          begin
-            ExceptionNotifier.notify_exception(exception, env: request.env)
-          rescue Exception => deliver_exception
-            logger.error "ERROR - #{exception.class.name} (#{exception.message})"
-            logger.error "Error delivering exception email - #{deliver_exception.class.name} (#{deliver_exception.message})"
-          end
+        unless [404, 406].include?(status)
+          Seek::Errors::ExceptionForwarder.send_notification(exception, {env:request.env}, current_user)
         end
       end
+
     end
   end
 end

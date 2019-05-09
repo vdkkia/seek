@@ -9,7 +9,7 @@
       <%= render :partial=>"assets/upload_box",:locals=>{:resource=>@model} -%>
 
       <div class="form-group">
-        <label>Title <span class="required">*</span></label>
+        <label class="required">Title</label>
         <% model_title_value = (params[:model].blank? || params[:model][:title].blank?) ? nil : params[:model][:title] -%>
         <%= text_field_tag 'model[title]', model_title_value, :class=>"form-control" -%>
       </div>
@@ -37,7 +37,7 @@
       <div>
         <%= preview_permission_popup_link(@model)-%>
         <%= create_button :id => "model_submit_btn",
-                       :onclick => "javascript: validateResourceFields(true, 'model',true); return(false);",
+                       :onclick => "return validateResourceFields('model')",
                        :class => 'btn btn-primary' -%>
         or <%= cancel_button(models_path) -%>
       </div>

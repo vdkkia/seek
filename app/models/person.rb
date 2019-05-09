@@ -1,9 +1,8 @@
-class Person < ActiveRecord::Base
+class Person < ApplicationRecord
 
   acts_as_annotation_source
 
-  include Seek::Rdf::RdfGeneration
-  include Seek::Taggable
+  include Seek::Annotatable
   include Seek::Roles::AdminDefinedRoles
 
   auto_strip_attributes :email, :first_name, :last_name, :web_page
@@ -11,11 +10,10 @@ class Person < ActiveRecord::Base
   alias_attribute :title, :name
 
   acts_as_yellow_pages
+
   scope :default_order, -> { order('last_name, first_name') }
 
   before_save :first_person_admin_and_add_to_default_project
-  before_destroy :clean_up_and_assign_permissions
-  after_destroy :updated_contributed_items_contributor_after_destroy
 
   acts_as_notifiee
 
@@ -27,6 +25,8 @@ class Person < ActiveRecord::Base
   validates_uniqueness_of :email, case_sensitive: false
 
   has_and_belongs_to_many :disciplines
+
+  has_one :user, dependent: :destroy
 
   has_many :group_memberships, dependent: :destroy, inverse_of: :person
   has_many :work_groups, through: :group_memberships, inverse_of: :people
@@ -41,39 +41,26 @@ class Person < ActiveRecord::Base
   has_many :current_work_groups, class_name: 'WorkGroup', through: :current_group_memberships,
                                  source: :work_group
 
-  has_many :institutions, -> { uniq }, through: :work_groups
+  has_many :institutions, -> { distinct }, through: :work_groups
 
   has_many :favourite_group_memberships, dependent: :destroy
   has_many :favourite_groups, through: :favourite_group_memberships
 
-  has_many :data_files_for_person, foreign_key: :contributor_id, class_name: 'DataFile'
-  has_many :sop_for_person, foreign_key: :contributor_id, class_name: 'Sop'
-  has_many :models_for_person, foreign_key: :contributor_id, class_name: 'Model'
-  has_many :publications_for_person, foreign_key: :contributor_id, class_name: 'Publication'
-
-  has_many :studies_for_person, foreign_key: :contributor_id, class_name: 'Study'
-  has_many :assays_for_person, foreign_key: :contributor_id, class_name: 'Assay'
-  alias assays assays_for_person
-  has_many :investigations_for_person, foreign_key: :contributor_id, class_name: 'Investigation'
-
-  has_many :presentations_for_person, foreign_key: :contributor_id, class_name: 'Presentation'
-  has_many :samples_for_person, foreign_key: :contributor_id, class_name: 'Sample'
-  has_many :events_for_person, foreign_key: :contributor_id, class_name: 'Event'
-
-  has_one :user, dependent: :destroy
-
   has_many :assets_creators, dependent: :destroy, foreign_key: 'creator_id'
-  has_many :created_data_files, through: :assets_creators, source: :asset, source_type: 'DataFile'
-  has_many :created_documents, through: :assets_creators, source: :asset, source_type: 'Document'
-  has_many :created_models, through: :assets_creators, source: :asset, source_type: 'Model'
-  has_many :created_sops, through: :assets_creators, source: :asset, source_type: 'Sop'
-  has_many :created_publications, through: :assets_creators, source: :asset, source_type: 'Publication'
-  has_many :created_presentations, through: :assets_creators, source: :asset, source_type: 'Presentation'
-  has_many :created_samples, through: :assets_creators, source: :asset, source_type: 'Sample'
 
-  has_many :created_investigations, through: :assets_creators, source: :asset, source_type: 'Investigation'
-  has_many :created_studies, through: :assets_creators, source: :asset, source_type: 'Study'
-  has_many :created_assays, through: :assets_creators, source: :asset, source_type: 'Assay'
+  RELATED_RESOURCE_TYPES = %w[DataFile Sop Model Document Publication Presentation
+                              Sample Event Investigation Study Assay Strain].freeze
+
+  RELATED_RESOURCE_TYPES.each do |type|
+    has_many :"contributed_#{type.tableize}", foreign_key: :contributor_id, class_name: type
+    has_many :"created_#{type.tableize}", through: :assets_creators, source: :asset, source_type: type
+  end
+
+  RELATED_RESOURCE_TYPES.collect(&:tableize).each do |type|
+    define_method "related_#{type}" do
+      send("created_#{type}") | send("contributed_#{type}")
+    end
+  end
 
   has_annotation_type :expertise, method_name: :expertise
   has_annotation_type :tool
@@ -101,12 +88,15 @@ class Person < ActiveRecord::Base
 
   after_commit :queue_update_auth_table
 
+  has_many :dependent_permissions, class_name: 'Permission', as: :contributor, dependent: :destroy
+  before_destroy :reassign_contribution_permissions
+  after_destroy :updated_contributed_items_contributor_after_destroy
   after_destroy :update_publication_authors_after_destroy
-  
+
   # to make it look like a User
   def person
     self
-  end    
+  end
 
   # not registered profiles that match this email
   def self.not_registered_with_matching_email(email)
@@ -114,7 +104,7 @@ class Person < ActiveRecord::Base
   end
 
   def queue_update_auth_table
-    if previous_changes.keys.include?('roles_mask')
+    if saved_changes.keys.include?('roles_mask')
       AuthLookupUpdateJob.new.add_items_to_queue self
     end
   end
@@ -125,7 +115,7 @@ class Person < ActiveRecord::Base
 
   # those that have updated time stamps and avatars appear first. A future enhancement could be to judge activity by last asset updated timestamp
   def self.active
-    Person.unscoped.order('avatar_id is null, updated_at DESC')
+    Person.unscoped.order(Arel.sql('avatar_id IS NULL'), 'updated_at DESC')
   end
 
   def receive_notifications
@@ -157,22 +147,6 @@ class Person < ActiveRecord::Base
     end
   end
 
-  def studies
-    studies_for_person
-  end
-
-  def investigations
-    investigations_for_person
-  end
-
-  def presentations
-    presentations_for_person
-  end
-
-  def related_samples
-    samples_for_person | created_samples
-  end
-
   def programmes
     projects.collect(&:programme).uniq
   end
@@ -195,17 +169,6 @@ class Person < ActiveRecord::Base
 
   def shares_project_or_programme?(other_item)
     shares_project?(other_item) || shares_programme?(other_item)
-  end
-
-  RELATED_RESOURCE_TYPES = %i[data_files documents models sops presentations events publications investigations
-                              studies assays].freeze
-  RELATED_RESOURCE_TYPES.each do |type|
-    define_method "related_#{type}" do
-      user_items = []
-      user_items |= send("created_#{type}".to_sym) if respond_to? "created_#{type}".to_sym
-      user_items |= send("#{type}_for_person".to_sym) if respond_to? "#{type}_for_person".to_sym
-      user_items.uniq
-    end
   end
 
   def self.userless_people
@@ -234,23 +197,6 @@ class Person < ActiveRecord::Base
     Person.order('ID asc').collect do |p|
       { 'id' => p.id, 'name' => p.name, 'email' => p.email, 'projects' => p.projects.collect(&:title).join(', ') }
     end.to_json
-  end
-
-  def validates_associated(*associations)
-    associations.each do |_association|
-      class_eval do
-        validates_each(associations) do |record, associate_name, _value|
-          associates = record.send(associate_name)
-          associates = [associates] unless associates.respond_to?('each')
-          associates.each do |associate|
-            next unless associate && !associate.valid?
-            associate.errors.each do |key, value|
-              record.errors.add(key, value)
-            end
-          end
-        end
-      end
-    end
   end
 
   def projects # ALL projects, former and current
@@ -329,7 +275,7 @@ class Person < ActiveRecord::Base
 
   # all items, assets, ISA, samples and events that are linked to this person as a contributor
   def contributed_items
-    [Assay, Study, Investigation, DataFile, Document, Sop, Presentation, Model, Sample, Strain, Publication, Event].collect do |type|
+    [Assay, Study, Investigation, DataFile, Document, Sop, Presentation, Model, Sample, Strain, Publication, Event, SampleType].collect do |type|
       type.where(contributor_id:id)
     end.flatten.uniq.compact
   end
@@ -383,14 +329,14 @@ class Person < ActiveRecord::Base
                          .where('controller_name != \'people\'')
                          .order('created_at DESC')
                          .limit(limit)
-                         .uniq +
+                         .distinct +
               ActivityLog.group(:id, :activity_loggable_type, :activity_loggable_id)
               .where(culprit_type: 'User', culprit_id: user, action: 'create')
               .where('controller_name != \'sessions\'')
               .where('controller_name != \'people\'')
               .order('created_at DESC')
               .limit(limit)
-              .uniq
+              .distinct
     results.sort_by(&:created_at).reverse.uniq { |r| "#{r.activity_loggable_type}#{r.activity_loggable_id}" }[0...limit]
   end
 
@@ -404,12 +350,9 @@ class Person < ActiveRecord::Base
     permissions.each(&:destroy)
   end
 
-  def clean_up_and_assign_permissions
-    # remove the permissions which are set on this person
-    remove_permissions
-
-    # retrieve the items that this person is contributor (owner for assay)
-    person_related_items = contributed_items
+  def reassign_contribution_permissions
+    # retrieve the items that this person is contributor (owner for assay), and that also has policy authorization
+    person_related_items = contributed_items.select{|item| item.respond_to?(:policy)}
 
     # check if anyone has manage right on the related_items
     # if not or if only the contributor then assign the manage right to pis||pals

@@ -13,8 +13,8 @@ SEEK::Application.configure do
   config.eager_load = false
 
   # Configure static file server for tests with Cache-Control for performance.
-  config.serve_static_files = true
-  config.static_cache_control = "public, max-age=3600"
+  config.public_file_server.enabled = true
+  config.public_file_server.headers = { 'Cache-Control' => 'public, max-age=3600' }
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -56,5 +56,9 @@ SEEK::Application.configure do
 
   # Uncomment this to raise exception on unpermitted params:
   # config.action_controller.action_on_unpermitted_parameters = :raise
+
+  # Uncomment this to see ActiveRecord logs in test
+  # ActiveRecord::Base.logger = Logger.new(STDOUT)
+  # ActiveRecord::Base.logger.level = 0
 
 end

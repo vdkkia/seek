@@ -1,7 +1,7 @@
 module Seek
   module BreadCrumbs
     def self.included(base)
-      base.before_filter :add_breadcrumbs
+      base.before_action :add_breadcrumbs
     end
 
     # FIXME: badly needs refactoring, this code is wrong in so many ways:
@@ -43,6 +43,11 @@ module Seek
         add_show_breadcrumb @assay
       elsif %w[compounds suggested_assay_types suggested_technology_types site_announcements].include?(controller_name)
         add_index_breadcrumb('admin', 'Administration')
+      elsif controller_name == 'dashboards'
+        add_index_breadcrumb 'projects'
+        add_show_breadcrumb @project
+        add_breadcrumb 'Dashboard'
+        return
       end
 
       # Index

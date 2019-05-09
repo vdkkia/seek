@@ -27,8 +27,30 @@ text_type.update_attributes(base_type: Seek::Samples::BaseType::TEXT)
 string_type = SampleAttributeType.find_or_initialize_by(title:'String')
 string_type.update_attributes(base_type: Seek::Samples::BaseType::STRING)
 
-chebi_type = SampleAttributeType.find_or_initialize_by(title:'CHEBI ID')
-chebi_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: 'CHEBI:[0-9]+', placeholder: 'CHEBI:1234', resolution:'http://identifiers.org/chebi/\\0')
+chebi_type = SampleAttributeType.find_or_initialize_by(title:'ChEBI')
+chebi_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: '^CHEBI:\\d+$', placeholder: 'CHEBI:1234', resolution:'http://identifiers.org/chebi/\\0')
+
+ecn_type = SampleAttributeType.find_or_initialize_by(title:'ECN')
+ecn_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: '[0-9\.]+', placeholder: '2.7.1.121',
+                           resolution:'http://identifiers.org/brenda/\\0')
+
+metanetx_chemical_type = SampleAttributeType.find_or_initialize_by(title:'MetaNetX chemical')
+metanetx_chemical_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: 'MNXM\\d+', placeholder: 'MNXM01',
+                                resolution:'http://identifiers.org/metanetx.chemical/\\0')
+
+metanetx_reaction_type = SampleAttributeType.find_or_initialize_by(title:'MetaNetX reaction')
+metanetx_reaction_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: 'MNXR\\d+', placeholder: 'MNXR891',
+                                resolution:'http://identifiers.org/metanetx.reaction/\\0')
+
+metanetx_compartment_type = SampleAttributeType.find_or_initialize_by(title:'MetaNetX compartment')
+metanetx_compartment_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: 'MNX[CD]\\d+',
+                                resolution:'http://identifiers.org/metanetx.compartment/\\0')
+
+inchi_type = SampleAttributeType.find_or_initialize_by(title:'InChI')
+inchi_type.update_attributes(base_type: Seek::Samples::BaseType::STRING,
+                             regexp: '^InChI\\=1S?\\/[A-Za-z0-9\\.]+(\\+[0-9]+)?(\\/[cnpqbtmsih][A-Za-z0-9\\-\\+\\(\\)\\,\\/\\?\\;\\.]+)*$',
+                             resolution:'http://identifiers.org/inchi/\\0')
+
 
 bool_type = SampleAttributeType.find_or_initialize_by(title:'Boolean')
 bool_type.update_attributes(base_type: Seek::Samples::BaseType::BOOLEAN)
@@ -47,6 +69,9 @@ uri_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: U
 
 doi_type = SampleAttributeType.find_or_initialize_by(title:'DOI')
 doi_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: '(DOI:)?(.*)', placeholder: 'DOI:10.1109/5.771073', resolution:'https://doi.org/\\2')
+
+ncbi_type = SampleAttributeType.find_or_initialize_by(title:'NCBI ID')
+ncbi_type.update_attributes(base_type: Seek::Samples::BaseType::STRING, regexp: '[0-9]+', placeholder: '23234', resolution:'https://identifiers.org/taxonomy/\\0')
 
 puts "Seeded #{SampleAttributeType.count - count} sample attribute types"
 

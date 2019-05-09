@@ -7,8 +7,8 @@ class AdminController < ApplicationController
   RESTART_MSG = "Your settings have been updated. If you changed some settings e.g. search, you need to restart some processes.
                  Please see the buttons and explanations below.".freeze
 
-  before_filter :login_required
-  before_filter :is_user_admin_auth
+  before_action :login_required
+  before_action :is_user_admin_auth
 
   def index
     respond_to do |format|
@@ -43,6 +43,7 @@ class AdminController < ApplicationController
     # Seek::Config.delete_asset_version_enabled = string_to_boolean params[:delete_asset_version_enabled]
     Seek::Config.programmes_enabled = string_to_boolean params[:programmes_enabled]
     Seek::Config.samples_enabled = string_to_boolean params[:samples_enabled]
+    Seek::Config.project_admin_sample_type_restriction = string_to_boolean params[:project_admin_sample_type_restriction]
     Seek::Config.programme_user_creation_enabled = string_to_boolean params[:programme_user_creation_enabled]
 
     Seek::Config.set_smtp_settings 'address', params[:address]
@@ -65,6 +66,8 @@ class AdminController < ApplicationController
 
     Seek::Config.internal_help_enabled = string_to_boolean params[:internal_help_enabled]
     Seek::Config.external_help_url = params[:external_help_url]
+
+    Seek::Config.workflows_enabled = string_to_boolean params[:workflows_enabled]
 
     Seek::Config.exception_notification_recipients = params[:exception_notification_recipients]
     Seek::Config.exception_notification_enabled = string_to_boolean params[:exception_notification_enabled]
@@ -210,6 +213,7 @@ class AdminController < ApplicationController
     Seek::Config.recaptcha_public_key = params[:recaptcha_public_key]
     Seek::Config.default_associated_projects_access_type = params[:default_associated_projects_access_type]
     Seek::Config.default_all_visitors_access_type = params[:default_all_visitors_access_type]
+    Seek::Config.max_all_visitors_access_type = params[:max_all_visitors_access_type]
     Seek::Config.permissions_popup = params[:permissions_popup]
     Seek::Config.auth_lookup_update_batch_size = params[:auth_lookup_update_batch_size]
 
@@ -244,10 +248,7 @@ class AdminController < ApplicationController
       rescue SystemExit => e
         Rails.logger.info("Exit code #{e.status}")
       rescue => e
-        error = e.message
-        if Seek::Config.exception_notification_enabled
-          ExceptionNotifier.notify_exception(e, data: { message: 'Problem restarting delayed job' })
-        end
+        Seek::Errors::ExceptionForwarder.send_notification(e, data:{message:'Problem restarting delayed job'})
       end
     end
 
@@ -339,7 +340,7 @@ class AdminController < ApplicationController
       when 'snapshot_and_doi_stats'
         render partial: 'admin/stats/snapshot_and_doi_stats'
       when 'none'
-        render text: ''
+        render html: ''
       else
         get_user_stats
     end
@@ -378,14 +379,12 @@ class AdminController < ApplicationController
       partial = 'user_stats_list'
       collection = Person.pals
       title = 'List of PALs'
-    when 'administrators'
-      partial = 'admin_selection'
     when 'none'
       partial = 'none'
     end
     respond_to do |format|
       if partial == 'none'
-        format.html { render text: '' }
+        format.html { render html: '' }
       else
         locals = { collection: collection, action: action, title: title }.merge(extra_options)
         format.html { render partial: partial, locals: locals }
@@ -409,22 +408,13 @@ class AdminController < ApplicationController
       mail = Mailer.test_email(params[:testing_email])
       if params[:deliver_later]
         mail.deliver_later
-        render :update do |page|
-          page.replace_html 'ajax_loader_position', "<div id='ajax_loader_position'></div>"
-          page.alert("Test email to #{params[:testing_email]} was added to the queue.")
-        end
+        render json: { message: "Test email to #{params[:testing_email]} was added to the queue."}, status: :ok
       else
         mail.deliver_now
-        render :update do |page|
-          page.replace_html 'ajax_loader_position', "<div id='ajax_loader_position'></div>"
-          page.alert("Test email sent successfully to #{params[:testing_email]}.")
-        end
+        render json: { message: "Test email sent successfully to #{params[:testing_email]}."}, status: :ok
       end
     rescue => e
-      render :update do |page|
-        page.replace_html 'ajax_loader_position', "<div id='ajax_loader_position'></div>"
-        page.alert("Fail to send test email, #{e.message}")
-      end
+      render json: { error: "Fail to send test email, #{e.message}"}, status: :internal_server_error
     ensure
       ActionMailer::Base.smtp_settings = smtp_hash_old
       ActionMailer::Base.raise_delivery_errors = raise_delivery_errors_setting
@@ -447,7 +437,7 @@ class AdminController < ApplicationController
   def clear_failed_jobs
     Delayed::Job.where('failed_at IS NOT NULL').destroy_all
     respond_to do |format|
-      format.json{ render text:'',status: :ok}
+      format.json { head :ok }
     end
   end
 

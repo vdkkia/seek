@@ -17,9 +17,7 @@ module ImagesHelper
     inner = "#{img_tag} #{label}".html_safe unless label.blank?
 
     if url
-      inner = if remote == :function
-                link_to_function inner, url, html_options
-              elsif remote
+      inner = if remote
                 link_to(inner, url, html_options.merge(remote: true))
               else
                 link_to(inner, url, html_options)
@@ -42,7 +40,7 @@ module ImagesHelper
   end
 
   def icon_filename_for_key(key)
-    (@@icon_dictionary ||= Seek::ImageFileDictionary.instance).image_filename_for_key(key)
+    Seek::ImageFileDictionary.instance.image_filename_for_key(key)
   end
 
   def image(key, options = {})
@@ -58,7 +56,7 @@ module ImagesHelper
 
     code = country_code(country)
 
-    if code && !code.empty?
+    if code.present? && CountryCodes.has_flag?(code)
       image_tag("famfamfam_flags/#{code.downcase}.png",
                 'data-tooltip' => tooltip(text),
                 :style => "vertical-align:middle; margin-right: #{margin_right};")
@@ -126,7 +124,7 @@ module ImagesHelper
 
   def header_logo_image
     if Seek::Config.header_image_avatar_id && avatar = Avatar.find_by_id(Seek::Config.header_image_avatar_id)
-      image_tag(avatar.public_asset_url)
+      image_tag(avatar.public_asset_url, options={:style=>'background-color:white'})
     else
       image('header_image_default')
     end

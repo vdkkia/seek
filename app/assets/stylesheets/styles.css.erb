@@ -554,30 +554,6 @@ a#adminmode {
     font-weight:bolder;
 }
 
-div#requesting_resource_status {
-    font-size: small;
-    margin: 0em 4em 0em 4em;
-}
-
-div#request_resource_form {
-    font-size: small;
-    margin: 0em 4em 0em 4em;
-}
-
-div#request_resource_form p {
-    margin-left: 10em;
-    font-weight: bold;
-}
-
-div#request_resource_form input {
-    vertical-align:bottom;
-}
-
-#home_intro {
-    min-height: 3em;
-    margin: 1em 2em 1em 2em;
-}
-
 div#faq {
     margin: 0 2em 0 2em;
 }
@@ -605,16 +581,6 @@ img.badge {
     width: 55px;
     height: 20px;
     padding-top: 3px;
-}
-
-#topbar {
-    text-align: center;
-    height: 20px;
-    background-image: url("<%= asset_path('searchfade-repeat.png') %>");
-    background-repeat: repeat-x;
-    background-position: top center;
-    padding: 10px 0;
-    border-top: 0px;
 }
 
 #topbar * {
@@ -646,10 +612,34 @@ img.search_fav_avatar {
 }
 
 p.list_item_attribute {
-    font-size: 85%;
     line-height: 1;
     margin: 5px 0;
 }
+
+div.list_item_attribute p, div.list_item_attribute h1, div.list_item_attribute h2, div.list_item_attribute h3,
+div.list_item_attribute h4, div.list_item_attribute li {
+  font-size: 85%;
+  line-height: 1;
+  margin: 5px 0;
+}
+
+div.list_item_attribute ul, div.list_item_attribute ol {
+  margin-left: 5px;
+  padding-left: 5px;
+}
+
+
+div.simple-formating h1, div.simple-formating h2, div.simple-formating h3, div.simple-formating h4, div.simple-formating h5,
+div.simple-formating h6, div.simple-formating li, div.simple-formating p {
+  font-size: 100%;
+}
+
+div.simple-formating h1, div.simple-formating h2, div.simple-formating h3, div.simple-formating h4, div.simple-formating h5,
+div.simple-formating h6 {
+  font-weight: bold;
+}
+
+
 
 div.list_item_left_column{
     float: left;
@@ -681,7 +671,7 @@ ul.related_asset_list {
     margin-bottom: 0;
 }
 
-ul.related_asset_list li{
+ul.related_asset_list li, li.association-list-item {
     white-space: normal;
     list-style-type: none;
     list-style-position: inside;
@@ -706,16 +696,6 @@ p.system_message {
     text-align: center;
     font-size: larger;
     font-weight: bolder;
-}
-
-.link_selector_buttons ul {
-    width: 100%;
-    text-align:center;
-    padding-top: 3em;
-}
-
-.link_selector_buttons ul li {
-    list-style: none;
 }
 
 ul.bulleted_list li {
@@ -983,15 +963,11 @@ ul.condition_or_factor_row li {
 }
 
 ul.measured_items {
-    clear:both;
+    padding-left: 0;
     margin-top: 1em;
 }
 
 ul.measured_items li{
-    float:left;
-    padding: 0 1em 0.25em 1em;
-    text-align:left;
-    min-height: 2em;
     list-style-type:none;
 }
 
@@ -1021,22 +997,11 @@ ul.condition_or_factor_row li#delete {
 }
 
 div.conditions_or_factors {
-    border: 1px solid #DDD;
-    float: left;
-    margin-left: 2em;
-    margin-top: 2em;
-    margin-bottom: 1em;
-    width: 48em;
-    padding: 0 1em 0.5em 1em;
+
 }
 
 ul.existing_conditions_or_factors {
-    float: left;
-    margin-left: 0em;
-    margin-top: 0em;
-    margin-bottom: 2em;
-    padding: 0 1em 0.5em 1em;
-    clear: both;
+
 }
 
 ul.existing_conditions_or_factors li {
@@ -1212,10 +1177,20 @@ li.fileinfo_container div.fileinfo {
     font-size: smaller;
     text-align: center;
 }
+
 #usage_timestamps p {
     margin: 0em;
     padding: 0em;
 }
+
+p#logging_started {
+  color: #555;
+
+  text-align: center;
+  font-style: italic;
+  margin-top: 1em;
+}
+
 
 #usage_count {
     margin-bottom: 0.5em;
@@ -1464,12 +1439,6 @@ div#version_box ul#version_list {
 }
 div#version_box .compare {
     font-size:smaller;
-}
-
-.required {
-    color: red;
-    font-weight: bold;
-    padding-left: 0.25em;
 }
 
 .large_text_entry {

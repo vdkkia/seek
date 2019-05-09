@@ -1,7 +1,12 @@
-class Event < ActiveRecord::Base
-  has_and_belongs_to_many :data_files, -> { uniq }
-  has_and_belongs_to_many :publications, -> { uniq }
-  has_and_belongs_to_many :presentations, -> { uniq }
+class Event < ApplicationRecord
+  has_and_belongs_to_many :data_files, -> { distinct }
+  has_and_belongs_to_many :publications, -> { distinct }
+  has_and_belongs_to_many :presentations, -> { distinct }
+  has_and_belongs_to_many :documents, -> { distinct }
+
+  before_destroy {documents.clear}
+
+  enforce_authorization_on_association :documents, :view
 
   include Seek::Subscribable
   include Seek::Search::CommonFields
@@ -20,16 +25,10 @@ class Event < ActiveRecord::Base
   # load the configuration for the pagination
   grouped_pagination
 
-  # FIXME: Move to Libs
-  Array.class_eval do
-    def contains_duplicates?
-      uniq.size != size
-    end
-  end
-
   validate :validate_data_files
   def validate_data_files
-    errors.add(:data_files, 'May only contain one association to each data file') if data_files.contains_duplicates?
+    df = data_files.to_a
+    errors.add(:data_files, 'May only contain one association to each data file') unless (df.count == df.uniq.count)
   end
 
   validate :validate_end_date
@@ -38,6 +37,10 @@ class Event < ActiveRecord::Base
   end
 
   validates_presence_of :title
+  validates :title, length: { maximum: 255 }
+
+  validates :description, length: { maximum: 65_535 }
+
   validates_presence_of :start_date
 
   # validates_is_url_string :url

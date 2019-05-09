@@ -13,21 +13,31 @@ en:
     modelling_analysis:  "Modelling analysis"
 
   data_file: "Data file"
+  discipline: "Discipline"
   document: "Document"
   model: "Model"
   sop: "SOP"
+  workflow: "Workflow"
+  workflows:
+    workflow: "Workflow"
+  node: "Workflow Node"
+  nodes:
+    node: "Workflow Node"
   publication: "Publication"
   presentation: "Presentation"
   event: "Event"
 
   sample: "Sample"
+  sample_type: "Sample type"
   strain: "Strain"
   scale: "Scale"
+  organism: "Organism"
 
   person: "Person"
   project: "Project"
   institution: "Institution"
   programme: "Programme"
+  profile: "Profile"
 
   gadget:
     new_heading: "New or upload"
@@ -74,3 +84,10 @@ en:
 
   jerm_harvester_name: 'The JERM Harvester'
   deleted_contributor_name: 'Deleted contributor'
+
+  null_license: 'No license - no permission to use unless the owner grants a licence'
+
+  activerecord:
+      attributes:
+        person:
+          title: "Full name"

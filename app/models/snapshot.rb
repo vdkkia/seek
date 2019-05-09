@@ -1,7 +1,7 @@
 require 'zip'
 
 # Investigation "snapshot"
-class Snapshot < ActiveRecord::Base
+class Snapshot < ApplicationRecord
   belongs_to :resource, polymorphic: true
   has_one :content_blob, as: :asset, foreign_key: :asset_id, required: true
 
@@ -19,6 +19,11 @@ class Snapshot < ActiveRecord::Base
 
   acts_as_doi_mintable(proxy: :resource)
   acts_as_zenodo_depositable(&:content_blob)
+
+  include Seek::ActsAsAsset::ContentBlobs::InstanceMethods
+  include Seek::Stats::ActivityCounts
+
+  acts_as_favouritable
 
   def to_param
     snapshot_number.to_s
@@ -101,6 +106,6 @@ class Snapshot < ActiveRecord::Base
 
   # Need to re-index the parent model to update its' "doi" field
   def reindex_parent_resource
-    ReindexingJob.new.add_items_to_queue(resource) if doi_changed?
+    ReindexingJob.new.add_items_to_queue(resource) if saved_change_to_doi?
   end
 end
