@@ -38,11 +38,11 @@ end
 Factory.define(:presentation_version, class: Presentation::Version) do |f|
   f.association :presentation
   f.projects { presentation.projects }
-  f.version { pres.version + 1 }
-  f.title { pres.title }
+  f.version { presentation.version + 1 }
+  f.title { presentation.title }
   f.content_blob { Factory(:ppt_content_blob, asset_version: version, asset_type: parent.class.name) }
   f.after_create do |v|
-    v.pres.update_column(:version, v.version)
+    v.presentation.update_column(:version, v.version)
   end
 end
 
