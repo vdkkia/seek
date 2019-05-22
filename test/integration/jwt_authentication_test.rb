@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class JWTTest < ActionDispatch::IntegrationTest
+class JWTAuthenticationTest < ActionDispatch::IntegrationTest
   setup do
     @user = Factory(:person, first_name: 'John', last_name: 'Smith').user
   end

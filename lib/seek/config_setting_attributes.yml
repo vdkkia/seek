@@ -198,3 +198,4 @@ allow_private_address_access:
 session_store_timeout:
 jwt_expiration:
   convert: :to_i
+jwt_algorithm:

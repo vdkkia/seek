@@ -138,10 +138,12 @@ module AuthenticatedSystem
   def login_from_jwt
     headers = ActionDispatch::Http::Headers.from_hash(request.env)
     if headers['Authorization'].present? && headers['Authorization'].start_with?('Bearer')
-      jwt = headers['Authorization'].split(' ').last
-      hash = Seek::JsonWebToken.decode(jwt)
-      unless hash.nil?
-        self.current_user = User.find_by_id(hash[:user_id])
+      matches = headers['Authorization'].match(/Bearer (.+)/)
+      if matches
+        hash = Seek::JsonWebToken.decode(matches[1])
+        if hash
+          self.current_user = User.find_by_id(hash[:user_id])
+        end
       end
     end
   end

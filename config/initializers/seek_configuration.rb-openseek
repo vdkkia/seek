@@ -228,6 +228,7 @@ def load_seek_config_defaults!
   Seek::Config.default :nels_use_dummy_client, false
 
   Seek::Config.default :jwt_expiration, 24
+  Seek::Config.default :jwt_algorithm, 'HS256'
 end
 
 SEEK::Application.configure do
