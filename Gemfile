@@ -125,6 +125,9 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # javascript assets from https://rails-assets.org
 gem 'bundler', '>= 1.8.4'
+
+gem 'jwt', '~> 2.1.0'
+
 source 'https://rails-assets.org' do
   gem 'rails-assets-bootstrap-multiselect', '~> 0.9.13'
   gem 'rails-assets-bootstrap-tagsinput', '~> 0.8.0'

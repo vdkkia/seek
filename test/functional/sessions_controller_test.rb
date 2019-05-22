@@ -277,6 +277,37 @@ class SessionsControllerTest < ActionController::TestCase
     assert_equal User.sha256_encrypt(test_password, sha1_user.salt), sha1_user.crypted_password
   end
 
+  test 'should generate JWT token' do
+    user = users(:quentin)
+    pass = 'test'
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user.login, pass)
+
+    with_config_value(:jwt_expiration, 21) do
+      post :token
+    end
+
+    assert_response :ok
+    json = JSON.parse(response.body)
+    assert json['token'].length > 1
+    assert Time.parse(json['expires']) > 20.hours.from_now
+    assert Time.parse(json['expires']) < 40.hours.from_now
+
+    decoded_token = Seek::JsonWebToken.decode(json['token'])
+    assert_equal user.id, decoded_token['user_id']
+    assert Time.at(decoded_token['exp']) > 20.hours.from_now
+    assert Time.at(decoded_token['exp']) < 40.hours.from_now
+  end
+
+  test 'should not generate JWT token if not authenticated' do
+    user = users(:quentin).login
+    pass = 'test'
+    @request.env['HTTP_AUTHORIZATION'] = ActionController::HttpAuthentication::Basic.encode_credentials(user, 'banana')
+
+    post :token
+    assert_response :unauthorized
+    assert response.body.empty?
+  end
+
   protected
 
   def cookie_for(user)

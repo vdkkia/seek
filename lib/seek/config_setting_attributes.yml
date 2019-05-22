@@ -196,3 +196,5 @@ nels_permalink_base:
 nels_use_dummy_client:
 allow_private_address_access:
 session_store_timeout:
+jwt_expiration:
+  convert: :to_i

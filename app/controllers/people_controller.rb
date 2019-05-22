@@ -8,7 +8,7 @@ class PeopleController < ApplicationController
   include RelatedItemsHelper
 
   before_action :find_and_authorize_requested_item, only: %i[show edit update destroy items]
-  before_action :current_user_exists, only: %i[register create new]
+  before_action :current_user_exists, only: %i[register create new me]
   before_action :is_during_registration, only: [:register]
   before_action :is_user_admin_auth, only: [:destroy]
   before_action :auth_to_create, only: %i[new create]
@@ -81,6 +81,10 @@ class PeopleController < ApplicationController
       format.xml
       format.json {render json: @person}
     end
+  end
+
+  def me
+    redirect_to current_person
   end
 
   def items

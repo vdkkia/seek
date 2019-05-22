@@ -29,6 +29,21 @@ class SessionsController < ApplicationController
     end
   end
 
+  def token
+    if current_user
+      expires_at = Seek::Config.jwt_expiration.hours.from_now
+
+      token = Seek::JsonWebToken.encode({ user_id: current_user.id }, expires_at)
+      respond_to do |format|
+        format.all { render json: { token: token, expires: expires_at.iso8601 }}
+      end
+    else
+      respond_to do |format|
+        format.all { head :unauthorized }
+      end
+    end
+  end
+
   def destroy
     logout_user
     flash[:notice] = "You have been logged out."

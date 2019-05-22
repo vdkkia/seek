@@ -155,6 +155,7 @@ SEEK::Application.routes.draw do
       get :index
       get :show
       get :auto_openid
+      post :token
     end
     member do
       get :show
@@ -172,6 +173,7 @@ SEEK::Application.routes.draw do
       post :userless_project_selected_ajax
       post :items_for_result
       post :bulk_destroy
+      get :me
     end
     member do
       post :check_related_items

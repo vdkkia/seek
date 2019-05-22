@@ -12,7 +12,12 @@ module AuthenticatedSystem
     if defined? @current_user
       @current_user
     else
-      @current_user = (login_from_session || login_from_basic_auth || login_from_cookie || User.guest)
+      @current_user =
+          login_from_session ||
+          login_from_basic_auth ||
+          login_from_cookie ||
+          login_from_jwt ||
+          User.guest
     end
   end
 
@@ -130,4 +135,14 @@ module AuthenticatedSystem
     end
   end
 
+  def login_from_jwt
+    headers = ActionDispatch::Http::Headers.from_hash(request.env)
+    if headers['Authorization'].present? && headers['Authorization'].start_with?('Bearer')
+      jwt = headers['Authorization'].split(' ').last
+      hash = Seek::JsonWebToken.decode(jwt)
+      unless hash.nil?
+        self.current_user = User.find_by_id(hash[:user_id])
+      end
+    end
+  end
 end
