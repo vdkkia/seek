@@ -13,7 +13,7 @@ module Seek
       body = JWT.decode(token, Rails.application.secrets.secret_key_base, true,
                         { algorithm: Seek::Config.jwt_algorithm })[0]
       HashWithIndifferentAccess.new(body)
-    rescue
+    rescue JWT::DecodeError
       nil
     end
   end
