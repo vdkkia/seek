@@ -41,13 +41,7 @@ class Settings < ApplicationRecord
   end
 
   def self.to_hash(starting_with=nil)
-    vars = select(:var, :values)
-    vars = vars.where("var LIKE ?", "'#{starting_with}%'") if starting_with
-
-    result = HashWithIndifferentAccess.new
-    vars.each do |record|
-      result[record.var] = record.value
-    end
+    raise "Settings.to_hash was called unintentionally!"
   end
 
   class << self
