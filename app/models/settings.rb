@@ -29,11 +29,6 @@ class Settings < ApplicationRecord
   attr_encrypted :value, key: proc { Seek::Config.attr_encrypted_key }, marshal: true, marshaler: Marshal
   before_save :ensure_no_plaintext, if: :encrypt?
 
-  # Support old plugin
-  if defined?(SettingsDefaults::DEFAULTS)
-    @@defaults = SettingsDefaults::DEFAULTS.with_indifferent_access
-  end
-
   #destroy the specified settings record
   def self.destroy(var_name)
     var_name = var_name.to_s
@@ -132,13 +127,11 @@ class Settings < ApplicationRecord
   end
 
   def self.defaults
-    if (defined? @@defaults) && @@defaults
-      @@defaults
-    else
-      @@defaults = {}.with_indifferent_access
-      load_seek_config_defaults!
-      defaults
+    unless (defined? @defaults) && @defaults
+      @defaults = {}.with_indifferent_access
     end
+
+    @defaults
   end
 
   private

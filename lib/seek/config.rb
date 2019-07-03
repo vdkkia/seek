@@ -273,8 +273,8 @@ module Seek
     end
 
     def soffice_available?(cached=true)
-      @@soffice_available = nil unless cached
-      @@soffice_available ||= begin
+      @soffice_available = nil unless cached
+      @soffice_available ||= begin
         port = ConvertOffice::ConvertOfficeConfig.options[:soffice_port]
         soc = TCPSocket.new('localhost', port)
         soc.close
@@ -306,37 +306,20 @@ module Seek
       val
     end
 
-    use_db = begin
-      Settings.table_exists?
-    rescue StandardError
-      false
+    def get_value(setting, conversion = nil)
+      result = Settings.global.fetch(setting)
+      if result
+        val = result.value
+      else
+        val = Settings.defaults[setting.to_s]
+      end
+      val = val.send(conversion) if conversion && val
+      val
     end
 
-    if use_db
-      def get_value(setting, conversion = nil)
-        result = Settings.global.fetch(setting)
-        if result
-          val = result.value
-        else
-          val = Settings.defaults[setting.to_s]
-        end
-        val = val.send(conversion) if conversion && val
-        val
-      end
-
-      def set_value(setting, val, conversion = nil)
-        val = val.send(conversion) if conversion && val
-        Settings.global[setting] = val
-      end
-    else
-      def get_value(setting, conversion = nil)
-        get_default_value(setting, conversion)
-      end
-
-      def set_value(setting, val, conversion = nil)
-        val = val.send(conversion) if conversion && val
-        Settings.defaults[setting.to_sym] = val
-      end
+    def set_value(setting, val, conversion = nil)
+      val = val.send(conversion) if conversion && val
+      Settings.global[setting] = val
     end
 
     def merge!(var, value)
@@ -379,7 +362,7 @@ module Seek
     end
 
     def encrypted_settings
-      @@encrypted_settings ||= []
+      @encrypted_settings ||= []
     end
 
     def encrypted_setting?(setting)
