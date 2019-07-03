@@ -30,7 +30,7 @@ require 'private_address_check_monkeypatch'
 SEEK::Application.configure do
   ASSET_ORDER = ['Person', 'Project', 'Institution', 'Investigation', 'Study', 'Assay', 'Strain', 'DataFile', 'Model', 'Sop', 'Publication', 'Presentation','SavedSearch', 'Organism', 'Event']
 
-  Seek::Config.propagate_all
+  Seek::Config.propagate_all if SEEK::Application.database_available?
 
   #Need to load defaut_locale file for internationalization used in Inflector below
   #coz this file is loaded at a later point

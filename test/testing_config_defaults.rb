@@ -61,10 +61,6 @@ Seek::Config.default :datacite_username, 'test'
 Seek::Config.default :datacite_password, 'test'
 Seek::Config.default :time_lock_doi_for, 0
 
-Seek::Config.fixed :css_prepended,''
-Seek::Config.fixed :css_appended,''
-Seek::Config.fixed :main_layout,'application'
-
 Seek::Config.default :faceted_browsing_enabled, false
 Seek::Config.default :facet_enable_for_pages, {:people => true, :projects => false, :institutions => false, :programmes => false, :investigations => false,:studies => false, :assays => true, :data_files => true, :models => true,:sops => true, :publications => true,:events => false, :strains => false, :presentations => false}
 Seek::Config.default :faceted_search_enabled,  false

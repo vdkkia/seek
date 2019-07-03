@@ -171,9 +171,9 @@ Seek::Config.default :permissions_popup, Seek::Config::PERMISSION_POPUP_ALWAYS
 
 Seek::Config.default :auth_lookup_update_batch_size, 10
 
-Seek::Config.fixed :css_prepended,''
-Seek::Config.fixed :css_appended,''
-Seek::Config.fixed :main_layout,'application'
+Seek::Config.default :css_prepended,''
+Seek::Config.default :css_appended,''
+Seek::Config.default :main_layout,'application'
 
 Seek::Config.default :datacite_url, 'https://mds.datacite.org/'
 Seek::Config.default :zenodo_publishing_enabled, false
