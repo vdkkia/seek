@@ -14,14 +14,12 @@ module SEEK
     # Since Rails 5, the app is booted even if database is not there.
     # This can cause issues when accessing the database in initializers.
     # To check the database is available, call `SEEK::Application.database_available?`.
-    config.x.database_available = begin
-      Settings.table_exists?
-    rescue StandardError
-      false
-    end
-
     def self.database_available?
-      config.x.database_available
+      begin
+        ActiveRecord::Base.connected? && Settings.table_exists?
+      rescue StandardError
+        false
+      end
     end
 
     config.eager_load_paths << Rails.root.join('lib')
