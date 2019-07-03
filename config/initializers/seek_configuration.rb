@@ -146,8 +146,6 @@ Seek::Config.default :site_base_host,"http://localhost:3000"
 Seek::Config.default :open_id_authentication_store,:memory
 Seek::Config.default :session_store_timeout, 1.hour
 
-
-
 #MERGENOTE - why are these here? they should be in the database under the Scale model. Maybe an old relic
 Seek::Config.default :scales,["organism","liver","liverLobule","intercellular","cell"]
 
@@ -223,3 +221,7 @@ Seek::Config.default :nels_api_url, 'https://test-fe.cbu.uib.no/nels-api'
 Seek::Config.default :nels_oauth_url, 'https://test-fe.cbu.uib.no/oauth2'
 Seek::Config.default :nels_permalink_base, 'https://test-fe.cbu.uib.no/nels/pages/sbi/sbi.xhtml'
 Seek::Config.default :nels_use_dummy_client, false
+
+if Rails.env.test?
+  require_relative '../../test/testing_config_defaults'
+end

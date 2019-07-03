@@ -22,7 +22,6 @@ require 'minitest/reporters'
 require 'minitest'
 require 'ostruct'
 require 'pry'
-require 'testing_config_defaults'
 
 Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new]
 
