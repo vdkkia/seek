@@ -287,34 +287,34 @@ module Seek
 
   # The inner wiring. Ideally this should be hidden away,
   module Wiring
-    def default(setting, value)
-      Settings.defaults[setting] = value
+    def default(key, value)
+      Settings.defaults[key] = value
     end
 
     def define_class_method(method, *args, &block)
       singleton_class.instance_eval { define_method method.to_sym, *args, &block }
     end
 
-    def get_default_value(setting, conversion = nil)
-      val = Settings.defaults[setting.to_sym]
+    def get_default_value(key, conversion = nil)
+      val = Settings.defaults[key.to_sym]
       val = val.send(conversion) if conversion && val
       val
     end
 
-    def get_value(setting, conversion = nil)
-      result = Settings.global.fetch(setting)
+    def get_value(key, conversion = nil)
+      result = Settings.global.fetch(key)
       if result
         val = result.value
       else
-        val = Settings.defaults[setting.to_s]
+        val = Settings.defaults[key.to_s]
       end
       val = val.send(conversion) if conversion && val
       val
     end
 
-    def set_value(setting, val, conversion = nil)
+    def set_value(key, val, conversion = nil)
       val = val.send(conversion) if conversion && val
-      Settings.global[setting] = val
+      Settings.global[key] = val
     end
 
     def merge!(var, value)
@@ -325,43 +325,43 @@ module Seek
       result
     end
 
-    def setting(setting, options = {})
+    def register_setting(key, options = {})
       options ||= {}
-      setter = "#{setting}="
-      getter = setting.to_s
+      setter = "#{key}="
+      getter = key.to_s
       propagate = "#{getter}_propagate"
       fallback = "#{getter}_fallback"
-      default = "default_#{setting}"
+      default = "default_#{key}"
       if respond_to?(fallback)
         define_class_method getter do
-          get_value(setting, options[:convert]) || send(fallback)
+          get_value(key, options[:convert]) || send(fallback)
         end
       else
         define_class_method getter do
-          get_value(setting, options[:convert])
+          get_value(key, options[:convert])
         end
       end
 
       define_class_method default do
-        get_default_value(setting, options[:convert])
+        get_default_value(key, options[:convert])
       end
 
       define_class_method setter do |val|
-        set_value(setting, val, options[:convert])
+        set_value(key, val, options[:convert])
         send propagate if respond_to?(propagate)
       end
     end
 
-    def register_encrypted_setting(setting)
-      encrypted_settings << setting.to_sym
+    def register_encrypted_setting(key)
+      encrypted_settings << key.to_sym
     end
 
     def encrypted_settings
       @encrypted_settings ||= []
     end
 
-    def encrypted_setting?(setting)
-      encrypted_settings.include?(setting.to_sym)
+    def encrypted_setting?(key)
+      encrypted_settings.include?(key.to_sym)
     end
   end
 
@@ -389,7 +389,7 @@ module Seek
     end
 
     read_setting_attributes.each do |method, opts|
-      setting method, opts
+      register_setting(method, opts)
       register_encrypted_setting(method) if opts && opts[:encrypt]
     end
 
