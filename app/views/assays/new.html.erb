@@ -1,3 +1,6 @@
+<%= render :partial=>"homes/isabreadcrumb", locals: {step:'assay'} -%>
+
+
 <% investigations = Investigation.all.select &:can_view?
    studies=[]
    investigations.each do |i|

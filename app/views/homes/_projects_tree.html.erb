@@ -1,0 +1,56 @@
+<%= panel('Existing projects', id: 'existingprojects', body_options: {class: 'feed'}) do %>
+
+  <div id="tree">
+    <ul>
+      <li data-jstree='{"icon":"glyphicon glyphicon-folder-close"}'>
+        <i></i>
+        <i></i> <span>Project #1  <a href="#"><small><i class="glyphicon glyphicon-plus" ></i><b>Investigation</b></small></a></span>
+        <ul>
+          <li data-jstree='{"icon":"glyphicon glyphicon-search"}'>
+            <i></i>
+            <i></i><span>Investigation #1  <a href="#"><small><i class="glyphicon glyphicon-plus" ></i><b>Study</b></small></a></span>
+          </li>
+          <li data-jstree='{"icon":"glyphicon glyphicon-search"}'>
+            <i></i>
+            <i></i><span>Investigation #2  <a href="#"><small><i class="glyphicon glyphicon-plus" ></i><b>Study</b></small></a></span>
+            <ul>
+              <li data-jstree='{"icon":"glyphicon glyphicon-book"}'>
+                <i></i>
+                <i></i><span>Study #1  <a href="#"><small><i class="glyphicon glyphicon-plus" ></i><b>Assay</b></small></a></span>
+                <ul>
+                  <li data-jstree='{"icon":"glyphicon glyphicon-tasks"}'>
+                    <i></i>
+                    <i></i>Assay #1
+                </ul>
+              </li>
+              <li data-jstree='{"icon":"glyphicon glyphicon-book"}'>
+                <i></i>
+                <i></i><span>Study #2  <a href="#"><small><i class="glyphicon glyphicon-plus" ></i><b>Assay</b></small></a></span>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li data-jstree='{"icon":"glyphicon glyphicon-folder-close"}'>
+        <i></i>
+        <i></i><span>Project #2 <a href="#"><small><i class="glyphicon glyphicon-plus" ></i><b>Investigation</b></small></a></span>
+      </li>
+    </ul>
+  </div>
+
+  <script type="text/javascript">
+      $j(document).ready(function () {
+          $j('#tree').jstree().on('click','a',function(){
+              window.location=$(this).attr('href');
+          });
+      });
+
+
+
+  </script>
+  <style>
+    .addbtn{
+    }
+  </style>
+
+<% end %>

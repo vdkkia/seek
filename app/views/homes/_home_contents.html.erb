@@ -1,3 +1,6 @@
+
+<link rel="stylesheet" type="text/css" href="https://introjs.com/introjs.css">
+
 <% if SiteAnnouncement.headline_announcement -%>
     <%= alert_box('warning') do %>
         <%= site_annoucements_headline %>
@@ -13,8 +16,10 @@
     <% end %>
 
     <% if logged_in_and_registered? %>
+      <%= render :partial=>"dashboard" -%>
         <%= render :partial=>"user_activity" -%>
-    <% else %>
+
+  <% else %>
         <%= render :partial=>"home_activity_notifications" -%>
     <% end %>
   </div>
@@ -33,3 +38,9 @@
     <% end %>
   </div>
 </div>
+
+
+<%= render :partial=>"welcome" %>
+
+
+<script src="https://introjs.com/intro.js" async></script>
