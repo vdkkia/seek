@@ -17,6 +17,12 @@
   <%= f.text_field :experimentalists, :class=>"form-control" %>
 </div>
 
+<%= folding_panel("Sample type and data",false, id: 'sample_type_data',help_text: "Here you can specify the sample type and populate the sample table with sample data") do %>
+  <%= render :partial => 'sample_sources' %>
+  <%= render :partial => 'sample_type_data' %>
+<% end %>
+
+
 <%= folding_panel("#{t('investigation')} details") do %>
     <label class="required"><%= t('investigation') %></label>
     <div id="investigation_collection">

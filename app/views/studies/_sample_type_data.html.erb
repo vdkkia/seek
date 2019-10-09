@@ -1,0 +1,24 @@
+<label><%= "Sample Data" %></label>
+<table>
+  <table class="table tableX">
+    <thead class="thead-dark">
+
+    </thead>
+    <tbody>
+
+    </tbody>
+  </table>
+
+
+</table>
+
+<button type="button" class="btn btn-primary" onclick="AddCell();">Add Col</button>
+<input type="text" id="col_name" placeholder="Type column name">
+<br>
+<button type="button" class="btn btn-primary" onclick="AddRow();">Add Row</button>
+
+<button type="button" class="btn btn-primary" onclick="ExportJSON();">Export to JSON</button>
+
+</div>
+
+<%= javascript_include_tag "table.js" %>

@@ -28,6 +28,9 @@
 
         <h3>Attributes</h3>
         <p class="help-block">Re-arrange attributes by clicking and dragging the button on the left-hand side of each row.</p>
+
+
+
         <table class="table" id="attribute-table">
           <thead>
           <tr>
@@ -40,11 +43,16 @@
           </tr>
           </thead>
           <tbody>
+
+
+
           <% @sample_type.sample_attributes.each_with_index do |sample_attribute, index| %>
               <%= render :partial => 'sample_attribute_form', :locals => { :index => index,
                                                                            :sample_attribute => sample_attribute,
                                                                            :sample_type=>@sample_type} %>
           <% end %>
+
+
 
           <% unless @sample_type.uploaded_template? || !@sample_type.editing_constraints.allow_new_attribute? %>
               <tr id="add-attribute-row">
@@ -55,6 +63,12 @@
           <% end %>
           </tbody>
         </table>
+
+
+
+
+
+
       </div>
 
       <% if @sample_type.new_record? %>
