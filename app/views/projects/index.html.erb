@@ -1,11 +1,24 @@
-<%= index_title -%>
-<%= render :partial=>"homes/projects_tree" -%>
-
-
-
+<div class="row">
+  <div class="col-lg-2"><%= index_title  -%></div>
+  <div class="col-lg-4">
+    <div class="input-group">
+      <input class="form-control" type="text" placeholder="Search a project..."/>
+      <div class="input-group-btn">   <button id="prj_search" type="button" class="btn btn-default" >
+          <span class="glyphicon glyphicon-search"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6"></div>
+</div>
+<br/>
 <% if @organisms -%>
   <h2><%= "#{t('project').pluralize} involved with the organism '"+h(@organisms)+"' ... " -%></h2>
 <% end %>
-
 <%= render :partial => "general/index_facets_or_paged" %>
-
+<style>
+  h1 {
+    margin: 0;
+      display: inline-block;
+  }
+</style>

@@ -1,5 +1,4 @@
 <%= panel('Existing projects', id: 'existingprojects', body_options: {class: 'feed'}) do %>
-
   <div class="container">
     <div class="row">
       <div class="col-lg-4 col-md-4 ">
@@ -25,46 +24,37 @@
                         <li data-jstree='{"icon":"glyphicon glyphicon-tasks"}'>
                           <i></i>
                           <i></i>Assay #1
-                      </ul>
-                    </li>
-                    <li data-jstree='{"icon":"glyphicon glyphicon-book"}'>
-                      <i></i>
-                      <i></i><span>Study #2  <a href="#"><small><i class="glyphicon glyphicon-plus"></i><b>Assay</b></small></a></span>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-            <li data-jstree='{"icon":"glyphicon glyphicon-folder-close"}'>
-              <i></i>
-              <i></i><span>Project #2 <a href="#"><small><i class="glyphicon glyphicon-plus"></i><b>Investigation</b></small></a></span>
-            </li>
-          </ul>
+                        </ul>
+                      </li>
+                      <li data-jstree='{"icon":"glyphicon glyphicon-book"}'>
+                        <i></i>
+                        <i></i><span>Study #2  <a href="#"><small><i class="glyphicon glyphicon-plus"></i><b>Assay</b></small></a></span>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+              <li data-jstree='{"icon":"glyphicon glyphicon-folder-close"}'>
+                <i></i>
+                <i></i><span>Project #2 <a href="#"><small><i class="glyphicon glyphicon-plus"></i><b>Investigation</b></small></a></span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
-
-
-      <div class="desc col-lg-8 col-md-8">
-        asd
-      </div>
     </div>
-  </div>
-  <script type="text/javascript">
+    <script type="text/javascript">
       $j(document).ready(function () {
           $j('#tree').jstree().on('click', 'a', function () {
               window.location = $(this).attr('href');
           });
       });
-
-
-  </script>
-  <style>
-   .desc{
-     border:1px solid #ddd;
-     padding:10px;
-     border-radius: 5px;
-   }
-
-  </style>
-
-<% end %>
+    </script>
+    <style>
+      .desc{
+        border:1px solid #ddd;
+        padding:10px;
+        border-radius: 5px;
+      }
+    </style>
+  <% end %>
