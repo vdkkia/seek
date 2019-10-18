@@ -819,3 +819,8 @@ z_file: 'file_icons/small/z.png'
 zabw_file: 'file_icons/small/zabw.png'
 zip2_file: 'file_icons/small/zip2.png'
 zoo_file: 'file_icons/small/zoo.png' 
+html: 'html.png'
+doc: 'doc.png'
+pdf: 'pdf.png'
+xls: 'xls.png'
+
