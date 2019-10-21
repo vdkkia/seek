@@ -1,3 +1,5 @@
+let selectedFile = '';
+
 function AddCell() {
     let colCount = $j('.tableX').columnCount() + 1;
     let newColName = $j("#col_name").val();
@@ -83,10 +85,27 @@ function ExportJSON() {
     }).get();
 
     console.log(tbl);
-
 }
 
+function setCookie(c_name, value, expireminutes) {
+    var exdate = new Date();
+    exdate.setMinutes(exdate.getMinutes() + expireminutes);
+    document.cookie = c_name + "=" + escape(value) +
+        ((expireminutes == null) ? "" : ";expires=" + exdate.toUTCString());
+}
 
+function getCookie(c_name) {
+    if (document.cookie.length > 0) {
+        c_start = document.cookie.indexOf(c_name + "=");
+        if (c_start != -1) {
+            c_start = c_start + c_name.length + 1;
+            c_end = document.cookie.indexOf(";", c_start);
+            if (c_end == -1) c_end = document.cookie.length;
+            return unescape(document.cookie.substring(c_start, c_end));
+        }
+    }
+    return "";
+}
 
 function populateSampleSourceTable(sourceId) {
     let cols = ['Developmental stage', 'Material Type', 'Organism', 'Organism part', 'Age', 'Genotype',
@@ -133,8 +152,26 @@ function populateSampleSourceTable(sourceId) {
     }
 
     $j('.tableX thead').append('<tr>' + temp + '</tr>');
-    AddRow();
-    AddRow();
-    AddRow();
+
 
 }
+
+
+$j(".UL").on("click", ".file", function(event) {
+    let R = $j('.tableX').prop('outerHTML')
+    setCookie(selectedFile, R, 1000000)
+
+    let fileName = $j(this).text();
+
+    let E = getCookie(fileName);
+    if (E.length > 60) {
+        $j('.tableX').empty();
+        $j('.tableX').html(E)
+    }
+    selectedFile = fileName;
+    $j('.UL li').each(function() {
+        $j(this).removeClass("file_selected")
+    });
+    $j(this).parent().addClass("file_selected")
+
+});

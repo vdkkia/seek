@@ -1,518 +1,570 @@
-<%= stylesheet_link_tag 'application', 'https://fonts.googleapis.com/css?family=Space+Mono&display=swap' %>
-<%= render :partial => "general/item_title",:locals => {:item=>@project, :buttons_partial => 'projects/buttons'} %>
-<div class="row">
-  <div class="col-md-12  box_about_actor">
-    <%= item_description @project.description -%>
-    <div class="row">
-      <div id="treeview" class="col-lg-2 ">
-        <div id="html" class="demo"></div>
-      </div>
-      <div id="contents" class="col-lg-10" style="background-color:aliceblue;border-radius: 5px;padding:10px">
-        <div id="details" class="col-lg-12 p-2">
-          <span id="event_result"></span>
-          <div id="Detail" >
-            <div class="row"  id="detailContent">
-              <div class="col-lg-8" style="background-color: white;margin-bottom: 5px; border-radius: 5px;padding:15px;border:#ddd solid 1px" id="_header">
-                <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Project</span></p>
-                <p id="description"> <strong>Description:</strong> <span id="descriptionContent">Project description</span> </p>
-                <div id="projectHeaderDetails">
-                <% if @project.respond_to?(:project_coordinators) %>
-                  <p class="project_coordinators">
-                    <strong>Project Coordinators:</strong>
-                    <%= project_coordinators_link_list @project %>
-                  </p>
-                <% end%>
-                <% if logged_in_and_registered? %>
-                  <p class="project_administrators">
-                    <strong><%= t('project_administrator').pluralize %>:</strong>
-                    <%= project_administrator_link_list @project %>
-                  </p>
-                <% end %>
-                <% if admin_logged_in? || @project.has_member?(current_user) %>
-                  <p class="asset_housekeepers">
-                    <strong><%= t('asset_housekeeper').pluralize %>:</strong>
-                    <%= asset_housekeepers_link_list @project %>
-                  </p>
-                  <p class="asset_gatekeepers">
-                    <strong><%= t('asset_gatekeeper').pluralize %>:</strong>
-                    <%= gatekeepers_link_list @project %>
-                  </p>
-                <% end %>
-                <p>
-                  <% if @project.start_date %>
-                    <strong><%= t('project') -%> start date:</strong>
-                    <%= date_as_string(@project.start_date, false) -%>
-                  <% else %>
-                    <strong><%= t('project') -%> created:</strong>
-                    <%= date_as_string(@project.created_at, false) %>
-                  <% end %>
-                </p>
-                <% if @project.end_date %>
-                  <p>
-                    <strong><%= t('project') -%> end date:</strong>
-                    <%= date_as_string(@project.end_date, false) -%>
-                  </p>
-                <% end %>
-                </div>
+<%= stylesheet_link_tag 'application', 'https://fonts.googleapis.com/css?family=Archivo+Narrow&display=swap' %>
+    <%= render :partial => "general/item_title",:locals => {:item=>@project, :buttons_partial => 'projects/buttons'} %>
+        <div class="row">
+            <div class="col-md-12  box_about_actor">
+                <%= item_description @project.description -%>
+                    <div class="row">
+                        <div class=col-lg-3>
+                        <div id="treeview" class="col-lg-12 treeview ">
+                            <div id="html" class="demo"></div>
+                        </div>
+                        </div>
+                        <div class="col-lg-9">
+                          <div id="contents" class="col-lg-12 container_main">
+                            <div id="details" class="col-lg-12 p-2">
+                                <span id="event_result"></span>
+                                <div id="Detail">
+                                    <div class="row" id="detailContent">
+                                        <div class="col-lg-8" style="background-color: white;margin-bottom: 5px; border-radius: 5px;padding:15px;border:#ddd solid 1px" id="_header">
+                                            <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Project</span></p>
+                                            <p id="description"> <strong>Description:</strong> <span id="descriptionContent">Project description</span> </p>
+                                            <div id="projectHeaderDetails">
+                                                <% if @project.respond_to?(:project_coordinators) %>
+                                                    <p class="project_coordinators">
+                                                        <strong>Project Coordinators:</strong>
+                                                        <%= project_coordinators_link_list @project %>
+                                                    </p>
+                                                    <% end%>
+                                                        <% if logged_in_and_registered? %>
+                                                            <p class="project_administrators">
+                                                                <strong><%= t('project_administrator').pluralize %>:</strong>
+                                                                <%= project_administrator_link_list @project %>
+                                                            </p>
+                                                            <% end %>
+                                                                <% if admin_logged_in? || @project.has_member?(current_user) %>
+                                                                    <p class="asset_housekeepers">
+                                                                        <strong><%= t('asset_housekeeper').pluralize %>:</strong>
+                                                                        <%= asset_housekeepers_link_list @project %>
+                                                                    </p>
+                                                                    <p class="asset_gatekeepers">
+                                                                        <strong><%= t('asset_gatekeeper').pluralize %>:</strong>
+                                                                        <%= gatekeepers_link_list @project %>
+                                                                    </p>
+                                                                    <% end %>
+                                                                        <p>
+                                                                            <% if @project.start_date %>
+                                                                                <strong><%= t('project') -%> start date:</strong>
+                                                                                <%= date_as_string(@project.start_date, false) -%>
+                                                                                    <% else %>
+                                                                                        <strong><%= t('project') -%> created:</strong>
+                                                                                        <%= date_as_string(@project.created_at, false) %>
+                                                                                            <% end %>
+                                                                        </p>
+                                                                        <% if @project.end_date %>
+                                                                            <p>
+                                                                                <strong><%= t('project') -%> end date:</strong>
+                                                                                <%= date_as_string(@project.end_date, false) -%>
+                                                                            </p>
+                                                                            <% end %>
+                                            </div>
 
-                <div id="investigationHeaderDetail">
-                   <div class="form-group">
-          <label>Shared with: </label>
-          <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span> 
-          <input type="text" />
-          </div>
-          </div>
-                
-                <div class="form-group">
-          <label>Permission: </label>
-          <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span> 
-          <span class="tag label label-default">Flora D'Anna<span data-role="remove"></span></span> 
-          <input type="text" />
-          </div>
-          </div>
-                          </div>
-                
-                   <div id="studyHeaderDetails">
-              <p><strong>Hypothesis: </strong> hypothesis description</p>
-                 <p><strong>Experimentalists: </strong> experimentalists description</p>
-                  <div class="form-group">
-          <label>Shared with: </label>
-          <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span> 
-          <input type="text" />
-          </div>
-          </div>
-              </div>
+                                            <div id="investigationHeaderDetail">
+                                                <div class="form-group">
+                                                    <label>Shared with: </label>
+                                                    <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>
 
-              </div>
+                                                <div class="form-group">
+                                                    <label>Permission: </label>
+                                                    <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span>
+                                                        <span class="tag label label-default">Flora D'Anna<span data-role="remove"></span></span>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>
+                                            </div>
 
-           
-              <div class="col-lg-4" id="projectDetails">
-                <%= render :partial => "layouts/contribution_section_box_avatar", :locals => { :object => @project } -%>
-                <% if @project.can_manage? %>
-                  <%= render :partial => 'general/storage_usage_box', locals: { programme: @project,
+                                            <div id="studyHeaderDetails">
+                                                <p><strong>Hypothesis: </strong> hypothesis description</p>
+                                                <p><strong>Experimentalists: </strong> experimentalists description</p>
+                                                <div class="form-group">
+                                                    <label>Shared with: </label>
+                                                    <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-lg-4" id="projectDetails">
+                                            <%= render :partial => "layouts/contribution_section_box_avatar", :locals => { :object => @project } -%>
+                                                <% if @project.can_manage? %>
+                                                    <%= render :partial => 'general/storage_usage_box', locals: { programme: @project,
                                                                     url: storage_report_project_path(@project)} %>
-                <% end %>
-              </div>
-            </div>
-            <div class="row" id="file_contents">
-              <div class="col-lg-12">
-                <div class="row">
-                  <div class="col-lg-2" id=files style="background-color: white;  min-height: 100vh; padding: 10px; border-radius: 5px; border:#ddd solid 1px">
-                    <div style="text-align: center;margin-right: auto; margin-left: auto;"> <strong>Files</strong></div>
-                    <hr/>
-                    <ul class="UL" style="list-style: none; font-size: 12px; font-family: 'Space Mono', monospace;padding: 0;">
-                     <li>empty</li>
-                          </ul>
-                        </div>
-                        <div class="col-lg-10 contents" id="contents" style="min-height: 100vh; padding: 10px;">
-                          <div style="text-align: center;margin-right: auto; margin-left: auto;"> 
-                            
-                            <div class="row">
-                              <div class="col-lg-12">
-                                <select id="sample_sources_id" class="form-control sample_sources_id">
-                                  <option value="">Please select a sample source</option>
-                                  <option value="1">Animal tissue</option>
-                                  <option value="2">Cell line</option>
-                                  <option value="3">Human tissue</option>
-                                  <option value="4">Plant</option>
-                                </select>
-                              </div>
-                              <br/>
-                              <br/>
-                              <div class="col-lg-12" style="margin: 0; padding:10px;">
-                                <table>
-                                  <table class="table tableX">
-                                    <thead class="thead-dark">
-                                    </thead>
-                                    <tbody>
-                                    </tbody>
-                                  </table>
-                                </table>
-                              </div>
-                            </div>
-                            <div class=row>
-                              <div class="col-lg-8">
-                              </div>
-                            </div>
-                            <div class="row">
-                               <form class="form-inline">
-                                 <button type="button" class="btn btn-primary" onclick="ExportJSON();">Export to JSON</button>
-                                <button type="button" class="btn btn-primary" onclick="AddRow();">Add Row</button>
-                                <button type="button" class="btn btn-primary" onclick="AddCell();">Add Col</button>
- 
-                                 <div class="form-group mx-sm-3 mb-2">
- 
-                                        <input type="text" id="col_name" class="form-control " placeholder="Type column name">
-                                  </div>
+                                                        <% end %>
+                                        </div>
+                                    </div>
+                                    <div class="row" id="file_contents">
+                                        <div class="col-lg-12">
+                                        <div class="row">
+                                         <div id=files >
+                                               
+                                                    <ul class="UL" >
+                                                        <li>empty</li>
+                                                    </ul>
+                                                </div></div>
+                                            <div class="row">
+                                               
+                                                <div class="col-lg-12 contents" id="contents" style="min-height: 100vh; padding: 10px;">
+                                                    <div style="text-align: center;margin-right: auto; margin-left: auto;">
 
-                            </form>
+                                                        <div class="row">
+                                                        <div class="col-lg-2" style="line-height:35px"> <label >Sample source:</label></div>
+                                                            <div class="col-lg-10">
+                                                                <select id="sample_sources_id" class="form-control sample_sources_id">
+                                                                    <option value="">Please select a sample source</option>
+                                                                    <option value="1">Animal tissue</option>
+                                                                    <option value="2">Cell line</option>
+                                                                    <option value="3">Human tissue</option>
+                                                                    <option value="4">Plant</option>
+                                                                </select>
+                                                            </div>
+                                                            <br/>
+                                                            <br/>
+                                                            <div class="col-lg-12" style="margin: 0; padding:10px;">
+                                                                <table>
+                                                                    <table class="table tableX">
+                                                                        <thead class="thead-dark">
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class=row>
+                                                            <div class="col-lg-8">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <form class="form-inline" style="text-align:left">
+                                                                <%# <button type="button" class="btn btn-primary" onclick="ExportJSON();">Export to JSON</button> %>
+                                                                <button type="button" class="btn btn-primary" onclick="AddRow();">Add Row</button>
+                                                                <button type="button" class="btn btn-primary" onclick="AddCell();">Add Col</button>
 
+                                                                <div class="form-group mx-sm-3 mb-2">
+
+                                                                    <input type="text" id="col_name" class="form-control " placeholder="Type column name">
+                                                                </div>
+
+                                                            </form>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>
+                      
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <style>
-            .UL li {
-                padding-bottom: 10px;
-                text-align: center;
-            }
-            
-            .UL li img {
-                margin-right: auto;
-                margin-left: auto;
-            }
-            .tableX{
-              background-color:white
-            }
-            .tableX th {
-           background-color:#000;
-           color:white
-            }
-             .tableX th:first-child {
-               border-top-left-radius:5px
-            }
-           .tableX th:last-child {
-               border-top-right-radius:5px
+                    <style>
+                        .UL li {
+                            padding-bottom: 10px;
+                            text-align: center;
+                             width: 110px;
+                             word-wrap: break-word;
+                             display: table-cell;
+                            border-radius:5px;
+                            padding:5px;
+                            
+                        }
+                        .UL li img {
+                            margin-right: auto;
+                            margin-left: auto;
+                            max-width:75px
+                        }
+                              .UL li a {
+                          cursor:pointer
+                        }
+                        .UL{
+                       display:table-row;
+                     list-style: none; 
+                     font-size: 14px; 
+                     font-family: 'Archivo Narrow', sans-serif;
+                     padding: 0;
+                        }
+                       
+                        .tableX {
+                            background-color: white
+                        }
+                        
+                        .tableX th {
+                            background-color: #000;
+                            color: white
+                        }
 
-            }
-          </style>
-          <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
-            <div style="clear:both;">
-              <b>
+                        tr:nth-child(even) {background: #eee}
+                        tr:nth-child(odd) {background: #FFF}
+                        
+                        .tableX th:first-child {
+                            border-top-left-radius: 5px
+                        }
+                        
+                        .tableX th:last-child {
+                            border-top-right-radius: 5px
+                        }
+                        
+                        .treeview {
+                            border: #ddd 1px solid;
+                            border-radius: 5px;
+                            overflow-x: scroll;
+                            min-height:500px
+                        }
+
+                        #files {
+                          background-color: white;  
+                          padding: 10px; 
+                          border-radius: 5px; 
+                          border:#ddd solid 1px
+                        }
+                        .container_main{
+                          background-color:aliceblue;border-radius: 5px;padding:10px;
+                          border:#ddd 1px solid
+                        }
+                        .file_selected{
+                          background-color:aliceblue;
+                          color:white
+                        }
+                    </style>
+                    <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
+                        <div style="clear:both;">
+                            <b>
                 Project Hierarchies
                 (<%= link_to "hide", '#', id: 'project-hierarchy-toggle' -%>):
-              </b><br/>
-              <br/>
-              <div id="project_hierarchy">
-                <ul><%= Rails.cache.fetch([:project_tree_editor, @project.cache_key]) { tree_editor_display Project, false, false, @project.id, "Person", true, true } %></ul>
-              </div>
-            </div>
-            <br/>
-            <div style="clear:both;">
-              <b>
+              </b>
+                            <br/>
+                            <br/>
+                            <div id="project_hierarchy">
+                                <ul>
+                                    <%= Rails.cache.fetch([:project_tree_editor, @project.cache_key]) { tree_editor_display Project, false, false, @project.id, "Person", true, true } %>
+                                </ul>
+                            </div>
+                        </div>
+                        <br/>
+                        <div style="clear:both;">
+                            <b>
                 <%= t('project') %> Members
                 (<%= link_to "show", '#', id: 'project-hierarchy-members-toggle' %>):
-              </b><br/>
-              <br/>
-              <div id="project_mailing_list" style="display: none;">
-                <%= project_mailing_list @project %>
-              </div>
-            </div>
-          <% end %>
-          <% if false%>
-            <%# get, classify and authorize all assets for this project -%>
-            <%= render :partial=>"general/items_related_to",:object => @project %>
-          <%end%>
-          <% if request_project_membership_button_enabled?(@project) %>
-            <%= render partial: 'request_membership_form', locals: { project: @project } %>
-          <% end %>
-          <script>
-            $j('#project-hierarchy-toggle').click(function () {
-                var el = $j('#project_hierarchy');
-            
-                if (el[0].style.display === 'none') {
-                    el.fadeIn();
-                    $j(this).text('hide');
-                } else {
-                    el.fadeOut();
-                    $j(this).text('show');
-                }
-            
-                return false;
-            });
-            
-            $j('#project-hierarchy-members-toggle').click(function () {
-                var el = $j('#project_mailing_list');
-            
-                if (el[0].style.display === 'none') {
-                    el.fadeIn();
-                    $j(this).text('hide');
-                } else {
-                    el.fadeOut();
-                    $j(this).text('show');
-                }
-            
-                return false;
-            });
-          </script>
-          <%=javascript_include_tag('table.js')%>
-          <script>
-               $j('#html').on('changed.jstree', function(e, data) {
-                let selected = data.instance.get_node(data.selected[0]).id;
-                // $('#event_result').html(selected);
-                $j('.PLACEHOLDER').empty();
-            
-            
-                $j("#prjDetail").hide();
-                $j("#presentationDetail").hide();
-                $j("#proposalsDetail").hide();
-            
-            
-                switch (selected) {
-                    case "j1_1": //Project
-                        {
-                          $j("#detailContent").show()
-                      $j("#projectDetails").show();
-                      $j("#_header").removeClass("col-lg-12")
-                        $j("#titleContent").text("Project title")
-                      $j("#file_contents").hide();
-                       $j("#projectHeaderDetails").show();
-                       $j("#investigationHeaderDetail").hide();
-                       $j("#studyHeaderDetails").hide();
-            
-            
-                            break;
-                        }
-                    case "j1_2":
-                        {
-            
-            
-                       $j("#detailContent").hide()
-                       $j("#file_contents").show();
-                       $j(".contents").hide();
-                   
-            
-                      
-            
-                            break;
-                        }
-                    case "j1_3":
-                        {
-                                   $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                     $j(".contents").hide();
-            
-            
-                            break;
-                        }
-                    case "j1_4":
-                        {
-                                   $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                  $j(".contents").hide();
-            
-                            break;
-                        }
-                    case "j1_5":
-                        {
-                                  $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                  $j(".contents").hide();
-                            break;
-                        }
-                    case "j1_6": //investigation
-                        {
-                       $j("#detailContent").show()
-                        $j("#projectDetails").hide();
-                         $j("#_header").addClass("col-lg-12")
-                         $j("#titleContent").text("Investigation title")
-                        $j("#descriptionContent").text("Investigation description")
-                        $j("#file_contents").hide();
-                         $j("#projectHeaderDetails").hide();
-                         $j("#investigationHeaderDetail").show();
-                         $j("#studyHeaderDetails").hide();
+              </b>
+                            <br/>
+                            <br/>
+                            <div id="project_mailing_list" style="display: none;">
+                                <%= project_mailing_list @project %>
+                            </div>
+                        </div>
+                        <% end %>
+                            <% if false%>
+                                <%# get, classify and authorize all assets for this project -%>
+                                    <%= render :partial=>"general/items_related_to",:object => @project %>
+                                        <%end%>
+                                            <% if request_project_membership_button_enabled?(@project) %>
+                                                <%= render partial: 'request_membership_form', locals: { project: @project } %>
+                                                    <% end %>
+                                                        <script>
+                                                            $j('#project-hierarchy-toggle').click(function() {
+                                                                var el = $j('#project_hierarchy');
 
-                        
-                            break;
-                        }
-                    case "j1_7":
-                        {
-                                 $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                  $j(".contents").hide();
-                            break;
-                        }
-                         case "j1_8"://proposal
-                        {
-                                  $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                  $j(".contents").show();
+                                                                if (el[0].style.display === 'none') {
+                                                                    el.fadeIn();
+                                                                    $j(this).text('hide');
+                                                                } else {
+                                                                    el.fadeOut();
+                                                                    $j(this).text('show');
+                                                                }
 
-                                     AddFile("proposal")
-                            break;
-                        }
-                         case "j1_9"://poster
-                        {
-                                   $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                 $j(".contents").show();
-                                     AddFile("poster")
-                            break;
-                        }
-                         case "j1_10"://slideshow
-                        {
-                                  $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                 $j(".contents").show();
-                                     AddFile("slideshow")
-                            break;
-                        }
-                         case "j1_11"://article
-                        {
-                                $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                 $j(".contents").show();
-                                     AddFile("article")
-                            break;
-                        }
-                    case "j1_12"://study
-                        {
-                         $j("#detailContent").show()
-                         $j("#file_contents").hide();
-                         $j("#projectHeaderDetails").hide();
-                         $j("#investigationHeaderDetail").hide();
-                         $j("#titleContent").text("Study title")
-                         $j("#descriptionContent").text("Study description")
-                         $j("#studyHeaderDetails").show();
-                                                        
+                                                                return false;
+                                                            });
 
-                                                        
-            
-            
-                            break;
-                        }
-                            case "j1_13":
-                        {
-                                  $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                 $j(".contents").show();
+                                                            $j('#project-hierarchy-members-toggle').click(function() {
+                                                                var el = $j('#project_mailing_list');
 
-                                 AddFile("study")
-                            break;
-                        }
-                         case "j1_14"://assay
-                        {
-                          $j("#detailContent").show()
-                          $j("#file_contents").hide();
-                          $j("#projectHeaderDetails").hide();
-                          $j("#investigationHeaderDetail").hide();
-                          $j("#studyHeaderDetails").hide();
-            
-           
-            
-                            break;
-                        }
-                            case "j1_15":
-                        {
-                                  $j("#detailContent").hide()
-                                 $j("#file_contents").show();
-                                  $j(".contents").hide();
-                            break;
-                        }
-                }
-            }).jstree({
-                'core': {
-                   "check_callback" : true,
-                    'data': [{
-                        "text": "Project",
-                        "a_attr": {
-                            "style": "font-weight:bold"
-                        },
-                        "state": {
-                            "opened": true,
-                            "selected": true,
-                        },
-            
-                        "children": [{
-                            "text": "Presentations (0)",
-                            "children": [{
-                                "text": "Proposals (0)"
-                            }, {
-                                "text": "Posters (0)"
-                            }, {
-                                "text": "Slideshows (0)"
-                            }]
-                        }, {
-                            "text": "Investigation",
-                            "a_attr": {
-                                "style": "font-weight:bold"
-                            },
-                            "state": {
-                                "opened": true
-                            },
-                            "children": [{
-                                "text": "Presentations (0)",
-                             
-                                "children": [{
-                                    "text": "Proposals (1)"
-                                }, {
-                                    "text": "Posters (1)"
-                                }, {
-                                    "text": "Slideshows (1)"
-                                }, {
-                                    "text": "Articles (1)"
-                                }]
-                            }, {
-                                "text": "Study",
-                                "state": {
-                                    "opened": true
-                                },
-                                "a_attr": {
-                                    "style": "font-weight:bold"
-                                },
-                                "children": [{
-                                    "text": "Files (3)"
-                                }, {
-                                    "text": "Assay",
-                                    "state": {
-                                        "opened": true
-                                    },
-                                    "a_attr": {
-                                        "style": "font-weight:bold"
-                                    },
-                                    "children": [{
-                                        "text": "Files (0)"
-                                    }, ]
-                                }, ]
-                            }, ]
-                        }, ]
-                    }]
-                },
-                'plugins' : [  "contextmenu" ] 
-            });
-          </script>
+                                                                if (el[0].style.display === 'none') {
+                                                                    el.fadeIn();
+                                                                    $j(this).text('hide');
+                                                                } else {
+                                                                    el.fadeOut();
+                                                                    $j(this).text('show');
+                                                                }
 
-          <script>
-          function AddFile(inp){
-            let base  = $j(".UL")
-            base.empty();
+                                                                return false;
+                                                            });
+                                                        </script>
+                                                        <%=javascript_include_tag('table.js')%>
+                                                            <script>
+                                                                $j('#html').on('changed.jstree', function(e, data) {
+                                                                    let selected = data.instance.get_node(data.selected[0]).id;
+                                                                    // $('#event_result').html(selected);
+                                                                    $j('.PLACEHOLDER').empty();
 
-            switch(inp)
-            {
-              case "study":
-                {
-                  base.append('<li><img src="/assets/xls.png"> <br><a href="#">Sample_Source.csv</a></li>')
-                  base.append('<li><img src="/assets/xls.png"> <br><a href="#">Explanatory_variables.csv</a></li>')
-                  base.append('<li><img src="/assets/xls.png"> <br><a href="#">Study_workflow.csv</a></li>')
-                  break;
-                }
-                case "slideshow":
-                  {
-                    base.append('<li><img src="/assets/html.png"> <br><a href="#">spaces_v000.ppt</a></li>')
-                    break;
-                  }
-                    case "poster":
-                  {
-                    base.append('<li><img src="/assets/pdf.png"> <br><a href="#">spaces_v000.svg</a></li>')
-                    break;
-                  }
-                    case "article":
-                  {
-                    base.append('<li><img src="/assets/doc.png"> <br><a href="#">spaces_v000.doc</a></li>')
-                    break;
-                  }
-                    case "proposal":
-                  {
-                    base.append('<li><img src="/assets/doc.png"> <br><a href="#">NASURv000.doc</a></li>')
-                    break;
-                  }
-               
-            }
-          }
-          </script>
+                                                                    $j("#prjDetail").hide();
+                                                                    $j("#presentationDetail").hide();
+                                                                    $j("#proposalsDetail").hide();
+
+                                                                    switch (selected) {
+                                                                        case "j1_1": //Project
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                                $j("#projectDetails").show();
+                                                                                $j("#_header").removeClass("col-lg-12")
+                                                                                $j("#titleContent").text("Project title")
+                                                                                $j("#file_contents").hide();
+                                                                                $j("#projectHeaderDetails").show();
+                                                                                $j("#investigationHeaderDetail").hide();
+                                                                                $j("#studyHeaderDetails").hide();
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_2":
+                                                                            {
+
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").hide();
+                                                                                 AddFile("");
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_3":
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").hide();
+                                                                                 AddFile("");
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_4":
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").hide();
+                                                                                 AddFile("");
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_5":
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").hide();
+                                                                                 AddFile("");
+                                                                                break;
+                                                                            }
+                                                                        case "j1_6": //investigation
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                                $j("#projectDetails").hide();
+                                                                                $j("#_header").addClass("col-lg-12")
+                                                                                $j("#titleContent").text("Investigation title")
+                                                                                $j("#descriptionContent").text("Investigation description")
+                                                                                $j("#file_contents").hide();
+                                                                                $j("#projectHeaderDetails").hide();
+                                                                                $j("#investigationHeaderDetail").show();
+                                                                                $j("#studyHeaderDetails").hide();
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_7":
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").hide();
+                                                                                 AddFile("");
+                                                                                break;
+                                                                            }
+                                                                        case "j1_8": //proposal
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+
+                                                                                AddFile("proposal")
+                                                                                break;
+                                                                            }
+                                                                        case "j1_9": //poster
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("poster")
+                                                                                break;
+                                                                            }
+                                                                        case "j1_10": //slideshow
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("slideshow")
+                                                                                break;
+                                                                            }
+                                                                        case "j1_11": //article
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("article")
+                                                                                break;
+                                                                            }
+                                                                        case "j1_12": //study
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                                $j("#file_contents").hide();
+                                                                                $j("#projectHeaderDetails").hide();
+                                                                                $j("#investigationHeaderDetail").hide();
+                                                                                $j("#titleContent").text("Study title")
+                                                                                $j("#descriptionContent").text("Study description")
+                                                                                $j("#studyHeaderDetails").show();
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_13":
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+
+                                                                                AddFile("study")
+                                                                                break;
+                                                                            }
+                                                                        case "j1_14": //assay
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                                $j("#file_contents").hide();
+                                                                                $j("#projectHeaderDetails").hide();
+                                                                                $j("#investigationHeaderDetail").hide();
+                                                                                $j("#studyHeaderDetails").hide();
+
+                                                                                break;
+                                                                            }
+                                                                        case "j1_15":
+                                                                            {
+                                                                                $j("#detailContent").hide()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").hide();
+                                                                                AddFile("");
+                                                                                break;
+                                                                            }
+                                                                    }
+                                                                }).jstree({
+                                                                    'core': {
+                                                                        "check_callback": true,
+                                                                        'data': [{
+                                                                            "text": "Project",
+                                                                            "a_attr": {
+                                                                                "style": "font-weight:bold"
+                                                                            },
+                                                                            "state": {
+                                                                                "opened": true,
+                                                                               // "selected": true,
+                                                                            },
+
+                                                                            "children": [{
+                                                                                "text": "Presentations <span class='badge'>0</span>",
+                                                                                "children": [{
+                                                                                    "text": "Proposals <span class='badge'>0</span>"
+                                                                                }, {
+                                                                                    "text": "Posters <span class='badge'>0</span>"
+                                                                                }, {
+                                                                                    "text": "Slideshows <span class='badge'>0</span>"
+                                                                                }]
+                                                                            }, {
+                                                                                "text": "Investigation",
+                                                                                "a_attr": {
+                                                                                    "style": "font-weight:bold"
+                                                                                },
+                                                                                "state": {
+                                                                                    "opened": true
+                                                                                },
+                                                                                "children": [{
+                                                                                    "text": "Presentations   <span class='badge'>0</span>",
+
+                                                                                    "children": [{
+                                                                                        "text": "Proposals <span class='badge'>1</span>"
+                                                                                    }, {
+                                                                                        "text": "Posters <span class='badge'>1</span>"
+                                                                                    }, {
+                                                                                        "text": "Slideshows <span class='badge'>1</span>"
+                                                                                    }, {
+                                                                                        "text": "Articles <span class='badge'>1</span>"
+                                                                                    }]
+                                                                                }, {
+                                                                                    "text": "Study",
+                                                                                    "state": {
+                                                                                        "opened": true
+                                                                                    },
+                                                                                    "a_attr": {
+                                                                                        "style": "font-weight:bold"
+                                                                                    },
+                                                                                    "children": [{
+                                                                                        "text": "Files <span class='badge'>4</span>",
+                                                                                        "state":{
+                                                                                           "selected": true,
+                                                                                        }
+                                                                                    }, {
+                                                                                        "text": "Assay",
+                                                                                        "state": {
+                                                                                            "opened": true
+                                                                                        },
+                                                                                        "a_attr": {
+                                                                                            "style": "font-weight:bold"
+                                                                                        },
+                                                                                        "children": [{
+                                                                                            "text": "Files <span class='badge'>0</span>"
+                                                                                        }, ]
+                                                                                    }, ]
+                                                                                }, ]
+                                                                            }, ]
+                                                                        }]
+                                                                    },
+                                                                    'plugins': ["contextmenu"]
+                                                                });
+                                                            </script>
+
+                                                            <script>
+                                                                function AddFile(inp) {
+                                                                    let base = $j(".UL")
+                                                                    base.empty();
+
+                                                                    switch (inp) {
+                                                                        case "study":
+                                                                            {
+                                                                                base.append('<li><img src="/assets/csv.png"> <br><a class="file"  >Sample Source</a></li>')
+                                                                                base.append('<li><img src="/assets/csv.png"> <br><a class="file"  >Explanatory variables</a></li>')
+                                                                                base.append('<li><img src="/assets/xls.png"> <br><a class="file"  >Covariates</a></li>')
+                                                                                base.append('<li><img src="/assets/svg.png"> <br><a class="file"  >Study workflow</a></li>')
+                                                                                   
+                                                                                break;
+                                                                            }
+                                                                        case "slideshow":
+                                                                            {
+                                                                                base.append('<li><img src="/assets/ppt.png"> <br><a >spaces_v000</a></li>')
+                                                                                break;
+                                                                            }
+                                                                        case "poster":
+                                                                            {
+                                                                                base.append('<li><img src="/assets/jpg.png"> <br><a  class="file" >spaces_v000</a></li>')
+                                                                                break;
+                                                                            }
+                                                                        case "article":
+                                                                            {
+                                                                                base.append('<li><img src="/assets/doc.png"> <br><a class="file">spaces_v000</a></li>')
+                                                                                break;
+                                                                            }
+                                                                        case "proposal":
+                                                                            {
+                                                                                base.append('<li><img src="/assets/ppt.png"> <br><a class="file" >NASURv000</a></li>')
+                                                                                break;
+                                                                            }
+                                                                            case "":{
+                                                                              base.append("<li style='padding:0'><br/>Empty folder <br/><br/></li>")
+                                                                            }
+
+                                                                    }
+                                                                }
+                                                            </script>
