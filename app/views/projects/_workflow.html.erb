@@ -28,25 +28,25 @@
 
 
                             // Panzoom initialization...
-                            $flowchart.panzoom();
+                            //$flowchart.panzoom();
 
                             // Centering panzoom
-                            $flowchart.panzoom('pan', -cx + $container.width() / 2, -cy + $container.height() / 2);
+                            //$flowchart.panzoom('pan', -cx + $container.width() / 2, -cy + $container.height() / 2);
 
                             // Panzoom zoom handling...
-                            var possibleZooms = [0.5, 0.75, 1, 2, 3];
-                            var currentZoom = 2;
-                            $container.on('mousewheel.focal', function(e) {
-                                e.preventDefault();
-                                var delta = (e.delta || e.originalEvent.wheelDelta) || e.originalEvent.detail;
-                                var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
-                                currentZoom = Math.max(0, Math.min(possibleZooms.length - 1, (currentZoom + (zoomOut * 2 - 1))));
-                                $flowchart.flowchart('setPositionRatio', possibleZooms[currentZoom]);
-                                $flowchart.panzoom('zoom', possibleZooms[currentZoom], {
-                                    animate: false,
-                                    focal: e
-                                });
-                            });
+                           // var possibleZooms = [0.5, 0.75, 1, 2, 3];
+                            var currentZoom =1;
+                            // $container.on('mousewheel.focal', function(e) {
+                            //     e.preventDefault();
+                            //     var delta = (e.delta || e.originalEvent.wheelDelta) || e.originalEvent.detail;
+                            //     var zoomOut = delta ? delta < 0 : e.originalEvent.deltaY > 0;
+                            //     currentZoom = Math.max(0, Math.min(possibleZooms.length - 1, (currentZoom + (zoomOut * 2 - 1))));
+                            //     $flowchart.flowchart('setPositionRatio', possibleZooms[currentZoom]);
+                            //     $flowchart.panzoom('zoom', possibleZooms[currentZoom], {
+                            //         animate: false,
+                            //         focal: e
+                            //     });
+                            // });
 
                             // Apply the plugin on a standard, empty div...
                             var $operatorProperties = $j('#operator_properties');
@@ -210,13 +210,17 @@
    <div class="draggable_operators">
 
                         <div class="draggable_operators_divs">
-                            <div class="draggable_operator ui-draggable ui-draggable-handle btn btn-primary" data-nb-inputs="1" data-nb-outputs="1" data-shape='oval'>Oval</div>
-                            <div class="draggable_operator ui-draggable ui-draggable-handle btn btn-primary" data-nb-inputs="1" data-nb-outputs="1" data-shape='rectangle'>Rectangle</div>
-                            <div class="draggable_operator ui-draggable ui-draggable-handle btn btn-primary" data-nb-inputs="1" data-nb-outputs="1" data-shape='parallelogram'>Parallelogram</div>
+                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn oval_button" data-nb-inputs="1" data-nb-outputs="2" data-shape='oval'>Source material</div> &nbsp;
+                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn rectangle_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='rectangle'>Method</div>&nbsp;&nbsp;&nbsp;
+                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn parallelogram_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='parallelogram'>Output/input material</div>&nbsp
+
+                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn parallelogram_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='parallelogram'>Output</div>&nbsp;
+                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn oval_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='oval'>Data analysis</div>&nbsp;
+
                             <%# <input type="button" value="Delete" class="btn btn-primary" onclick="Delete();" /> %>
                             &emsp;
                             &emsp;
-                            <input type="button" class="btn btn-primary" value="Save" onclick="saveWorkflow();">
+                            <input type="button" class="btn btn-primary" value="Save" onclick="saveWorkflow();" style="float:right">
                         </div>
                     </div>
                

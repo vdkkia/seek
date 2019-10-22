@@ -52,7 +52,7 @@
     height: 0px;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 10px solid #004278;
+    border-left: 10px solid #ad7f00;
     position: absolute;
     top: 0px;
 }
@@ -106,9 +106,9 @@
 
 .flowchart-operator {
     position: absolute;
-    width: 140px;
-    border: 1px solid #004278;
-    background: #008cff;
+    width: 120px;
+    border: 1px solid #d99f00;
+    background: #fcba03;
     pointer-events: initial;
     vertical-align: middle;
     /* transform: skew(20deg); */
@@ -122,17 +122,10 @@
     border-color: #555;
 }
 
-.flowchart-operator .flowchart-operator-title {
-    /* ... */
-    /* transform: skew(-20deg); */
-    color: white
-}
-
 .flowchart-operator .flowchart-operator-inputs-outputs {
     display: table;
     width: 100%;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 12px;
 }
 
 .flowchart-operator .flowchart-operator-inputs,
@@ -156,6 +149,8 @@
 .flowchart-example-container {
     height: 200px;
     margin-bottom: 10px;
+    border: #ddd 1px solid;
+    border-radius: 5px;
 }
 
 .flowchart-operator-connector-arrow {
@@ -209,8 +204,8 @@ h4 {
     width: 100%;
     height: 300px;
     background: white;
-    top: 150px;
-    left: 50px
+    /* top: 150px;
+    left: 50px */
 }
 
 #chart_container {
@@ -220,8 +215,6 @@ h4 {
     background: repeating-linear-gradient( 45deg, #eee, #eee 10px, #e5e5e5 10px, #e5e5e5 20px);
     border: 1px solid black;
 }
-
-.draggable_operator {}
 
 .draggable_operators {
     margin-top: 25px;
@@ -236,14 +229,38 @@ h4 {
 }
 
 .flowchart-operator-title {
-    text-align: center
-}
-
-.flowchart-operator-title {
+    text-align: center;
+    line-height: 58px;
     font-family: 'Archivo Narrow';
-    font-weight: 100;
+    font-weight: 500;
+    color: black;
+    height: 20px;
+    cursor: grab;
 }
 
-#main-content {
-    /* background-color: white; */
+.oval_button {
+    border-radius: 10px;
+}
+
+.rectangle_button {
+    border-radius: 0;
+}
+
+.parallelogram_button {
+    border-radius: 0;
+    transform: skew(-20deg);
+}
+
+.wf_btn {
+    height: 50px;
+    width: 120px;
+    border: 1px solid #d99f00;
+    background: #fcba03;
+    color: white;
+    display: inline-block;
+    text-align: center;
+    line-height: 45px;
+    cursor: grab;
+    font-family: 'Archivo Narrow';
+    color: black;
 }

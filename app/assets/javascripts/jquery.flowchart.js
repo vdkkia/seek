@@ -9,7 +9,7 @@ $j(function() {
             data: {},
             distanceFromArrow: 3,
             defaultOperatorClass: 'flowchart-default-operator',
-            defaultLinkColor: '#0398fc',
+            defaultLinkColor: '#d99f00',
             defaultSelectedLinkColor: 'black',
             linkWidth: 5,
             grid: 20,
