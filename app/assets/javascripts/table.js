@@ -52,7 +52,6 @@ $j(document).ready(function() {
     });
 
     populateSampleSourceTable("1")
-
 });
 
 
@@ -158,20 +157,39 @@ function populateSampleSourceTable(sourceId) {
 
 
 $j(".UL").on("click", ".file", function(event) {
-    let R = $j('.tableX').prop('outerHTML')
-    setCookie(selectedFile, R, 1000000)
+    // SaveTable();
+    $j('#tableContainer').hide();
+    $j('#workflowContainer').hide();
+
+
 
     let fileName = $j(this).text();
 
-    let E = getCookie(fileName);
-    if (E.length > 60) {
-        $j('.tableX').empty();
-        $j('.tableX').html(E)
+
+
+    if (fileName == "Sample Source") {
+        let E = getCookie(fileName);
+        if (E.length > 60) {
+            $j('.tableX').empty();
+            $j('.tableX').html(E);
+            $j('#tableContainer').show();
+        }
+    } else if (fileName == "Study workflow") {
+        $j('#workflowContainer').show();
+        loadWorkflow();
+        //   loadWorkflow();
     }
-    selectedFile = fileName;
+
+
+    // selectedFile = fileName;
     $j('.UL li').each(function() {
         $j(this).removeClass("file_selected")
     });
     $j(this).parent().addClass("file_selected")
 
 });
+
+function SaveTable() {
+    let R = $j('.tableX').prop('outerHTML')
+    setCookie("Sample Source", R, 1000000)
+}

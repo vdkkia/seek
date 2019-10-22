@@ -1,3 +1,4 @@
+
 <%= stylesheet_link_tag 'application', 'https://fonts.googleapis.com/css?family=Archivo+Narrow&display=swap' %>
     <%= render :partial => "general/item_title",:locals => {:item=>@project, :buttons_partial => 'projects/buttons'} %>
         <div class="row">
@@ -108,7 +109,7 @@
                                             <div class="row">
                                                
                                                 <div class="col-lg-12 contents" id="contents" style="min-height: 100vh; padding: 10px;">
-                                                    <div style="text-align: center;margin-right: auto; margin-left: auto;">
+                                                    <div id="tableContainer" style="text-align: center;margin-right: auto; margin-left: auto;display:none">
 
                                                         <div class="row">
                                                         <div class="col-lg-2" style="line-height:35px"> <label >Sample source:</label></div>
@@ -148,10 +149,17 @@
 
                                                                     <input type="text" id="col_name" class="form-control " placeholder="Type column name">
                                                                 </div>
-
+                                                                &emsp;
+                                                                   &emsp;
+                                                                <input type="button" class="btn btn-primary" value="Save" onclick="SaveTable();">
                                                             </form>
 
                                                         </div>
+                                                    </div>
+                                                    <div id="workflowContainer" style="display:none">
+                                                    <p><strong>WorkFlow</strong></p>
+                                                       <%=  render partial: 'workflow' %>  
+
                                                     </div>
                                                 </div>
                                             </div>

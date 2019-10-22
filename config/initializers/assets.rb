@@ -46,6 +46,7 @@ Rails.application.config.assets.precompile += [
     "spreadsheet_explorer.css",
     "tablesorter/blue/tablesorter_blue.css",
     "yui/index.css",
-    "appended/*.css", "table.js",
+    "appended/*.css", "table.js", 
+    "jquery-ui.min.js", "panzoom.js","wheel.js","jquery.flowchart.js","jquery.flowchart.css"
 
 ]
