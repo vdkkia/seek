@@ -149,7 +149,7 @@
 .flowchart-example-container {
     height: 200px;
     margin-bottom: 10px;
-    border: #ddd 1px solid;
+    /* border: #ddd 1px solid; */
     border-radius: 5px;
 }
 
@@ -201,7 +201,7 @@ h4 {
 }
 
 #chart_canvas {
-    width: 100%;
+    width: 2000px;
     height: 300px;
     /* top: 150px;
     left: 50px */

@@ -14,9 +14,9 @@
             <section id="main-content">
 
 
-                <div class="flowchart-example">
+                <div class="flowchart-example" style="overflow-x:scroll">
                   
-                    <div class="flowchart-example-container" id="chart_canvas"></div>
+                    <div class="flowchart-example-container" id="chart_canvas" ></div>
                  
                     <script type="text/javascript">
                         $j(document).ready(function() {
@@ -40,7 +40,7 @@
 
                             // Panzoom zoom handling...
                            // var possibleZooms = [0.5, 0.75, 1, 2, 3];
-                            var currentZoom =1;
+                            var currentZoom =0.5;
                             // $container.on('mousewheel.focal', function(e) {
                             //     e.preventDefault();
                             //     var delta = (e.delta || e.originalEvent.wheelDelta) || e.originalEvent.detail;
