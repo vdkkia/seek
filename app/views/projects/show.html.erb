@@ -111,7 +111,7 @@
                                                 <div class="col-lg-12 contents" id="contents" style="min-height: 100vh; padding: 0;padding-top:10px">
                                                     <div id="tableContainer" style="text-align: center;margin-right: auto; margin-left: auto;display:none">
 
-                                                        <div class="row">
+                                                        <div >
                                                         <div class="col-lg-2" style="line-height:35px"> <label >Sample source:</label></div>
                                                             <div class="col-lg-10">
                                                                 <select id="sample_sources_id" class="form-control sample_sources_id">
@@ -135,12 +135,10 @@
                                                                 </table>
                                                             </div>
                                                         </div>
-                                                        <div class=row>
-                                                            <div class="col-lg-8">
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <form class="form-inline" style="text-align:left">
+                                                 
+                                                        <div >
+                                                        <div class="col-lg-12">
+                                                            <div class="form-inline" style="text-align:left">
                                                                 <%# <button type="button" class="btn btn-primary" onclick="ExportJSON();">Export to JSON</button> %>
                                                                 <button type="button" class="btn btn-primary" onclick="AddRow();">Add Row</button>
                                                                 <button type="button" class="btn btn-primary" onclick="AddCell();">Add Col</button>
@@ -152,14 +150,15 @@
                                                                 &emsp;
                                                                    &emsp;
                                                                 <input type="button" class="btn btn-primary" value="Save" onclick="SaveTable();">
-                                                            </form>
-
+                                                            </div>
+                                                        </div>
                                                         </div>
                                                     </div>
                                                     <div id="workflowContainer" style="display:none">
+                                                    <div class="col-lg-12">
                                                     <p><strong>WorkFlow</strong></p>
                                                        <%=  render partial: 'workflow' %>  
-
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -199,16 +198,20 @@
                         }
                        
                         .tableX {
-                            background-color: white
+                            background-color: white;
+                        
                         }
+
+                        .tableX td {border: 1px #ddd solid}
                         
                         .tableX th {
                             background-color: #000;
-                            color: white
+                            color: white;
+                            text-align:center
                         }
 
-                        tr:nth-child(even) {background: #eee}
-                        tr:nth-child(odd) {background: #FFF}
+                        tr:nth-child(even) {background: aliceblue}
+                        tr:nth-child(odd) {background: white}
                         
                         .tableX th:first-child {
                             border-top-left-radius: 5px
@@ -216,6 +219,10 @@
                         
                         .tableX th:last-child {
                             border-top-right-radius: 5px
+                        }
+
+                         .tableX  td {
+                            border-radius: 5px
                         }
                         
                         .treeview {
@@ -238,6 +245,10 @@
                         .file_selected{
                           background-color:aliceblue;
                           color:white
+                        }
+                        .contents{
+                            background-color:white;margin-top:5px;
+                            border: #ddd solid 1px; border-radius:5px
                         }
                     </style>
                     <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
