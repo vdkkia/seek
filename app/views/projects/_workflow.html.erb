@@ -20,6 +20,11 @@
                  
                     <script type="text/javascript">
                         $j(document).ready(function() {
+                            init_workflow();                           
+
+                        });
+
+                        function init_workflow(){
                             var $flowchart = $j('#chart_canvas');
                             var $container = $flowchart.parent();
 
@@ -92,8 +97,12 @@
                             var $draggableOperators = $j('.draggable_operator');
 
                             function getOperatorData($element) {
-                                var nbInputs = parseInt($element.data('nb-inputs'));
-                                var nbOutputs = parseInt($element.data('nb-outputs'));
+                              
+                                const nbInputs = parseInt($element.data('nb-inputs'));
+                                const nbOutputs = parseInt($element.data('nb-outputs'));
+
+                                console.log(nbInputs)
+                                
                                 var data = {
                                     properties: {
                                         title: $element.text(),
@@ -133,6 +142,7 @@
                                     var $this = $j(this);
                                     var data = getOperatorData($this);
                                     return $flowchart.flowchart('getOperatorElement', data);
+                                    
                                 },
                                 stop: function(e, ui) {
                                     var $this = $j(this);
@@ -160,11 +170,7 @@
                                     }
                                 }
                             });
-                            
-
-                        });
-
-
+                        }
 
                         $j('html').keyup(function(e) {
                             if (e.keyCode == 46) {
@@ -182,6 +188,8 @@
                         function saveWorkflow()
                         {
                           
+                                   
+
                             var $flowchart = $j('#chart_canvas'); 
                             var data = $flowchart.flowchart('getData');
                             setCookie("wf",JSON.stringify(data), 1000000)
@@ -204,19 +212,24 @@
                               } 
                               
                         }
+
+               
+
                     </script>
                 </div>
 
    <div class="draggable_operators">
 
                         <div class="draggable_operators_divs">
-                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn oval_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='oval'>Source material</div> &nbsp;
+                            <div id="fgg" class="draggable_operator ui-draggable ui-draggable-handle wf_btn oval_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='oval'>Source material</div> &nbsp;
                             <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn rectangle_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='rectangle'>Method</div>&nbsp;&nbsp;&nbsp;
-                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn parallelogram_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='parallelogram'>Output/input material</div>&nbsp
-
+                            <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn parallelogram_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='parallelogram'>Output/input material</div>&nbsp;
                             <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn parallelogram_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='parallelogram'>Output</div>&nbsp;
                             <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn oval_button" data-nb-inputs="1" data-nb-outputs="1" data-shape='oval'>Data analysis</div>&nbsp;
-
+                            <div class="form-inline" style="margin-top:10px">
+                                    Inputs:<input id="inputs_num" type="number" class="form-control" style="width:50px" value="1" min="1" max="3"> 
+                                    &nbsp;Outputs:<input id="outputs_num" type="number" class="form-control" style="width:50px"  value="1" min="1" max="3">
+                            </div>
                             <%# <input type="button" value="Delete" class="btn btn-primary" onclick="Delete();" /> %>
                             &emsp;
                             &emsp;
@@ -233,3 +246,18 @@
 
 
 
+<script>
+    $j('#inputs_num').on('input', function(e) {
+         let num = $j(this).val();
+        if (num > 0 && num < 4)
+            $j('.wf_btn').data('nb-inputs', num);
+    });
+
+    $j('#outputs_num').on('input', function(e) {
+        let num = $j(this).val();
+        if (num > 0 && num < 4)
+            $j('.wf_btn').data('nb-outputs', num);
+   
+       
+    });      
+</script>
