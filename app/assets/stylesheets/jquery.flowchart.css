@@ -153,6 +153,11 @@
     border-radius: 5px;
 }
 
+.flowchart-example {
+    border-radius: 5px;
+    border: 1px #ddd solid
+}
+
 .flowchart-operator-connector-arrow {
     top: 4px;
 }
@@ -203,6 +208,7 @@ h4 {
 #chart_canvas {
     width: 2000px;
     height: 300px;
+    background: repeating-linear-gradient( 45deg, #eee, #eee 10px, #e5e5e5 10px, #e5e5e5 20px);
     /* top: 150px;
     left: 50px */
 }
@@ -211,7 +217,6 @@ h4 {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: repeating-linear-gradient( 45deg, #eee, #eee 10px, #e5e5e5 10px, #e5e5e5 20px);
     border: 1px solid black;
 }
 
@@ -253,8 +258,8 @@ h4 {
 .wf_btn {
     height: 50px;
     width: 120px;
-    border: 1px solid #d99f00;
-    background: #fcba03;
+    border: 1px solid #a1a1a1;
+    background: #c7c7c7;
     color: white;
     display: inline-block;
     text-align: center;
