@@ -177,7 +177,6 @@ $j(".UL").on("click", ".file", function(event) {
     } else if (fileName == "Study workflow") {
         $j('#workflowContainer').show();
         loadWorkflow();
-        //   loadWorkflow();
     }
 
 

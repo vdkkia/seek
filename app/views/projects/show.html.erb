@@ -1,6 +1,16 @@
 
 <%= stylesheet_link_tag 'application', 'https://fonts.googleapis.com/css?family=Archivo+Narrow&display=swap' %>
     <%= render :partial => "general/item_title",:locals => {:item=>@project, :buttons_partial => 'projects/buttons'} %>
+
+    <div >
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                        <img src="/assets/guidance.png" alt="user guidance"  style=" width: 100%; height: auto;margin-bottom:20px"/>
+                </div>
+                <div class="col-lg-2"></div>
+
+</div>
+
         <div class="row">
             <div class="col-md-12  box_about_actor">
                 <%= item_description @project.description -%>
@@ -77,14 +87,9 @@
                                             </div>
 
                                             <div id="studyHeaderDetails">
-                                                <p><strong>Hypothesis: </strong> hypothesis description</p>
-                                                <p><strong>Experimentalists: </strong> experimentalists description</p>
-                                                <div class="form-group">
-                                                    <label>Shared with: </label>
-                                                    <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span>
-                                                        <input type="text" />
-                                                    </div>
-                                                </div>
+                                               
+
+
                                             </div>
 
                                         </div>
@@ -157,7 +162,7 @@
                                                     <div id="workflowContainer" style="display:none">
                                                     <div class="col-lg-12">
                                                     <p><strong>WorkFlow</strong></p>
-                                                       <%=  render partial: 'workflow' %>  
+                                                    
                                                         </div>
                                                     </div>
                                                 </div>
@@ -165,6 +170,35 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+
+                            <div id="studyDetails" style="display:none;background-color:white">
+                                            <ul class="nav nav-tabs">
+                                            <li class="active "><a data-toggle="tab" href="#home"><i class="glyphicon glyphicon-th-list"></i> Details</a></li>
+                                            <li><a data-toggle="tab" href="#menu1"><i class="glyphicon glyphicon-pencil"></i>  Design</a></li>
+                                            <li><a data-toggle="tab" href="#menu2" onclick="setTimeout(() => { loadWorkflow()}, 250);"><i class="glyphicon glyphicon-random"></i>   Workflow</a></li>
+                                            </ul>
+
+                                            <div class="tab-content">
+                                            <div id="home" class="tab-pane fade in active" style="padding:10px">
+                                                <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Project</span></p>
+                                                <p id="description"> <strong>Description:</strong> <span id="descriptionContent">Project description</span> </p>
+                                                 <p><strong>Hypothesis: </strong> hypothesis description</p>
+                                                <p><strong>Experimentalists: </strong> experimentalists description</p>
+                                                <div class="form-group">
+                                                    <label>Shared with: </label>
+                                                    <div class="bootstrap-tagsinput"><span class="tag label label-default">Vahid Kiani<span data-role="remove"></span></span>
+                                                        <input type="text" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="menu1" class="tab-pane fade" style="padding:10px">
+                                             
+                                            </div>
+                                            <div id="menu2" class="tab-pane fade" style="padding:10px">
+                                                                   <%=  render partial: 'workflow' %>  
+                                            </div>
+                                            </div>  
                             </div>
                         </div>
                       
@@ -232,7 +266,7 @@
                             min-height:500px
                         }
 
-                        #files {
+                        #files, #studyDetails {
                           background-color: white;  
                           padding: 10px; 
                           border-radius: 5px; 
@@ -250,6 +284,44 @@
                             background-color:white;margin-top:5px;
                             border: #ddd solid 1px; border-radius:5px
                         }
+                        .separator{
+                            border-bottom: 1px solid;
+                            border-image-source: linear-gradient(45deg, rgba(0,0,0,0), rgba(0,0,0,0.1), rgba(0,0,0,0));
+                            border-image-slice: 1;
+                            width:100%;
+                            left:0;
+                            color:#aaa;
+                            font-size:10px;
+                            font-weight:normal;
+                            float:right;
+                            text-align:right;
+                            padding-right:20px;
+                            position:absolute;
+                            z-index:-1
+                        }
+                        .treeaction{
+                            color:#555;
+                            margin-left:3px;
+                            padding:2px;
+                            font-weight:bold;
+                            font-size:10px;
+                            border:none;
+                            background-color:white;
+                            transition: all .2s ease-in-out;
+                              text-decoration:none;
+                   
+                       float:right;
+                              right:-12px;
+                              top:4px;
+                           
+                           
+                        }
+                        .treeaction:hover{
+                            color:green;
+                            text-decoration:none;
+                           transform: scale(1.5);
+                        }
+                      
                     </style>
                     <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
                         <div style="clear:both;">
@@ -324,7 +396,9 @@
                                                                     $j("#prjDetail").hide();
                                                                     $j("#presentationDetail").hide();
                                                                     $j("#proposalsDetail").hide();
+                                                                     $j("#studyDetails").hide();
 
+                                                                    $j("#_header").show();
                                                                     switch (selected) {
                                                                         case "j1_1": //Project
                                                                             {
@@ -427,31 +501,31 @@
                                                                                 $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
-                                                                                AddFile("article")
+                                                                                //AddFile("article")
+                                                                                 AddFile("study")
                                                                                 break;
+
+                                                                             
                                                                             }
                                                                         case "j1_12": //study
                                                                             {
-                                                                                $j("#detailContent").show()
+                                                                                //$j("#detailContent").show();
+                                                                                $j("#studyHeaderDetails").show();
+                                                                                $j("#studyDetails").show()
+
+                                                                                $j("#_header").hide();
                                                                                 $j("#file_contents").hide();
                                                                                 $j("#projectHeaderDetails").hide();
                                                                                 $j("#investigationHeaderDetail").hide();
+                                                                                 $j("#projectDetails").hide();
+
                                                                                 $j("#titleContent").text("Study title")
                                                                                 $j("#descriptionContent").text("Study description")
-                                                                                $j("#studyHeaderDetails").show();
-
+                                                                                  loadWorkflow()
+                             
                                                                                 break;
                                                                             }
-                                                                        case "j1_13":
-                                                                            {
-                                                                                $j("#detailContent").hide()
-                                                                                $j("#file_contents").show();
-                                                                                $j(".contents").show();
-
-                                                                                AddFile("study")
-                                                                                break;
-                                                                            }
-                                                                        case "j1_14": //assay
+                                                                        case "j1_13": //assay
                                                                             {
                                                                                 $j("#detailContent").show()
                                                                                 $j("#file_contents").hide();
@@ -461,7 +535,7 @@
 
                                                                                 break;
                                                                             }
-                                                                        case "j1_15":
+                                                                        case "j1_14":
                                                                             {
                                                                                 $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
@@ -480,17 +554,19 @@
                                                                             },
                                                                             "state": {
                                                                                 "opened": true,
-                                                                               // "selected": true,
+                                                                                "separate" : {'label':'Projects'},
+                                                                                "selected": true,
                                                                             },
 
                                                                             "children": [{
-                                                                                "text": "Presentations <span class='badge'>0</span>",
+                                                                                "text": "Presentations","count": '0',
+                                                                                
                                                                                 "children": [{
-                                                                                    "text": "Proposals <span class='badge'>0</span>"
+                                                                                    "text": "Proposals","count": '0',
                                                                                 }, {
-                                                                                    "text": "Posters <span class='badge'>0</span>"
+                                                                                    "text": "Posters","count": '0',
                                                                                 }, {
-                                                                                    "text": "Slideshows <span class='badge'>0</span>"
+                                                                                    "text": "Slideshows","count": '0',
                                                                                 }]
                                                                             }, {
                                                                                 "text": "Investigation",
@@ -498,43 +574,41 @@
                                                                                     "style": "font-weight:bold"
                                                                                 },
                                                                                 "state": {
-                                                                                    "opened": true
+                                                                                    "opened": true,
+                                                                                     "separate" : {'label':'Investigations','action':'http://www.google.com'}
                                                                                 },
                                                                                 "children": [{
-                                                                                    "text": "Presentations   <span class='badge'>0</span>",
+                                                                                    "text": "Presentations ","count": '0',
 
                                                                                     "children": [{
-                                                                                        "text": "Proposals <span class='badge'>1</span>"
+                                                                                        "text": "Proposals","count": 1,
                                                                                     }, {
-                                                                                        "text": "Posters <span class='badge'>1</span>"
+                                                                                        "text": "Posters","count": 1,
                                                                                     }, {
-                                                                                        "text": "Slideshows <span class='badge'>1</span>"
+                                                                                        "text": "Slideshows","count": 1,
                                                                                     }, {
-                                                                                        "text": "Articles <span class='badge'>1</span>"
+                                                                                        "text": "Articles","count": 4,
                                                                                     }]
                                                                                 }, {
                                                                                     "text": "Study",
                                                                                     "state": {
-                                                                                        "opened": true
+                                                                                        "opened": true,
+                                                                                         "separate" : {'label':'Studies','action':'http://www.google.com'}
                                                                                     },
                                                                                     "a_attr": {
                                                                                         "style": "font-weight:bold"
                                                                                     },
                                                                                     "children": [{
-                                                                                        "text": "Files <span class='badge'>4</span>",
-                                                                                        "state":{
-                                                                                           "selected": true,
-                                                                                        }
-                                                                                    }, {
                                                                                         "text": "Assay",
                                                                                         "state": {
-                                                                                            "opened": true
+                                                                                            "opened": true,
+                                                                                             "separate" : {'label':'Assays','action':'http://www.google.com'}
                                                                                         },
                                                                                         "a_attr": {
                                                                                             "style": "font-weight:bold"
                                                                                         },
                                                                                         "children": [{
-                                                                                            "text": "Files <span class='badge'>0</span>"
+                                                                                            "text": "Files","count": '0',
                                                                                         }, ]
                                                                                     }, ]
                                                                                 }, ]
@@ -581,9 +655,25 @@
                                                                                 break;
                                                                             }
                                                                             case "":{
-                                                                              base.append("<li style='padding:0'><br/>Empty folder <br/><br/></li>")
+                                                                              base.append("<li style='padding:0'><br/>No File! <br/><br/></li>")
                                                                             }
 
                                                                     }
                                                                 }
+
+
+//   setTimeout(() => {
+//             $j('a:contains("Project")').append('<span class="itemdesc">Projects</span>')
+//             $j('a:contains("Investigation")').append('<span class="itemdesc">Investigations</span>')
+//             $j('a:contains("Study")').append('<span class="itemdesc">Studies</span>')
+//             $j('a:contains("Assay")').append('<span class="itemdesc">Assays</span>')
+
+            
+//               $j('a:contains("Project")').addClass('separator')
+//             $j('a:contains("Investigation")').addClass('separator')
+//             $j('a:contains("Study")').addClass('separator')
+//             $j('a:contains("Assay")').addClass('separator')
+//   }, 250);
+ 
+
                                                             </script>

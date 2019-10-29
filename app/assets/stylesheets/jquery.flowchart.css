@@ -52,7 +52,7 @@
     height: 0px;
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
-    border-left: 10px solid #ad7f00;
+    border-left: 10px solid #116383;
     position: absolute;
     top: 0px;
 }
@@ -107,8 +107,8 @@
 .flowchart-operator {
     position: absolute;
     width: 120px;
-    border: 1px solid #d99f00;
-    background: #fcba03;
+    border: 1px solid #273d9b;
+    background: #4085bd;
     pointer-events: initial;
     vertical-align: middle;
     /* transform: skew(20deg); */
@@ -237,7 +237,7 @@ h4 {
     line-height: 58px;
     font-family: 'Archivo Narrow';
     font-weight: 500;
-    color: black;
+    color: white;
     height: 20px;
     cursor: grab;
 }
