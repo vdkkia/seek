@@ -1,0 +1,282 @@
+<div id="content-wrapper">
+    <div class="inner">
+
+        <div id="tableContainer" style="text-align: center;margin-right: auto; margin-left: auto;">
+<h2>Independent variables</h1>
+
+            <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+
+            <table class="table tableXs indtable">
+                <thead class="thead-dark">
+                    <th>Independent variables</th>
+                    <th></th>
+                    <th>Levels</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="1">variable name</td>
+                        <td rowspan="1">
+                            <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
+                        </td>
+                        <td>level name </td>
+                    </tr>
+
+                </tbody>
+            </table>
+<h2>Dependent variables</h1>
+
+ <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addDepVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+ 
+  <a class="btn btn-primary " style="font-size:10px;float:left;margin-left:5px" onClick="addDepCol()"> <i class="glyphicon glyphicon-plus"></i> Add sub-sample</a>
+
+  <table class="table tableXs deptable">
+                <thead class="thead-dark">
+                    <th>Dependent variables</th>
+                    <th>Experimental Unit</th>
+                    <th>Sub-sample of</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td >variable name</td>
+                        <td >experimental unit</td>
+                        <td>sample</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+<h2>Blocking variables</h1>
+
+        <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addBlockVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+
+            <table class="table tableXs blocktable">
+                <thead class="thead-dark">
+                    <th>Blocking variables</th>
+                    <th></th>
+                    <th>Levels</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="1">variable name</td>
+                        <td rowspan="1">
+                            <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
+                        </td>
+                        <td>level name </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+<h2>Covariates variables</h1>
+
+        <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addCovVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+
+            <table class="table tableXs covtable">
+                <thead class="thead-dark">
+                    <th>Blocking variables</th>
+                    <th></th>
+                    <th>Levels</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="1">variable name</td>
+                        <td rowspan="1">
+                            <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
+                        </td>
+                        <td>level name </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+            <h2>Confounding variables</h2>
+
+
+        <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addConfVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+
+            <table class="table tableXs conftable">
+                <thead class="thead-dark">
+                    <th>Blocking variables</th>
+                    <th></th>
+                    <th>Levels</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td rowspan="1">variable name</td>
+                        <td rowspan="1">
+                            <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
+                        </td>
+                        <td>level name </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+   <h2>Control variables</h2>
+
+
+        <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addControlVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+
+            <table class="table tableXs controltable">
+                <thead class="thead-dark">
+                    <th>Control variables</th>
+                    <th>Description</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td >variable name</td>
+                        <td>description</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+             <h2>Replicates</h2>
+
+
+        <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addRep()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
+
+            <table class="table tableXs reptable">
+                <thead class="thead-dark">
+                    <th>Replicates</th>
+                  
+                    <th>Description</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td >variable name</td>
+                        <td>description</td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+
+   <h2>Design of experiment</h2>
+<div class="form-inline" style="text-align:left">
+ <select id="expDesign" class="form-control">
+                                                                    <option value="">Please select an item</option>
+                                                                    <option value="1">1</option>
+                                                                    <option value="2">2</option>
+                                                                    <option value="3">3</option>
+                                                                    <option value="4">4</option>
+                                                                </select>
+
+                                                                <input typ e="text"  class="form-control" style="min-width:400px" placeholder="Description">
+</div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+</div>
+
+<script>
+    //Table population
+    $j(document).ready(function() {
+        $j(".table").on('click', 'td', function() {
+            if ($j(this).attr("contentEditable") == true) {
+                $j(this).attr("contentEditable", "false");
+            } else {
+                $j(this).attr("contentEditable", "true");
+            }
+        });
+
+    });
+
+    function addLevel() {
+        var tr = event.target.closest('tr');
+        var firstCol = $j(tr).find('td:eq(0)');
+        var rowspan = parseInt($j(firstCol).attr('rowspan'));
+        $j(firstCol).attr('rowspan', rowspan + 1);
+        $j(tr).find('td:eq(1)').attr('rowspan', rowspan + 1);
+        $j(tr).after('<tr><td>Level name </td> </tr>')
+    }
+
+    function addVar() {
+        let tag = " <tr><td rowspan='1'>variable name</td><td rowspan='1'><a  class='btn btn-primary'  style='font-size:10px' onClick='addLevel()'> <i class='glyphicon glyphicon-plus'></i> Add Level</a></td><td>level name </td></tr>"
+        $j('.indtable tbody').append(tag)
+    }
+      function addDepVar() {
+     
+            let rowCount = $j('.deptable').rowcount() + 1;
+
+    // console.log($j('.table tbody tr:last-child').html())
+    let newRow;
+    $j('.deptable thead tr').find('th').each(function() {
+        newRow += '<td>TBD</td>'
+    });
+    $j('.deptable tbody').append('<tr>' + newRow + '</tr>')
+
+
+    }
+    function addDepCol(){
+          let colCount = $j('.deptable').columnCount() + 1;
+    $j('.deptable').find('thead').find('th').eq(colCount - 2).after('<th>sub-sample of</th>');
+    $j('.deptable').find('tr').each(function() {
+        $j(this).find('td').eq(colCount - 2).after('<td>TBD</td>');
+    });
+    }
+
+    function addBlockVar(){
+        let tag = " <tr><td rowspan='1'>variable name</td><td rowspan='1'><a  class='btn btn-primary'  style='font-size:10px' onClick='addLevel()'> <i class='glyphicon glyphicon-plus'></i> Add Level</a></td><td>level name </td></tr>"
+        $j('.blocktable tbody').append(tag)
+    }
+
+        function addCovVar(){
+        let tag = " <tr><td rowspan='1'>variable name</td><td rowspan='1'><a  class='btn btn-primary'  style='font-size:10px' onClick='addLevel()'> <i class='glyphicon glyphicon-plus'></i> Add Level</a></td><td>level name </td></tr>"
+        $j('.covtable tbody').append(tag)
+    }
+
+        function addConfVar(){
+        let tag = " <tr><td rowspan='1'>variable name</td><td rowspan='1'><a  class='btn btn-primary'  style='font-size:10px' onClick='addLevel()'> <i class='glyphicon glyphicon-plus'></i> Add Level</a></td><td>level name </td></tr>"
+        $j('.conftable tbody').append(tag)
+    }
+    function addControlVar(){
+      let tag = " <tr><td rowspan='1'>variable name</td><td>description</td></tr>"
+        $j('.controltable tbody').append(tag)
+    }
+
+    function addRep(){
+      let tag = " <tr><td rowspan='1'>variable name</td><td>description</td></tr>"
+        $j('.reptable tbody').append(tag)
+    }
+</script>
+
+<style>
+h2 {
+  overflow: hidden;
+  text-align: left;
+  font-size:16px !important;
+  font-weight:bold !important;
+  color:#888 !important;
+
+}
+
+
+
+h2:after {
+  background-color: #bbb;
+  content: "";
+  display: inline-block;
+  height: 1px;
+  position: relative;
+  vertical-align: middle;
+  width: 100%;
+  
+}
+
+
+
+h2:after {
+  left: 0.5em;
+  margin-right: -50%;
+}
+</style>

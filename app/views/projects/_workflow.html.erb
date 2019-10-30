@@ -189,11 +189,11 @@
                         function saveWorkflow()
                         {
                           
-                                   
-
                             var $flowchart = $j('#chart_canvas'); 
                             var data = $flowchart.flowchart('getData');
                             setCookie("wf",JSON.stringify(data), 1000000)
+
+                            console.log(data)
                         
                         }
 

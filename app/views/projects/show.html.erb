@@ -131,7 +131,7 @@
                                                             <br/>
                                                             <div class="col-lg-12" style="margin: 0; padding:10px;">
                                                                 <table>
-                                                                    <table class="table tableX">
+                                                                    <table class="table tableX tableXs">
                                                                         <thead class="thead-dark">
                                                                         </thead>
                                                                         <tbody>
@@ -193,7 +193,9 @@
                                                 </div>
                                             </div>
                                             <div id="menu1" class="tab-pane fade" style="padding:10px">
-                                             
+
+                                                                      <%=  render partial: 'studydesign' %>                        
+                                          
                                             </div>
                                             <div id="menu2" class="tab-pane fade" style="padding:10px">
                                                                    <%=  render partial: 'workflow' %>  
@@ -231,14 +233,14 @@
                      padding: 0;
                         }
                        
-                        .tableX {
+                        .tableXs {
                             background-color: white;
                         
                         }
 
-                        .tableX td {border: 1px #ddd solid}
+                        .tableXs td {border: 1px #ddd solid}
                         
-                        .tableX th {
+                        .tableXs th {
                             background-color: #000;
                             color: white;
                             text-align:center
@@ -247,15 +249,15 @@
                         tr:nth-child(even) {background: aliceblue}
                         tr:nth-child(odd) {background: white}
                         
-                        .tableX th:first-child {
+                        .tableXs th:first-child {
                             border-top-left-radius: 5px
                         }
                         
-                        .tableX th:last-child {
+                        .tableXs th:last-child {
                             border-top-right-radius: 5px
                         }
 
-                         .tableX  td {
+                         .tableXs  td {
                             border-radius: 5px
                         }
                         
@@ -555,7 +557,7 @@
                                                                             "state": {
                                                                                 "opened": true,
                                                                                 "separate" : {'label':'Projects'},
-                                                                                "selected": true,
+                                                                                
                                                                             },
 
                                                                             "children": [{
@@ -593,6 +595,7 @@
                                                                                     "text": "Study",
                                                                                     "state": {
                                                                                         "opened": true,
+                                                                                        "selected": true,
                                                                                          "separate" : {'label':'Studies','action':'http://www.google.com'}
                                                                                     },
                                                                                     "a_attr": {
@@ -661,19 +664,5 @@
                                                                     }
                                                                 }
 
-
-//   setTimeout(() => {
-//             $j('a:contains("Project")').append('<span class="itemdesc">Projects</span>')
-//             $j('a:contains("Investigation")').append('<span class="itemdesc">Investigations</span>')
-//             $j('a:contains("Study")').append('<span class="itemdesc">Studies</span>')
-//             $j('a:contains("Assay")').append('<span class="itemdesc">Assays</span>')
-
-            
-//               $j('a:contains("Project")').addClass('separator')
-//             $j('a:contains("Investigation")').addClass('separator')
-//             $j('a:contains("Study")').addClass('separator')
-//             $j('a:contains("Assay")').addClass('separator')
-//   }, 250);
- 
 
                                                             </script>
