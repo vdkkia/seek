@@ -181,9 +181,9 @@
 
                                             <div class="tab-content">
                                             <div id="home" class="tab-pane fade in active" style="padding:10px">
-                                                <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Project</span></p>
-                                                <p id="description"> <strong>Description:</strong> <span id="descriptionContent">Project description</span> </p>
-                                                 <p><strong>Hypothesis: </strong> hypothesis description</p>
+                                                <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Effect of temperature on Lasiodiplodia theobromae transcriptomics</span></p>
+                                                <p id="description"> <strong>Description:</strong> <span id="descriptionContent">How temperature affects gene expression</span> </p>
+                                                 <p><strong>Hypothesis: </strong> Warm temperature affect pathogenicity genes</p>
                                                 <p><strong>Experimentalists: </strong> experimentalists description</p>
                                                 <div class="form-group">
                                                     <label>Shared with: </label>
@@ -407,7 +407,7 @@
                                                                                 $j("#detailContent").show()
                                                                                 $j("#projectDetails").show();
                                                                                 $j("#_header").removeClass("col-lg-12")
-                                                                                $j("#titleContent").text("Project title")
+                                                                                $j("#titleContent").text("Effect of temperature on Lasiodiplodia theobromae")
                                                                                 $j("#file_contents").hide();
                                                                                 $j("#projectHeaderDetails").show();
                                                                                 $j("#investigationHeaderDetail").hide();
@@ -415,7 +415,7 @@
 
                                                                                 break;
                                                                             }
-                                                                        case "j1_2":
+                                                                        case "j1_2"://Articles
                                                                             {
 
                                                                                 $j("#detailContent").hide()
@@ -425,38 +425,12 @@
 
                                                                                 break;
                                                                             }
-                                                                        case "j1_3":
-                                                                            {
-                                                                                $j("#detailContent").hide()
-                                                                                $j("#file_contents").show();
-                                                                                $j(".contents").hide();
-                                                                                 AddFile("");
-
-                                                                                break;
-                                                                            }
-                                                                        case "j1_4":
-                                                                            {
-                                                                                $j("#detailContent").hide()
-                                                                                $j("#file_contents").show();
-                                                                                $j(".contents").hide();
-                                                                                 AddFile("");
-
-                                                                                break;
-                                                                            }
-                                                                        case "j1_5":
-                                                                            {
-                                                                                $j("#detailContent").hide()
-                                                                                $j("#file_contents").show();
-                                                                                $j(".contents").hide();
-                                                                                 AddFile("");
-                                                                                break;
-                                                                            }
-                                                                        case "j1_6": //investigation
+                                                                        case "j1_3"://Investigation
                                                                             {
                                                                                 $j("#detailContent").show()
                                                                                 $j("#projectDetails").hide();
                                                                                 $j("#_header").addClass("col-lg-12")
-                                                                                $j("#titleContent").text("Investigation title")
+                                                                                $j("#titleContent").text("Effect of temperature on Lasiodiplodia theobromae molecular mechanism")
                                                                                 $j("#descriptionContent").text("Investigation description")
                                                                                 $j("#file_contents").hide();
                                                                                 $j("#projectHeaderDetails").hide();
@@ -465,24 +439,17 @@
 
                                                                                 break;
                                                                             }
-                                                                        case "j1_7":
-                                                                            {
-                                                                                $j("#detailContent").hide()
-                                                                                $j("#file_contents").show();
-                                                                                $j(".contents").hide();
-                                                                                 AddFile("");
-                                                                                break;
-                                                                            }
-                                                                        case "j1_8": //proposal
+                                                                        case "j1_4"://Proposal
                                                                             {
                                                                                 $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
 
                                                                                 AddFile("proposal")
+
                                                                                 break;
                                                                             }
-                                                                        case "j1_9": //poster
+                                                                        case "j1_5"://poster
                                                                             {
                                                                                 $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
@@ -490,29 +457,25 @@
                                                                                 AddFile("poster")
                                                                                 break;
                                                                             }
-                                                                        case "j1_10": //slideshow
+                                                                        case "j1_6": //slideshow
                                                                             {
-                                                                                $j("#detailContent").hide()
+                                                                               $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
                                                                                 AddFile("slideshow")
                                                                                 break;
                                                                             }
-                                                                        case "j1_11": //article
+                                                                        case "j1_7"://Articles
                                                                             {
                                                                                 $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
-                                                                                $j(".contents").show();
-                                                                                //AddFile("article")
-                                                                                 AddFile("study")
+                                                                                $j(".contents").hide();
+                                                                                 AddFile("article");
                                                                                 break;
-
-                                                                             
                                                                             }
-                                                                        case "j1_12": //study
+                                                                        case "j1_8": //Study
                                                                             {
-                                                                                //$j("#detailContent").show();
-                                                                                $j("#studyHeaderDetails").show();
+                                                                                 $j("#studyHeaderDetails").show();
                                                                                 $j("#studyDetails").show()
 
                                                                                 $j("#_header").hide();
@@ -521,25 +484,25 @@
                                                                                 $j("#investigationHeaderDetail").hide();
                                                                                  $j("#projectDetails").hide();
 
-                                                                                $j("#titleContent").text("Study title")
-                                                                                $j("#descriptionContent").text("Study description")
+                                                                                $j("#titleContent").text("Effect of temperature on Lasiodiplodia theobromae transcriptomic")
+                                                                                $j("#descriptionContent").text("How temperature affects gene expression")
                                                                                   loadWorkflow()
-                             
+
+                                                                                
                                                                                 break;
                                                                             }
-                                                                        case "j1_13": //assay
+                                                                        case "j1_9": //Assay
                                                                             {
-                                                                                $j("#detailContent").show()
+                                                                                  $j("#detailContent").show()
                                                                                 $j("#file_contents").hide();
                                                                                 $j("#projectHeaderDetails").hide();
                                                                                 $j("#investigationHeaderDetail").hide();
                                                                                 $j("#studyHeaderDetails").hide();
-
                                                                                 break;
                                                                             }
-                                                                        case "j1_14":
+                                                                        case "j1_10": //File
                                                                             {
-                                                                                $j("#detailContent").hide()
+                                                                               $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").hide();
                                                                                 AddFile("");
@@ -561,17 +524,7 @@
                                                                                 
                                                                             },
 
-                                                                            "children": [{
-                                                                                "text": "Presentations","count": '0',
-                                                                                
-                                                                                "children": [{
-                                                                                    "text": "Proposals","count": '0',
-                                                                                }, {
-                                                                                    "text": "Posters","count": '0',
-                                                                                }, {
-                                                                                    "text": "Slideshows","count": '0',
-                                                                                }]
-                                                                            }, {
+                                                                            "children": [{"text":"Articles", "count": '0'},{
                                                                                 "text": "Investigation",
                                                                                 "a_attr": {
                                                                                     "style": "font-weight:bold"
@@ -581,9 +534,6 @@
                                                                                      "separate" : {'label':'Investigations','action':'http://www.google.com'}
                                                                                 },
                                                                                 "children": [{
-                                                                                    "text": "Presentations ","count": '0',
-
-                                                                                    "children": [{
                                                                                         "text": "Proposals","count": 1,
                                                                                     }, {
                                                                                         "text": "Posters","count": 1,
@@ -591,7 +541,6 @@
                                                                                         "text": "Slideshows","count": 1,
                                                                                     }, {
                                                                                         "text": "Articles","count": 4,
-                                                                                    }]
                                                                                 }, {
                                                                                     "text": "Study",
                                                                                     "state": {
@@ -606,7 +555,7 @@
                                                                                         "text": "Assay",
                                                                                         "state": {
                                                                                             "opened": true,
-                                                                                             "separate" : {'label':'Assays','action':'http://www.google.com'}
+                                                                                             "separate" : {'label':'Assays'}
                                                                                         },
                                                                                         "a_attr": {
                                                                                             "style": "font-weight:bold"
@@ -651,6 +600,9 @@
                                                                         case "article":
                                                                             {
                                                                                 base.append('<li><img src="/assets/doc.png"> <br><a class="file">spaces_v000</a></li>')
+                                                                                    base.append('<li><img src="/assets/doc.png"> <br><a class="file">spaces_v001</a></li>')
+                                                                                        base.append('<li><img src="/assets/doc.png"> <br><a class="file">spaces_v002</a></li>')
+                                                                                            base.append('<li><img src="/assets/doc.png"> <br><a class="file">spaces_v003</a></li>')
                                                                                 break;
                                                                             }
                                                                         case "proposal":

@@ -18,8 +18,12 @@
     <div class="collapse navbar-collapse" id="navbar-inner">
 
       <ul class="nav navbar-nav">
+      
+       <%if false%>
         <%= render :partial => "layouts/navbar/browse_menu" %>
         <%= render :partial => "layouts/navbar/create_menu" if logged_in_and_registered? %>
+         <%end%>
+
         <%= render :partial => "layouts/navbar/help_menu" if Seek::Config.documentation_enabled %>
       </ul>
 
