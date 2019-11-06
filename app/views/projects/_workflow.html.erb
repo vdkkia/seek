@@ -17,13 +17,20 @@
                 <div class="flowchart-example" style="overflow-x:scroll">
                   
                     <div class="flowchart-example-container" id="chart_canvas" ></div>
-                 
+                 <style>
+                 #operator_properties{
+                     position:absolute;
+                     background-color:white;
+                     opacity:0.8;
+                     border-radius:5px;
+                     border:1px dashed #ddd
+                 }
+                 </style>
                     <script type="text/javascript">
+
                         $j(document).ready(function() {
                             init_workflow();                           
-                           
-
-                        });
+                          });
 
                         function init_workflow(){
                             var $flowchart = $j('#chart_canvas');
@@ -65,6 +72,10 @@
                                 onOperatorSelect: function(operatorId) {
                                     $operatorProperties.show();
                                     $operatorTitle.val($flowchart.flowchart('getOperatorTitle', operatorId));
+                                $operatorProperties.css('position', 'absolute');
+                                $operatorProperties.css("left", this.data.operators[operatorId].left);
+                                $operatorProperties.css("top", this.data.operators[operatorId].top);
+  
                                     return true;
                                 },
                                 onOperatorUnselect: function() {

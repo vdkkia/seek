@@ -240,6 +240,11 @@ h4 {
     color: white;
     height: 20px;
     cursor: grab;
+    border-radius: 5px;
+}
+
+.flowchart-operator-title:hover {
+    background-color: #1100ff1e
 }
 
 .oval_button {
