@@ -89,7 +89,8 @@ function ExportJSON() {
 function setCookie(c_name, value, expireminutes) {
     var exdate = new Date();
     exdate.setMinutes(exdate.getMinutes() + expireminutes);
-    document.cookie = c_name + "=" + escape(value) +
+    //document.cookie = c_name + "=";
+    document.cookie = c_name + "=" + value +
         ((expireminutes == null) ? "" : ";expires=" + exdate.toUTCString());
 }
 
@@ -176,7 +177,7 @@ $j(".UL").on("click", ".file", function(event) {
         }
     } else if (fileName == "Study workflow") {
         $j('#workflowContainer').show();
-        loadWorkflow();
+        //  loadWorkflow();
     }
 
 

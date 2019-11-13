@@ -205,24 +205,26 @@
 
                         }
 
-                        function saveWorkflow()
+                        function saveWorkflow(cookieName)
                         {
-                          
+                           if (!cookieName) return;
                             var $flowchart = $j('#chart_canvas'); 
                             var data = $flowchart.flowchart('getData');
-                            setCookie("wf",JSON.stringify(data), 1000000)
+                            setCookie(cookieName ,JSON.stringify(data), 1000000)
 
                             console.log(data)
                         
                         }
 
-                        function loadWorkflow()
+                        function loadWorkflow(cookieName)
                         {
                           
                                 var $flowchart = $j('#chart_canvas');
-                              let data = getCookie("wf");
+                              let data = getCookie(cookieName);
+                              if (!data) {$flowchart.flowchart('setData', "");
+                              return;}
 
-                              console .log(data);
+                              //console .log(data);
                               console .log(JSON.parse(data));
 
                               //
@@ -253,7 +255,7 @@
                             <%# <input type="button" value="Delete" class="btn btn-primary" onclick="Delete();" /> %>
                             &emsp;
                             &emsp;
-                            <input type="button" class="btn btn-primary" value="Save" onclick="saveWorkflow();" style="float:right">
+                            <input type="button" class="btn btn-primary" value="Save" onclick="saveWorkflow(getCookie('whichWorkflow'));" style="float:right">
                         </div>
                     </div>
                

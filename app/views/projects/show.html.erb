@@ -28,7 +28,7 @@
                                     <div class="row" id="detailContent">
                                         <div class="col-lg-8" style="background-color: white;margin-bottom: 5px; border-radius: 5px;padding:15px;border:#ddd solid 1px" id="_header">
                                             <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Project</span></p>
-                                            <p id="description"> <strong>Description:</strong> <span id="descriptionContent">Project description</span> </p>
+                                            <p id="description"> <strong>Description:</strong> <span id="descriptionContent">Effect of temperature on Lasiodiplodia theobromae</span> </p>
                                             <div id="projectHeaderDetails">
                                                 <% if @project.respond_to?(:project_coordinators) %>
                                                     <p class="project_coordinators">
@@ -86,11 +86,7 @@
                                                 </div>
                                             </div>
 
-                                            <div id="studyHeaderDetails">
-                                               
-
-
-                                            </div>
+                                      
 
                                         </div>
 
@@ -176,12 +172,12 @@
                                             <ul class="nav nav-tabs">
                                             <li class="active "><a data-toggle="tab" href="#home"><i class="glyphicon glyphicon-th-list"></i> Details</a></li>
                                             <li><a data-toggle="tab" href="#menu1"><i class="glyphicon glyphicon-pencil"></i>  Design</a></li>
-                                            <li><a data-toggle="tab" href="#menu2" onclick="setTimeout(() => { loadWorkflow()}, 250);"><i class="glyphicon glyphicon-random"></i>   Workflow</a></li>
+                                            <li><a data-toggle="tab" href="#menu2" onclick="setTimeout(() => { loadWorkflow(getCookie('whichWorkflow'))}, 250);"><i class="glyphicon glyphicon-random"></i>   Workflow</a></li>
                                             </ul>
 
                                             <div class="tab-content">
                                             <div id="home" class="tab-pane fade in active" style="padding:10px">
-                                                <p id="title"><strong style="text-align: center;">Title:</strong> <span id="titleContent">Effect of temperature on Lasiodiplodia theobromae transcriptomics</span></p>
+                                                <p id="title"><strong style="text-align: center;">Title:</strong> <span id="studytitleContent">Transcriptomics</span></p>
                                                 <p id="description"> <strong>Description:</strong> <span id="descriptionContent">How temperature affects gene expression</span> </p>
                                                  <p><strong>Hypothesis: </strong> Warm temperature affect pathogenicity genes</p>
                                                 <p><strong>Experimentalists: </strong> experimentalists description</p>
@@ -202,6 +198,8 @@
                                             </div>
                                             </div>  
                             </div>
+
+                      
                         </div>
                       
                         </div>
@@ -394,12 +392,7 @@
                                                                     let selected = data.instance.get_node(data.selected[0]).id;
                                                                     // $('#event_result').html(selected);
                                                                     $j('.PLACEHOLDER').empty();
-
-                                                                    $j("#prjDetail").hide();
-                                                                    $j("#presentationDetail").hide();
-                                                                    $j("#proposalsDetail").hide();
-                                                                     $j("#studyDetails").hide();
-
+                                                                        hideAll();
                                                                     $j("#_header").show();
                                                                     switch (selected) {
                                                                         case "j1_1": //Project
@@ -407,19 +400,15 @@
                                                                                 $j("#detailContent").show()
                                                                                 $j("#projectDetails").show();
                                                                                 $j("#_header").removeClass("col-lg-12")
-                                                                                $j("#titleContent").text("Effect of temperature on Lasiodiplodia theobromae")
-                                                                                $j("#file_contents").hide();
+                                                                                $j("#titleContent").text("L. theobromae & temp")
+                                                                          
                                                                                 $j("#projectHeaderDetails").show();
-                                                                                $j("#investigationHeaderDetail").hide();
-                                                                                $j("#studyHeaderDetails").hide();
-
+                                                                            
                                                                                 break;
                                                                             }
                                                                         case "j1_2"://proposal
                                                                             {
 
-                                                                                
-                                                                                $j("#detailContent").hide()
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
 
@@ -428,26 +417,25 @@
                                                                             }
                                                                         case "j1_3"://poster
                                                                             {
-                                                                                $j("#detailContent").hide()
+                                                                          
                                                                                 $j("#file_contents").show();
-                                                                                $j(".contents").hide();
+                                                                                $j(".contents").show();
                                                                                  AddFile("poster");
                                                                                 break;
                                                                             }
                                                                         case "j1_4"://slideshow
                                                                             {
                                                                                 
-                                                                                $j("#detailContent").hide()
-                                                                                $j("#file_contents").show();
+                                                                               $j("#file_contents").show();
                                                                                 $j(".contents").show();
                                                                                 AddFile("slideshow")
                                                                                 break;
                                                                             }
                                                                         case "j1_5"://article
                                                                             {
-                                                                               $j("#detailContent").hide()
+                                                                           
                                                                                 $j("#file_contents").show();
-                                                                                $j(".contents").hide();
+                                                                                $j(".contents").show();
                                                                                  AddFile("article");
                                                                                 break;
                                                                             }
@@ -455,57 +443,123 @@
                                                                             {
                                                                                
                                                                                        $j("#detailContent").show()
-                                                                                $j("#projectDetails").hide();
+                                                                             
                                                                                 $j("#_header").addClass("col-lg-12")
-                                                                                $j("#titleContent").text("Effect of temperature on Lasiodiplodia theobromae molecular mechanism")
-                                                                                $j("#descriptionContent").text("Investigation description")
-                                                                                $j("#file_contents").hide();
-                                                                                $j("#projectHeaderDetails").hide();
+                                                                                $j("#titleContent").text("Molecular mechanism")
+                                                                                $j("#descriptionContent").text("Effect of temperature on Lasiodiplodia theobromae")
+                                                                        
                                                                                 $j("#investigationHeaderDetail").show();
-                                                                                $j("#studyHeaderDetails").hide();
 
                                                                                 break;
                                                                             }
-                                                                        case "j1_7"://Study
+                                                                        case "j1_7"://proposal
                                                                             {
-                                                                               $j("#studyHeaderDetails").show();
-                                                                                $j("#studyDetails").show()
-
-                                                                                $j("#_header").hide();
-                                                                                $j("#file_contents").hide();
-                                                                                $j("#projectHeaderDetails").hide();
-                                                                                $j("#investigationHeaderDetail").hide();
-                                                                                 $j("#projectDetails").hide();
-
-                                                                                $j("#titleContent").text("Effect of temperature on Lasiodiplodia theobromae transcriptomic")
-                                                                                $j("#descriptionContent").text("How temperature affects gene expression")
-                                                                                  loadWorkflow()
-                                                                                  break;
-                                                                            }
-                                                                        case "j1_8": //Assay
-                                                                            {
-                                                                                    $j("#detailContent").show()
-                                                                                $j("#file_contents").hide();
-                                                                                $j("#projectHeaderDetails").hide();
-                                                                                $j("#investigationHeaderDetail").hide();
-                                                                                $j("#studyHeaderDetails").hide();
-                                                                                break;
-                                                                            }
-                                                                        case "j1_9": //File
-                                                                            {
-                                                                              $j("#detailContent").hide()
+                                                                             
+                                                                 
                                                                                 $j("#file_contents").show();
-                                                                                $j(".contents").hide();
+                                                                                $j(".contents").show();
+
+                                                                                AddFile("proposal")
+                                                                                break;                                                                            }
+                                                                        case "j1_8": //poster
+                                                                            {
+                                                                              
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                           
+                                                                                 AddFile("poster");
+                                                                                 break;
+                                                                            }
+                                                                        case "j1_9": //slideshow
+                                                                            {
+                                                                         
+                                                                              $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("slideshow")
+                                                                                break;
+                                                                            }
+                                                                               case "j1_10": //article
+                                                                            {
+                                                                             
+                                                                               $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                         
+                                                                                 AddFile("article");
+                                                                                break;
+                                                                            }
+                                                                                 case "j1_11": //Study
+                                                                            {
+                                                                                $j("#studyDetails").show()
+                                                                                $j("#studytitleContent").text("Effect of temperature on Lasiodiplodia theobromae transcriptomic")
+                                                                                $j("#descriptionContent").text("How temperature affects gene expression")
+                                                                                loadWorkflow("wf")
+                                                                                 setCookie("whichWorkflow" ,"wf", 1000000)
+                                                                                     console.log("wf")
+                                                                                break;
+                                                                            }
+                                                                                 case "j1_12": //Assay
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                              
+                                                                                break;
+                                                                            }
+                                                                                 case "j1_13": //File
+                                                                            {
+                                                                              
+                                                                                $j("#file_contents").show();
+                                                                       
+                                                                                AddFile("");
+                                                                                break;
+                                                                            }
+                                                                                 case "j1_14": //second study
+                                                                            {
+                                                                                $j("#studyDetails").show()
+                                                                                $j("#studytitleContent").text("Proteomics")
+                                                                                $j("#descriptionContent").text("Proteomics")
+                                                                               
+                                                                                setCookie("whichWorkflow" ,"wf2", 1000000)
+                                                                                console.log("wf2")
+                                                                                 loadWorkflow("wf2")
+
+                                                                                break;
+                                                                            }
+                                                                                  case "j1_15": //second Assay
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                           
+                                                                                break;
+                                                                            }
+                                                                                  case "j1_16": //second files
+                                                                            {
+                                                                              
+                                                                                $j("#file_contents").show();
+                                                                              
                                                                                 AddFile("");
                                                                                 break;
                                                                             }
                                                                        
                                                                     }
+
+                                                                            function hideAll(){
+                                                                                     $j("#_header").hide();
+                                                                                $j("#file_contents").hide();
+                                                                                $j("#projectHeaderDetails").hide();
+                                                                                $j("#investigationHeaderDetail").hide();
+                                                                                $j("#projectDetails").hide();
+                                                                               $j("#detailContent").hide()
+                                                                               $j("#studyDetails").hide()
+                                                                               $j("#studyDetails2").hide()
+                                                                                $j(".contents").hide();
+                                                                                $j("#prjDetail").hide();
+                                                                                 $j("#presentationDetail").hide();
+                                                                                   $j("#proposalsDetail").hide();
+                                                                                }
+
                                                                 }).jstree({
                                                                     'core': {
                                                                         "check_callback": true,
                                                                         'data': [{
-                                                                            "text": "Project",
+                                                                            "text": "L. theobromae & temp",
                                                                             "a_attr": {
                                                                                 "style": "font-weight:bold"
                                                                             },
@@ -523,22 +577,29 @@
                                                                                     }, {
                                                                                         "text": "Slideshows","count": 1,
                                                                                     }, {
-                                                                                        "text": "Articles","count": 4,
+                                                                                        "text": "Articles","count": 4, "state":{ "separate" : {'label':'Investigations','action':'http://www.google.com'}}
                                                                                 }, {
-                                                                                "text": "Investigation",
+                                                                                "text": "Molecular mechanism",
                                                                                 "a_attr": {
                                                                                     "style": "font-weight:bold"
                                                                                 },
                                                                                 "state": {
                                                                                     "opened": true,
-                                                                                     "separate" : {'label':'Investigations','action':'http://www.google.com'}
+                                                                                    
                                                                                 },
                                                                                 "children": [{
-                                                                                    "text": "Study",
+                                                                                        "text": "Proposals","count": 1,
+                                                                                    }, {
+                                                                                        "text": "Posters","count": 1,
+                                                                                    }, {
+                                                                                        "text": "Slideshows","count": 1,
+                                                                                    }, {
+                                                                                        "text": "Articles","count": 4,  "state": {"separate" : {'label':'Studies','action':'http://www.google.com'}}
+                                                                                },{
+                                                                                    "text": "Transcriptomics",
                                                                                     "state": {
                                                                                         "opened": true,
                                                                                         // "selected": true,
-                                                                                         "separate" : {'label':'Studies','action':'http://www.google.com'}
                                                                                     },
                                                                                     "a_attr": {
                                                                                         "style": "font-weight:bold"
@@ -547,16 +608,32 @@
                                                                                         "text": "Assay",
                                                                                         "state": {
                                                                                             "opened": true,
-                                                                                             "separate" : {'label':'Assays'}
+                                                                                             "separate" : {'label':'Assay'}
                                                                                         },
                                                                                         "a_attr": {
                                                                                             "style": "font-weight:bold"
                                                                                         },
                                                                                         "children": [{
-                                                                                            "text": "Files","count": '0',
+                                                                                            "text": "Methods","count": '0',
                                                                                         }, ]
                                                                                     }, ]
-                                                                                }, ]
+                                                                                }, {"text":"Proteomics",  "state": {
+                                                                                        "opened": true,
+                                                                                    },  "a_attr": {
+                                                                                        "style": "font-weight:bold"
+                                                                                    },  "children": [{
+                                                                                        "text": "Assay",
+                                                                                        "state": {
+                                                                                            "opened": true,
+                                                                                             "separate" : {'label':'Assay'}
+                                                                                        },
+                                                                                        "a_attr": {
+                                                                                            "style": "font-weight:bold"
+                                                                                        },
+                                                                                        "children": [{
+                                                                                            "text": "Methods","count": '0',
+                                                                                        }, ]
+                                                                                    }, ]}]
                                                                             }, ]
                                                                         }]
                                                                     },

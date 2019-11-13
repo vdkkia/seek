@@ -2,28 +2,32 @@
     <div class="inner">
 
         <div id="tableContainer" style="text-align: center;margin-right: auto; margin-left: auto;">
-<h2>Independent variables</h1>
+<h2>Experimental factors</h1>
 
             <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
 
             <table class="table tableXs indtable">
                 <thead class="thead-dark">
-                    <th>Independent variables</th>
+                    <th>Experimental factors</th>
                     <th></th>
-                    <th>Levels</th>
+                    <th>Factors levels</th>
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="1">variable name</td>
-                        <td rowspan="1">
+                        <td rowspan="2">Temperature (°c)</td>
+                        <td rowspan="2">
                             <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
                         </td>
-                        <td>level name </td>
+                        <td>25 </td>
+                    </tr>
+                       <tr>
+                    
+                        <td >37</td>
                     </tr>
 
                 </tbody>
             </table>
-<h2>Dependent variables</h1>
+<h2>Response variables</h1>
 
  <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addDepVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
  
@@ -31,15 +35,15 @@
 
   <table class="table tableXs deptable">
                 <thead class="thead-dark">
-                    <th>Dependent variables</th>
-                    <th>Experimental Unit</th>
+                    <th>Response variables (what will you quantify?)</th>
+                    <th>Material (quantification on what?)</th>
                     <th>Sub-sample of</th>
                 </thead>
                 <tbody>
                     <tr>
-                        <td >variable name</td>
-                        <td >experimental unit</td>
-                        <td>sample</td>
+                        <td >Gene expression</td>
+                        <td >L. Theobromae</td>
+                        <td>N/A</td>
                     </tr>
 
                 </tbody>
@@ -57,34 +61,39 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="1">variable name</td>
+                        <td rowspan="1">N/A</td>
                         <td rowspan="1">
                             <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
                         </td>
-                        <td>level name </td>
+                        <td>N/A </td>
                     </tr>
 
                 </tbody>
             </table>
 
 
-<h2>Covariates variables</h1>
+<h2>Covariates</h1>
 
         <a class="btn btn-primary " style="font-size:10px;float:left" onClick="addCovVar()"> <i class="glyphicon glyphicon-plus"></i> Add Variable</a>
 
             <table class="table tableXs covtable">
                 <thead class="thead-dark">
-                    <th>Covariates variables</th>
+                    <th>Covariates (Variables of no interest that might affect response variables)</th>
                     <th></th>
                     <th>Levels</th>
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="1">variable name</td>
-                        <td rowspan="1">
+                        <td rowspan="2">Experimentalist</td>
+                        <td rowspan="2">
                             <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
                         </td>
-                        <td>level name </td>
+                        <td>fldan </td>
+
+                    </tr>
+                    <tr>
+                     <td>vakia </td>
+
                     </tr>
 
                 </tbody>
@@ -98,17 +107,17 @@
 
             <table class="table tableXs conftable">
                 <thead class="thead-dark">
-                    <th>Confounding variables</th>
+                    <th>Confounding variables (Variables of no interest that might affect experimental factors and response variables)</th>
                     <th></th>
                     <th>Levels</th>
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="1">variable name</td>
+                        <td rowspan="1">N/A</td>
                         <td rowspan="1">
                             <a class="btn btn-primary" style="font-size:10px" onClick="addLevel()"> <i class="glyphicon glyphicon-plus"></i> Add Level</a>
                         </td>
-                        <td>level name </td>
+                        <td>N/A </td>
                     </tr>
 
                 </tbody>
@@ -121,15 +130,18 @@
 
             <table class="table tableXs controltable">
                 <thead class="thead-dark">
-                    <th>Control variables</th>
+                    <th>Control variables (Variable that stay unchanged)</th>
                     <th>Description</th>
                 </thead>
                 <tbody>
                     <tr>
-                        <td >variable name</td>
-                        <td>description</td>
+                        <td >Geographical coordinates</td>
+                        <td>Long, lat, etc...</td>
                     </tr>
-
+                        <tr>
+                        <td >Time of treatment (days)</td>
+                        <td>4</td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -153,8 +165,8 @@
                     </tr>
                     <tr>
                         <td >Technical</td>
-                         <td >2</td>
-                        <td>2 per block</td>
+                         <td >N/A</td>
+                        <td>N/A</td>
                     </tr>
 
                 </tbody>
@@ -165,13 +177,11 @@
 <div class="form-inline" style="text-align:left">
  <select id="expDesign" class="form-control">
                                                                     <option value="">Please select an item</option>
-                                                                    <option value="1">1</option>
-                                                                    <option value="2">2</option>
-                                                                    <option value="3">3</option>
-                                                                    <option value="4">4</option>
+                                                                    <option value="1">One-factor experiment</option>
+                                                           
                                                                 </select>
 
-                                                                <input typ e="text"  class="form-control" style="min-width:400px" placeholder="Description">
+                                                                <input typ e="text"  class="form-control" style="min-width:400px" placeholder="Description" value="Compare two temperature. Three independent replicates">
 </div>
         </div>
 
