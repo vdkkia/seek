@@ -217,6 +217,7 @@
                             var data = $flowchart.flowchart('getData');
                             setCookie(cookieName ,JSON.stringify(data), 1000000)
                             updateMethods(data);
+                            updateTBLs(data);
                            // console.log(data)
                         }
 
@@ -263,6 +264,67 @@
                             }
 
                         }
+
+                            function updateTBLs(data)
+                        {
+                            let TableNames = [];
+                            let TableopIndexes = [];
+                           // if the workflow has TBL box
+                           $j.map(data.operators, (operator, index)=>{
+                               if (operator.properties.shape === "parallelogram")
+                               {
+                                            TableopIndexes.push(index);    
+                               }
+                           })
+                            
+                              let FirstBox = findFirstBox(TableopIndexes,data.links);
+                             let arrenged = arrangeBoxes(data.operators, FirstBox, data.links)
+                                $j.map(arrenged, (operator, index)=>{
+                               if (operator.properties.shape === "parallelogram")
+                               {
+                                             TableNames.push(operator.properties.title);
+                               }
+                           })
+
+                           let currentStudy = getCookie("whichWorkflow");
+                           setCookie(currentStudy + "_TBLs",TableNames,1000000);
+                         
+                        }
+
+                        function findFirstBox(operatorsIndexes, links)
+                        {
+                            let temp, result;
+                             $j.each(operatorsIndexes,(op_key, op_val)=>{
+                                               temp = false;
+                                            $j.each(links,(link_key, link_val)=>{                                                 
+                                                       if (link_val.toOperator.toString() == op_val)
+                                                                temp = true;
+                                             })
+                                             if (!temp)
+                                             {
+                                                    result =  op_val;
+                                                    return result
+                                             }
+                             })
+                         return result
+                        }
+
+                        function arrangeBoxes(OpList, firstBoxId, links){
+                                let arranged = [], current = firstBoxId;
+                                  arranged.push(OpList[current])
+                                for (let i=0; i<Object.keys(links).length; i++){
+                                        $j.each(links, (key,link)=>{
+                                        
+                                                if (link.fromOperator == current)
+                                                {
+                                                    arranged.push(OpList[link.toOperator])
+                                                    current = link.toOperator
+                                                }
+                                        })
+                                          
+                                }   
+                                                    return arranged
+                        }
                     
                       
 function bounce(item, text) {
@@ -271,6 +333,8 @@ item.addClass('animate')
 setTimeout(() => {
  item.css('transform', 'scale(2)')
   item.css('opacity', '0')
+
+  
     
 }, 1);
 setTimeout(() => {

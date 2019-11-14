@@ -1,16 +1,15 @@
 let selectedFile = '';
 
-function AddCell() {
-    let colCount = $j('.tableX').columnCount() + 1;
-    let newColName = $j("#col_name").val();
+function AddCell(table, newColName) {
+    let colCount = $j(table).columnCount() + 1;
     if (newColName.length < 3) {
         alert("Please enter a valid column name!");
         return;
     }
-    $j('.tableX').find('thead').find('th').eq(colCount - 2).after('<th>' + newColName + '</th>');
+    $j(table).find('thead').find('th').eq(colCount - 2).after('<th>' + newColName + '</th>');
 
 
-    $j('.tableX').find('tr').each(function() {
+    $j(table).find('tr').each(function() {
         $j(this).find('td').eq(colCount - 2).after('<td>TBD</td>');
     });
 }
@@ -23,16 +22,14 @@ $j.fn.rowcount = function() {
     return $j('tr', $j(this).find('tbody')).length;
 };
 
-function AddRow() {
-    let rowCount = $j('.tableX').rowcount() + 1;
-
+function AddRow(table) {
+    let rowCount = $j(table).rowcount() + 1;
     // console.log($j('.table tbody tr:last-child').html())
     let newRow;
-    $j('.tableX thead tr').find('th').each(function() {
+    $j(table + ' thead tr').find('th').each(function() {
         newRow += '<td>TBD</td>'
     });
-    $j('.tableX tbody').append('<tr>' + newRow + '</tr>')
-
+    $j(table + ' tbody').append('<tr>' + newRow + '</tr>')
 }
 
 
@@ -190,10 +187,25 @@ $j(".UL").on("click", ".file", function(event) {
         //-----------SHOW CONTENT---------------
     let fileType = $j(this).data('filetype');
     if (fileType == "txt") {
-
         $j('#txt_file_content').show();
         let content = getCookie(selectedFIle)
         $j('#txt_file_content').val(content.length > 0 ? content.replace(new RegExp("<br/>", "g"), '\n') : '')
+    } else if (fileType == "tbl") {
+        $j("#tbl_file_content").show();
+        //tableInpOut
+        $j(".tableInpOut thead tr").remove();
+        $j(".tableInpOut tr").remove();
+        let temp = "";
+        if ($j(this).parent().index() == 0) {
+            temp += '<th scope="col">Name</th>'
+            temp += '<th scope="col">Developmental Stage</th>'
+            temp += '<th scope="col">Organism</th>'
+            temp += '<th scope="col">Organism part</th>'
+            temp += '<th scope="col">Material type</th>'
+            $j('.tableInpOut thead').append('<tr>' + temp + '</tr>');
+
+            AddRow('.tableInpOut')
+        }
     }
 
 });

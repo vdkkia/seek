@@ -109,6 +109,31 @@
 
                                                     <div class="col-lg-12 contents" id="contents" style="min-height: 100vh; padding:10px">
                                                         <textarea placeholder="Insert content here!" style="width:100%;min-height: 100vh" id="txt_file_content" class="form-control"></textarea>
+                                                        <div id="tbl_file_content">
+                                                                <a class="btn btn-primary " style="font-size:10px;float:left;margin-right:5px" onClick="AddRow('.tableInpOut')"> <i class="glyphicon glyphicon-plus"></i> Add Row</a>
+                                                                <a class="btn btn-primary " style="font-size:10px;float:left" onClick="showPreDefinedCols()"> <i class="glyphicon glyphicon-plus"></i> Add Column</a>
+                                                                      <div class="arrow_box" style="padding:5px; display:none">
+                                                                     <ul style="list-style-type: none;   padding: 0;">
+                                                                     <li> <input placeholder="custom column name..." class="form-control customCol"  /></li>
+                                                                     <li><input type="button" class="btn btn-primary col-md-12 predef" value="predefined 1" /></li>
+                                                                     <li><input type="button" class="btn btn-primary col-md-12 predef" value="predefined 2" /></li>
+                                                                       <li><input type="button" class="btn btn-primary col-md-12 predef" value="predefined 3" /></li>
+                                                                        <li><input type="button" class="btn btn-primary col-md-12 predef" value="predefined 4" /></li>
+                                                                         <li><input type="button" class="btn btn-primary col-md-12 predef" value="predefined 5" /></li>
+                                                                          <li><input type="button" class="btn btn-primary col-md-12 predef" value="predefined 6" /></li>
+                                                                     </ul>
+                                                               
+                                                                            </div>
+
+                                                                        <table>
+                                                                        <table class="tableXs table tableInpOut">
+                                                                            <thead class="thead-dark">
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </table>
+                                                        </div>
                                                         <div id="tableContainer" style="text-align: center;margin-right: auto; margin-left: auto;display:none">
 
                                                             <div>
@@ -142,8 +167,8 @@
                                                                 <div class="col-lg-12">
                                                                     <div class="form-inline" style="text-align:left">
                                                                         <%# <button type="button" class="btn btn-primary" onclick="ExportJSON();">Export to JSON</button> %>
-                                                                            <button type="button" class="btn btn-primary" onclick="AddRow();">Add Row</button>
-                                                                            <button type="button" class="btn btn-primary" onclick="AddCell();">Add Col</button>
+                                                                            <button type="button" class="btn btn-primary" onclick="AddRow('.tableX');">Add Row</button>
+                                                                            <button type="button" class="btn btn-primary" onclick="AddCell('.tableX', $j('#col_name').val());">Add Col</button>
 
                                                                             <div class="form-group mx-sm-3 mb-2">
 
@@ -336,6 +361,42 @@
                             text-decoration: none;
                             transform: scale(1.5);
                         }
+
+                        .preDefinedCols{
+                            width:200px; height:270px;
+                            border-radius:5px;border:1px solid #ddd;position:absolute;background-color:white;
+                            box-shadow: 0px 0px 5px 6px rgba(0,0,0,0.1);
+                        }
+
+                        .arrow_box {
+                                width:200px; height:270px;
+	position: absolute;
+	background: white;
+	border: 4px solid #ddd;
+     border-radius:5px;
+}
+.arrow_box:after, .arrow_box:before {
+	right: 100%;
+	top: 7%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.arrow_box:after {
+	border-right-color: white;
+	border-width: 10px;
+	margin-top: -10px;
+}
+.arrow_box:before {
+	border-right-color: #ddd;
+	border-width: 16px;
+	margin-top: -16px;
+}
+
                     </style>
                     <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
                         <div style="clear:both;">
@@ -514,7 +575,9 @@
                                                                         case "j1_12": //Assay
                                                                             {
                                                                                 setCookie("whichWorkflow", "wf", 1000000)
-                                                                                $j("#detailContent").show()
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("Assay");
                                                                                 break;
                                                                             }
                                                                         case "j1_13": //Methods
@@ -538,8 +601,9 @@
                                                                         case "j1_15": //second Assay
                                                                             {
                                                                                 setCookie("whichWorkflow", "wf2", 1000000)
-                                                                                $j("#detailContent").show()
-
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("Assay");
                                                                                 break;
                                                                             }
                                                                         case "j1_16": //second Methods
@@ -567,6 +631,7 @@
                                                                         $j("#presentationDetail").hide();
                                                                         $j("#proposalsDetail").hide();
                                                                         $j("#txt_file_content").hide();
+                                                                        $j("#tbl_file_content").hide();                                                                        
                                                                     }
 
                                                                 }).jstree({
@@ -740,6 +805,17 @@
                                                                                 
                                                                                 break;
                                                                             }
+                                                                            case "Assay":{
+                                                                                 let TBLs = getCookie(getCookie("whichWorkflow") + "_TBLs").split(',');
+                                                                                if (TBLs[0] == "") {
+                                                                                    base.append('<li>empty</li>')
+                                                                                } else {
+                                                                                    $j.each(TBLs, (index) => {
+                                                                                        base.append('<li ><img src="/assets/tbl.png"> <br><a data-filetype="tbl" class="file">' + TBLs[index] + '</a></li>')
+                                                                                    })
+                                                                                }
+                                                                                break;
+                                                                            }
                                                                         case "":
                                                                             {
                                                                                 base.append("<li style='padding:0'><br/>No File! <br/><br/></li>")
@@ -747,4 +823,35 @@
 
                                                                     }
                                                                 }
+
+
+                                                                function showPreDefinedCols(){
+                                                                        if( $j('.arrow_box').css('display') =="block" )  { 
+                                                                                           $j(".arrow_box").css({display: "none", left: 200 , top:4});
+                                                                                } 
+                                                                                else { 
+                                                                               $j(".arrow_box").css({display: "block", left: 200 , top:4});
+                                                                                }
+                                                                }
+
+                                                                $j('.predef').on('click', function(){
+                                                                  
+                                                                          AddCell('.tableInpOut', $j(this).val())
+                                                                          $j(".arrow_box").css({display: "none", left: 200 , top:4});
+    
+                                                                })
+
+                                                              
+                                                                $j('.customCol').keypress(function(event){
+	
+                                                                    var     keycode = (event.keyCode ? event.keyCode : event.which);
+                                                                    if(keycode == '13'){
+                                                                       AddCell('.tableInpOut', $j(this).val())
+                                                                       $j(".arrow_box").css({display: "none", left: 200 , top:4});
+                                                                    }
+
+                                                                });
+                                                             
+                                                             
+                                                             
                                                             </script>
