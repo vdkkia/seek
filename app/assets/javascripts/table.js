@@ -86,10 +86,9 @@ function ExportJSON() {
     console.log(tbl);
 }
 
-function setCookie(c_name, value, expireminutes) {
+function setCookie(c_name, value, expireminutes, ) {
     var exdate = new Date();
     exdate.setMinutes(exdate.getMinutes() + expireminutes);
-    //document.cookie = c_name + "=";
     document.cookie = c_name + "=" + value +
         ((expireminutes == null) ? "" : ";expires=" + exdate.toUTCString());
 }
@@ -179,15 +178,33 @@ $j(".UL").on("click", ".file", function(event) {
         $j('#workflowContainer').show();
         //  loadWorkflow();
     }
-
-
     // selectedFile = fileName;
     $j('.UL li').each(function() {
         $j(this).removeClass("file_selected")
     });
     $j(this).parent().addClass("file_selected")
 
+
+    let selectedFIle = $j(this).html();
+    setCookie("selectedFIle", selectedFIle, 1000000)
+        //-----------SHOW CONTENT---------------
+    let fileType = $j(this).data('filetype');
+    if (fileType == "txt") {
+
+        $j('#txt_file_content').show();
+        let content = getCookie(selectedFIle)
+        $j('#txt_file_content').val(content.length > 0 ? content.replace(new RegExp("<br/>", "g"), '\n') : '')
+    }
+
 });
+
+//SAVE CONTENT ON txt_file_content KEYUP
+$j('#txt_file_content').keyup(function(event) {
+    let content = $j(this).val().replace(/\n/g, '<br/>');
+    setCookie(getCookie("selectedFIle"), content, 1000000)
+})
+
+
 
 function SaveTable() {
     let R = $j('.tableX').prop('outerHTML')
