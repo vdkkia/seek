@@ -200,8 +200,8 @@
                                     <div class="tab-content">
                                         <div id="home" class="tab-pane fade in active" style="padding:10px">
                                             <p id="title"><strong style="text-align: center;">Title:</strong> <span id="studytitleContent">Transcriptomics</span></p>
-                                            <p id="description"> <strong>Description:</strong> <span id="descriptionContent">How temperature affects gene expression</span> </p>
-                                            <p><strong>Hypothesis: </strong> Warm temperature affect pathogenicity genes</p>
+                                            <p id="description"> <strong>Description:</strong> <span id="StudyDescriptionContent">How temperature affects gene expression</span> </p>
+                                            <p><strong>Hypothesis: </strong> <span id="Hypothesis">Warm temperature affect pathogenicity genes</span></p>
                                             <p><strong>Experimentalists: </strong> experimentalists description</p>
                                             <div class="form-group">
                                                 <label>Shared with: </label>
@@ -393,6 +393,10 @@
 	border-width: 16px;
 	margin-top: -16px;
 }
+.disabledMenu{
+   pointer-events: none;
+    opacity: 0.4 !important;
+}
 
                     </style>
                     <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
@@ -515,21 +519,16 @@
                                                                             {
 
                                                                                 $j("#detailContent").show()
-
                                                                                 $j("#_header").addClass("col-lg-12")
                                                                                 $j("#titleContent").text("Molecular mechanism")
                                                                                 $j("#descriptionContent").text("Effect of temperature on Lasiodiplodia theobromae")
-
                                                                                 $j("#investigationHeaderDetail").show();
-
                                                                                 break;
                                                                             }
                                                                         case "j1_7": //proposal
                                                                             {
-
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
-
                                                                                 AddFile("proposal")
                                                                                 break;
                                                                             }
@@ -538,7 +537,6 @@
 
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
-
                                                                                 AddFile("poster");
                                                                                 break;
                                                                             }
@@ -552,10 +550,8 @@
                                                                             }
                                                                         case "j1_10": //article
                                                                             {
-
                                                                                 $j("#file_contents").show();
                                                                                 $j(".contents").show();
-
                                                                                 AddFile("article");
                                                                                 break;
                                                                             }
@@ -563,10 +559,9 @@
                                                                             {
                                                                                 $j("#studyDetails").show()
                                                                                 $j("#studytitleContent").text("Transcriptomic")
-                                                                                $j("#descriptionContent").text("How temperature affects gene expression")
+                                                                                $j("#StudyDescriptionContent").text("How temperature affects gene expression")
                                                                                 loadWorkflow("wf")
                                                                                 setCookie("whichWorkflow", "wf", 1000000)
-
                                                                                 break;
                                                                             }
                                                                         case "j1_12": //Assay
@@ -589,7 +584,7 @@
                                                                             {
                                                                                 $j("#studyDetails").show()
                                                                                 $j("#studytitleContent").text("Proteomics")
-                                                                                $j("#descriptionContent").text("Proteomics")
+                                                                                $j("#StudyDescriptionContent").text("Proteomics")
                                                                                 setCookie("whichWorkflow", "wf2", 1000000)
                                                                                 loadWorkflow("wf2")
 
@@ -611,6 +606,71 @@
                                                                                 AddFile("Methods");
                                                                                 break;
                                                                             }
+                                                                            case "j1_17": //second Investigation
+                                                                            {
+                                                                                $j("#detailContent").show()
+                                                                                $j("#_header").addClass("col-lg-12")
+                                                                                $j("#titleContent").text("Genome-seq")
+                                                                                $j("#descriptionContent").text("genome-seq and assembly")
+                                                                                $j("#investigationHeaderDetail").show();
+                                                                                break;
+                                                                            }
+                                                                               case "j1_18": //proposal
+                                                                            {
+                                                                                 $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("proposal")
+                                                                                break;
+                                                                            }
+                                                                               case "j1_19": //poster
+                                                                            {
+                                                                               $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("poster");
+                                                                                break;
+                                                                            }
+                                                                               case "j1_20": //slideshow
+                                                                            {
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("slideshow")
+                                                                                break;
+                                                                            }
+                                                                               case "j1_21": //article
+                                                                            {
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("article");
+                                                                                break;
+                                                                            }
+                                                                               case "j1_22": //Study
+                                                                            {
+                                                                                $j("#studyDetails").show()
+                                                                                $j("#studytitleContent").text("Genome-seq")
+                                                                                $j("#StudyDescriptionContent").text("genome-seq and assembly")
+                                                                                 $j("#Hypothesis").text("")
+                                                                                 $j("#menu1").addClass("disabledMenu")
+                                                                                loadWorkflow("wf3")
+                                                                                setCookie("whichWorkflow", "wf3", 1000000)
+                                                                                break;
+                                                                            }
+                                                                               case "j1_23": //Assay
+                                                                            {
+                                                                                setCookie("whichWorkflow", "wf3", 1000000)
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("Assay");
+                                                                                break;
+                                                                            }
+                                                                               case "j1_24": //Methods
+                                                                            {
+                                                                                setCookie("whichWorkflow", "wf3", 1000000)
+                                                                                $j("#file_contents").show();
+                                                                                $j(".contents").show();
+                                                                                AddFile("Methods");
+                                                                                break;
+                                                                            }
+                                                                        
 
                                                                     }
 
@@ -628,7 +688,8 @@
                                                                         $j("#presentationDetail").hide();
                                                                         $j("#proposalsDetail").hide();
                                                                         $j("#txt_file_content").hide();
-                                                                        $j("#tbl_file_content").hide();                                                                        
+                                                                        $j("#tbl_file_content").hide();         
+                                                                           $j("#menu1").removeClass("disabledMenu")                                                               
                                                                     }
 
                                                                 }).jstree({
@@ -743,7 +804,65 @@
                                                                                         }, ]
                                                                                     }, ]
                                                                                 }]
-                                                                            }, ]
+                                                                            }, 
+                                                                            
+                                                                            {
+                                                                                "text": "Genome assembly",
+                                                                                "a_attr": {
+                                                                                    "style": "font-weight:bold"
+                                                                                },
+                                                                                "state": {
+                                                                                    "opened": true,
+
+                                                                                },
+                                                                                "children": [{
+                                                                                    "text": "Proposals",
+                                                                                    "count": 1,
+                                                                                }, {
+                                                                                    "text": "Posters",
+                                                                                    "count": 1,
+                                                                                }, {
+                                                                                    "text": "Slideshows",
+                                                                                    "count": 1,
+                                                                                }, {
+                                                                                    "text": "Articles",
+                                                                                    "count": 4,
+                                                                                    "state": {
+                                                                                        "separate": {
+                                                                                            'label': 'Studies',
+                                                                                            'action': 'http://www.google.com'
+                                                                                        }
+                                                                                    }
+                                                                                }, {
+                                                                                    "text": "Genome-seq",
+                                                                                    "state": {
+                                                                                        "opened": true,
+                                                                                        // "selected": true,
+                                                                                    },
+                                                                                    "a_attr": {
+                                                                                        "style": "font-weight:bold"
+                                                                                    },
+                                                                                    "children": [{
+                                                                                        "text": "Assay",
+                                                                                        "state": {
+                                                                                            "opened": true,
+                                                                                            "separate": {
+                                                                                                'label': 'Assay'
+                                                                                            }
+                                                                                        },
+                                                                                        "a_attr": {
+                                                                                            "style": "font-weight:bold"
+                                                                                        },
+                                                                                        "children": [{
+                                                                                            "text": "Methods",
+                                                                                            "count": getCookie("wf3_Methods").split(',').length,
+                                                                                        }, ]
+                                                                                    }, ]
+                                                                                }, ]
+                                                                            }
+                                                                            
+                                                                            
+                                                                            ]
                                                                         }]
                                                                     },
                                                                     'plugins': ["contextmenu"]

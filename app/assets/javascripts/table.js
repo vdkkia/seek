@@ -82,6 +82,7 @@ function ExportJSON() {
 }
 
 function setCookie(c_name, value, expireminutes, ) {
+
     var exdate = new Date();
     exdate.setMinutes(exdate.getMinutes() + expireminutes);
     document.cookie = c_name + "=" + encodeURIComponent(value) +
