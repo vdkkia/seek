@@ -79,14 +79,12 @@ function ExportJSON() {
         });
         return retVal;
     }).get();
-
-    console.log(tbl);
 }
 
 function setCookie(c_name, value, expireminutes, ) {
     var exdate = new Date();
     exdate.setMinutes(exdate.getMinutes() + expireminutes);
-    document.cookie = c_name + "=" + value +
+    document.cookie = c_name + "=" + encodeURIComponent(value) +
         ((expireminutes == null) ? "" : ";expires=" + exdate.toUTCString());
 }
 
@@ -97,7 +95,7 @@ function getCookie(c_name) {
             c_start = c_start + c_name.length + 1;
             c_end = document.cookie.indexOf(";", c_start);
             if (c_end == -1) c_end = document.cookie.length;
-            return unescape(document.cookie.substring(c_start, c_end));
+            return decodeURIComponent(document.cookie.substring(c_start, c_end));
         }
     }
     return "";
@@ -148,22 +146,12 @@ function populateSampleSourceTable(sourceId) {
     }
 
     $j('.tableX thead').append('<tr>' + temp + '</tr>');
-
-
 }
 
-
 $j(".UL").on("click", ".file", function(event) {
-    // SaveTable();
     $j('#tableContainer').hide();
     $j('#workflowContainer').hide();
-
-
-
     let fileName = $j(this).text();
-
-
-
     if (fileName == "Sample Source") {
         let E = getCookie(fileName);
         if (E.length > 60) {
@@ -191,24 +179,69 @@ $j(".UL").on("click", ".file", function(event) {
         let content = getCookie(selectedFIle)
         $j('#txt_file_content').val(content.length > 0 ? content.replace(new RegExp("<br/>", "g"), '\n') : '')
     } else if (fileType == "tbl") {
-        $j("#tbl_file_content").show();
-        //tableInpOut
-        $j(".tableInpOut thead tr").remove();
-        $j(".tableInpOut tr").remove();
-        let temp = "";
-        if ($j(this).parent().index() == 0) {
-            temp += '<th scope="col">Name</th>'
+        showAssayTable($j(this), selectedFIle)
+    }
+
+});
+
+function showAssayTable(T, selectedFIle) {
+    $j("#tbl_file_content").show();
+    $j(".tableInpOut thead tr").remove();
+    $j(".tableInpOut tr").remove();
+    let content = getCookie(selectedFIle)
+    let index = T.parent().index()
+    let predefCols
+    if (index == 0) {
+        predefCols = ['Species', 'Strain', 'Source', 'Source origins', 'Growth medium', 'Growth temperature', 'Unit']
+    } else if (index == 1) {
+        predefCols = ['Start treatment', 'Calibration']
+    } else if (index == 2) {
+        predefCols = ['Exraction data', 'Experimentalist', 'Concentration', 'Unit', '260/280', '260/230', 'Volume', 'Solvent', 'DNAse treatment', 'Position']
+    }
+    populatePredefinedCols(predefCols)
+        //------------IF THERE IS NO CONTENT---------------
+    if (content) {
+        LoadTable('.tableInpOut', selectedFIle, content)
+    } else {
+        let temp
+        if (index == 0) { // -------------FIRST TABLE--------------
+            temp = '<th scope="col">Name</th>'
             temp += '<th scope="col">Developmental Stage</th>'
             temp += '<th scope="col">Organism</th>'
             temp += '<th scope="col">Organism part</th>'
             temp += '<th scope="col">Material type</th>'
-            $j('.tableInpOut thead').append('<tr>' + temp + '</tr>');
 
-            AddRow('.tableInpOut')
+        } else
+        if (index == 1) { // -------------SECOND TABLE--------------
+            temp = '<th scope="col">Name</th>'
+            temp += '<th scope="col">Applied Protocol</th>'
+            temp += '<th scope="col">Material Type</th>'
+            temp += '<th scope="col">Temperature</th>'
+            temp += '<th scope="col">Unit</th>'
+            temp += '<th scope="col">Bio Rep (BR)</th>'
+            temp += '<th scope="col">Experimentalist</th>'
+            temp += '<th scope="col">Output Label</th>'
+        } else if (index == 2) { // -------------THIRD TABLE--------------
+            temp = '<th scope="col">Input Label</th>'
+            temp += '<th scope="col">Applied Protocol</th>'
+            temp += '<th scope="col">Material Type</th>'
+            temp += '<th scope="col">Output Label</th>'
+
         }
+        $j('.tableInpOut thead').append('<tr>' + temp + '</tr>');
+        AddRow('.tableInpOut')
+
     }
 
-});
+}
+
+function populatePredefinedCols(colList) {
+    $j('#preDefinedList li:not(:first-child)').remove()
+    $j.each(colList, function(index) {
+        $j('#preDefinedList').append(`<li><input type="button" class="btn btn-primary col-md-12 predef"  value="${colList[index]}"/></li>`);
+    })
+
+}
 
 //SAVE CONTENT ON txt_file_content KEYUP
 $j('#txt_file_content').keyup(function(event) {
@@ -216,9 +249,11 @@ $j('#txt_file_content').keyup(function(event) {
     setCookie(getCookie("selectedFIle"), content, 1000000)
 })
 
+function SaveTable(Table, saveName) {
+    console.log($j(Table).prop('outerHTML'))
+    setCookie(saveName, $j(Table).prop('outerHTML'), 1000000)
+}
 
-
-function SaveTable() {
-    let R = $j('.tableX').prop('outerHTML')
-    setCookie("Sample Source", R, 1000000)
+function LoadTable(Table, savedName, content) {
+    $j(Table).html(content ? content : getCookie(savedName));
 }
