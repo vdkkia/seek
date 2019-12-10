@@ -1,159 +1,316 @@
 <%= render :partial => "general/item_title",:locals => {:item=>@project, :buttons_partial => 'projects/buttons'} %>
+<div>
+  <div class="col-lg-2"></div>
+  <div class="col-lg-8">
+    <img src="/assets/guidance.png" alt="user guidance" style=" width: 100%; height: auto;margin-bottom:20px" />
+    <%= hidden_field_tag 'selected_item_id', ''  %>
+    <%= hidden_field_tag 'selected_folder', ''  %>
+    <%= hidden_field_tag 'selected_tree_item_id', ''  %>
 
+  </div>
+  <div class="col-lg-2"></div>
+</div>
 <div class="row">
-  <div class="col-md-9 col-sm-8 box_about_actor">
+  <div class="col-md-12  box_about_actor">
     <%= item_description @project.description -%>
-
     <div class="row">
-      <div class="col-md-6">
-        <% if Seek::Config.programmes_enabled %>
-            <p>
-              <strong><%= t('programme') -%>:</strong>
-              <%= programme_link(@project) -%>
-            </p>
-        <% end %>
-
-        <%= persistent_resource_id(@project) %>
-
-        <%= show_funding_codes(@project) %>
-
-        <p>
-          <strong>Public web page:</strong>
-          <%= text_or_not_specified(@project.web_page,:external_link=>true) %>
-        </p>
-
-        <% unless hide_contact_details?(@project) %>
-            <p>
-              <strong>Internal web page:</strong>
-              <%= text_or_not_specified(@project.wiki_page,:external_link=>true) %>
-            </p>
-        <% end %>
-
-        <% if Seek::Config.organisms_enabled %>
-            <p>
-              <strong>Organisms:</strong>
-              <%= organisms_link_list @project.organisms -%>
-            </p>
-        <% end %>
+      <div class=col-lg-3>
+        <div id="treeview" class="col-lg-12 project_treeview">
+          <div id="html" class="demo"></div>
+        </div>
       </div>
+      <div class="col-lg-9">
+        <div style="padding:10px;background-color: aliceblue;border-radius: 5px; border: #ddd 1px solid">
+          <div id="container" class="container-fluid">
+            <div id="projectDetailContainer" class="row">
+              <div class="col-lg-8 simpleForm">
+                <%= render :partial => "project_details" -%>
+              </div>
+              <div class="col-lg-4">
+                <%= render :partial => "layouts/contribution_section_box_avatar", :locals => { :object => @project } -%>
+                <% if @project.can_manage? %>
+                <%= render :partial => 'general/storage_usage_box', locals: { programme: @project,
+                                                                    url: storage_report_project_path(@project)} %>
+                <% end %>
+              </div>
+            </div>
+            <div id="fileManagerContainer" class="row">
+              <%= render :partial => "filemanager" -%>
+            </div>
+            <div id="investigationContainer" class="row">
 
-      <div class="col-md-6">
-        <p class="pals">
-          <strong><%= Seek::Config.dm_project_name %> <%= t('pal').pluralize %>:</strong>
-          <%= pals_link_list @project -%>
-        </p>
+              <%= render :partial => "investigation_details" -%>
 
-        <% if @project.respond_to?(:project_coordinators) %>
-            <p class="project_coordinators">
-              <strong>Project Coordinators:</strong>
-              <%= project_coordinators_link_list @project %>
-            </p>
-        <% end%>
-
-        <% if logged_in_and_registered? %>
-            <p class="project_administrators">
-              <strong><%= t('project_administrator').pluralize %>:</strong>
-              <%= project_administrator_link_list @project %>
-            </p>
-        <% end %>
-
-
-        <% if admin_logged_in? || @project.has_member?(current_user) %>
-            <p class="asset_housekeepers">
-              <strong><%= t('asset_housekeeper').pluralize %>:</strong>
-              <%= asset_housekeepers_link_list @project %>
-            </p>
-
-            <p class="asset_gatekeepers">
-              <strong><%= t('asset_gatekeeper').pluralize %>:</strong>
-              <%= gatekeepers_link_list @project %>
-            </p>
-        <% end %>
-        <p>
-          <% if @project.start_date %>
-            <strong><%= t('project') -%> start date:</strong>
-            <%= date_as_string(@project.start_date, false) -%>
-          <% else %>
-            <strong><%= t('project') -%> created:</strong>
-            <%= date_as_string(@project.created_at, false) %>
-          <% end %>
-        </p>
-        <% if @project.end_date %>
-          <p>
-            <strong><%= t('project') -%> end date:</strong>
-            <%= date_as_string(@project.end_date, false) -%>
-          </p>
-        <% end %>
+            </div>
+            <div id="studyContainer" class="row">
+              <%= render :partial => "study" -%>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-
-  </div>
-
-  <div class="col-md-3 col-sm-4">
-    <%= render :partial => "layouts/contribution_section_box_avatar", :locals => { :object => @project } -%>
-    <% if @project.can_manage? %>
-      <%= render :partial => 'general/storage_usage_box', locals: { programme: @project,
-                                                                    url: storage_report_project_path(@project)} %>
-    <% end %>
-  </div>
-</div>
-
-<% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
+    <% if Seek::Config.project_hierarchy_enabled && logged_in_and_member? -%>
     <div style="clear:both;">
       <b>
         Project Hierarchies
         (<%= link_to "hide", '#', id: 'project-hierarchy-toggle' -%>):
-      </b><br/><br/>
-
+      </b>
+      <br />
+      <br />
       <div id="project_hierarchy">
-        <ul><%= Rails.cache.fetch([:project_tree_editor, @project.cache_key]) { tree_editor_display Project, false, false, @project.id, "Person", true, true } %></ul>
+        <ul>
+          <%= Rails.cache.fetch([:project_tree_editor, @project.cache_key]) { tree_editor_display Project, false, false, @project.id, "Person", true, true } %>
+        </ul>
       </div>
     </div>
-    <br/>
+    <br />
     <div style="clear:both;">
       <b>
         <%= t('project') %> Members
         (<%= link_to "show", '#', id: 'project-hierarchy-members-toggle' %>):
-      </b><br/><br/>
+      </b>
+      <br />
+      <br />
       <div id="project_mailing_list" style="display: none;">
         <%= project_mailing_list @project %>
       </div>
     </div>
-<% end %>
-
-<%# get, classify and authorize all assets for this project -%>
-<%= render :partial=>"general/items_related_to",:object => @project %>
-
-<% if request_project_membership_button_enabled?(@project) %>
+    <% end %>
+    <% if false%>
+    <%# get, classify and authorize all assets for this project -%>
+    <%= render :partial=>"general/items_related_to",:object => @project %>
+    <%end%>
+    <% if request_project_membership_button_enabled?(@project) %>
     <%= render partial: 'request_membership_form', locals: { project: @project } %>
-<% end %>
+    <% end %>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="data-file-modal-inv">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <%= render :partial=>"investigations/new" %>
+        <div class="row" style="padding:15px">
+          <a id="submit_investigation" type="button" class="btn btn-primary">Create</a>
+          &nbsp;
+          <a type="button" class="btn btn-default">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="data-file-modal-std">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <%= render :partial=>"studies/new" %>
+        <div class="row" style="padding:15px">
+          <a id="submit_study" type="button" class="btn btn-primary">Create</a>
+          &nbsp;
+          <a type="button" class="btn btn-default">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
   $j('#project-hierarchy-toggle').click(function () {
-      var el = $j('#project_hierarchy');
+    var el = $j('#project_hierarchy');
 
-      if (el[0].style.display === 'none') {
-          el.fadeIn();
-          $j(this).text('hide');
-      } else {
-          el.fadeOut();
-          $j(this).text('show');
-      }
+    if (el[0].style.display === 'none') {
+      el.fadeIn();
+      $j(this).text('hide');
+    } else {
+      el.fadeOut();
+      $j(this).text('show');
+    }
 
-      return false;
+    return false;
   });
 
   $j('#project-hierarchy-members-toggle').click(function () {
-      var el = $j('#project_mailing_list');
+    var el = $j('#project_mailing_list');
 
-      if (el[0].style.display === 'none') {
-          el.fadeIn();
-          $j(this).text('hide');
-      } else {
-          el.fadeOut();
-          $j(this).text('show');
-      }
+    if (el[0].style.display === 'none') {
+      el.fadeIn();
+      $j(this).text('hide');
+    } else {
+      el.fadeOut();
+      $j(this).text('show');
+    }
 
-      return false;
+    return false;
   });
+</script>
+
+<script>
+  (function ($, undefined) {
+    "use strict";
+    $j.jstree.plugins.separate = function (options, parent) {
+      this.redraw_node = function (obj, deep, callback, force_draw) {
+        obj = parent.redraw_node.apply(this, arguments);
+        var n = this.get_node(obj),
+          d = document;
+        if (obj) {
+          if (n.original.count) {
+            obj.childNodes[1].innerHTML += " <span class='badge badge-secondary'>" + n.original.count +
+              "</span>"
+          }
+          if (n.original._type) $j(obj.childNodes[1]).attr('_type', n.original._type)
+          if (n.original._id) $j(obj.childNodes[1]).attr('_id', n.original._id)
+          if (n.state.separate) {
+            let p = d.createElement('p')
+            p.innerHTML = n.state.separate.label;
+            p.className = 'separator';
+            if (n.state.separate.action) {
+              let a = d.createElement('a')
+              a.href = n.state.separate.action;
+              a.className = 'treeaction glyphicon glyphicon-plus';
+              $j(a).attr('onclick', `add${n.state.separate.label}(this)`)
+              obj.prepend(a)
+
+            }
+            obj.prepend(p);
+          }
+        }
+        return obj;
+      };
+    }
+  })(jQuery);
+
+  $j(document).ready(function () {
+    hide_all_containers()
+    $j("#projectDetailContainer").show()
+  })
+
+  function hide_all_containers() {
+    $j("#projectDetailContainer").hide()
+    $j("#fileManagerContainer").hide()
+    $j("#investigationContainer").hide()
+    $j("#studyContainer").hide()
+  }
+
+  $j('#html').on('changed.jstree', function (e, data) {
+      let item = data.instance.get_node(data.selected[0])
+      let item_id = item.original._id
+      let item_type = item.original._type
+      $j("#selected_item_id").val(item_id)
+      $j("#selected_tree_item_id").val(item.id)
+      hide_all_containers();
+      switch (item_type) {
+        case "prj":
+          $j("#projectDetailContainer").show()
+          break;
+        case "inv":
+          $j("#investigationContainer").show()
+          populate_tags(item_id, 'inv')
+          break;
+        case "std":
+          $j("#studyContainer").show()
+          populate_tags(item_id, 'std')
+          break;
+        case "asy":
+          $j("#fileManagerContainer").show()
+          break;
+        case "fld":
+          $j("#fileManagerContainer").show()
+          $j("#selected_folder").val(item.text)
+          load_files()
+          break;
+      }
+    })
+    .jstree({
+      'core': {
+        'data': <%= @treeData.html_safe %>
+      },
+      plugins: ["separate"]
+    });
+
+  function addInvestigations(t) {
+    $j('#data-file-modal-inv').modal({
+      backdrop: 'static',
+      keyboard: true
+    });
+  }
+
+  function addStudies(t) {
+    //Change the JStree active item to the associated Investigation id
+    $j("#selected_item_id").val($j(t).parent().children('.jstree-anchor').attr('_id'))
+    $j('#data-file-modal-std').modal({
+      backdrop: 'static',
+      keyboard: true
+    });
+  }
+
+  $j(document).ready(function () {
+    let pid = <%= params[:id] %>
+    let uid = <%= current_user.id if current_user %>
+      $j("a:contains('Cancel')").click(function (e) {
+        e.preventDefault();
+        $j('#data-file-modal-inv').modal('hide');
+        $j('#data-file-modal-std').modal('hide');
+      })
+    $j("#submit_investigation").click(function () {
+      let f = $j('#new_investigation')
+      append_Form("investigation[project_ids][]", pid, f)
+      append_Form("policy_attributes[access_type]", "0", f)
+      append_Form("investigation[creator_ids][]", uid, f)
+      append_Form("policy_attributes[permissions_attributes][0][contributor_type]", "Project", f)
+      append_Form("policy_attributes[permissions_attributes][0][contributor_id]", pid, f)
+      //TO_DO: set current Project access type:
+      append_Form("policy_attributes[permissions_attributes][0][access_type]", "2", f) 
+      append_Form("redirect", "false", f)
+      f.submit()
+    })
+
+    $j("#submit_study").click(function () {
+      let f = $j('#new_study')
+      let inv_id = $j("#selected_item_id").val()
+      append_Form("study[investigation_id]", inv_id, f)
+      append_Form("study[person_responsible_id]", uid, f)
+      append_Form("study[creator_ids][]", uid, f)
+      append_Form("policy_attributes[access_type]", "0", f)
+      append_Form("policy_attributes[permissions_attributes][0][contributor_type]", "Project", f)
+      append_Form("policy_attributes[permissions_attributes][0][contributor_id]", pid, f)
+      //TO_DO: set current Project access type:
+      append_Form("policy_attributes[permissions_attributes][0][access_type]", "2", f)
+      append_Form("redirect", "false", f)
+      f.submit()
+    })
+
+  })
+
+  function append_Form(name, val, form) {
+    let input = $j("<input>")
+      .attr("type", "hidden")
+      .attr("name", name).val(val);
+    form.append(input);
+  }
+
+  function populate_tags(item_id, item_type) {
+           //Populate the tags input with list of 'Shared with people'
+           let pid = <%= params[:id] %>
+               let geturl = item_type == 'inv' ? '/investigation_shared_with?inv_id=' : '/study_shared_with?std_id='
+           let tag_input = item_type == 'inv' ? '#investigation-permission-people-ids' : '#study-permission-people-ids'
+           $j.ajax({
+               type: 'GET',
+               url: pid + geturl + item_id,
+               success: s => {
+                   if (s.people)
+                       $j(tag_input).tagsinput('removeAll');
+                   s.people.map((person) => {
+                       $j(tag_input).tagsinput('add', {
+                           id: person.id,
+                           name: person.nam
+                       })
+                   })
+               },
+               error: e => {
+                   alert("Error retrieving investigation sharing list")
+               }
+           })
+       }
 </script>

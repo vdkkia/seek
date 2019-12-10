@@ -5,6 +5,7 @@ class ProjectsController < ApplicationController
   include CommonSweepers
   include Seek::DestroyHandling
   include ApiHelper
+  include Seek::AssetsStandardControllerActions
 
   before_action :find_requested_item, only: %i[show admin edit update destroy asset_report admin_members
                                                admin_member_roles update_members storage_report request_membership overview]
@@ -25,6 +26,7 @@ class ProjectsController < ApplicationController
   include Seek::IsaGraphExtensions
 
   respond_to :html, :json
+ 
 
   def asset_report
     @no_sidebar = true
@@ -80,15 +82,115 @@ class ProjectsController < ApplicationController
     end
   end
 
+  
   # GET /projects/1
   # GET /projects/1.xml
   def show
+    retrieve_project_files
+    #Create JStree core data
+    @treeData = build_tree_data
+    #For creating new investigation and study in Project view page
+    @investigation = Investigation.new({})
+    @study = Study.new({})
+
     respond_to do |format|
       format.html # show.html.erb
       format.rdf { render template: 'rdf/show' }
       format.xml
       format.json { render json: @project }
     end
+  end
+
+  #POST
+  def update_investigation_permission
+    # item: finding investigation based on investigation id
+    # TODO: authorize user
+    investigation_id = params[:inv_id]
+    @investigation = Investigation.find(investigation_id)    
+    update_sharing_policies @investigation
+      if @investigation.save
+        render :json => {message: 'Permission was successfully updated'} 
+      else
+        render :json => {message: @investigation.errors} 
+      end
+  end
+
+  #POST
+  def update_study_permission
+    # item: finding study based on investigation id
+    # TODO: use determine_asset_from_controller method to authorize user
+    study_id = params[:std_id]
+    study = Study.find(study_id)    
+    update_sharing_policies study
+      if study.save
+        render :json => {message: 'Permission was successfully updated'} 
+      else
+        render :json => {message: study.errors} 
+      end
+  end
+
+  #GET
+  def study_shared_with
+    #Passing list of 'Shared with people'
+    study_id = params[:std_id]
+    std_policy_id = Study.find(study_id).policy.id
+    permissions  = Permission.where(policy_id: std_policy_id, contributor_type: 'Person')
+    user_ids=[]
+    permissions.each do |perm|
+      user_ids.push(perm.contributor.id) 
+    end
+    sharedwith =[]
+    sharedwith = Person.where(id: user_ids).select("id, CONCAT(first_name,' ',  last_name) as nam")
+  
+    render :json => {people: sharedwith} 
+    
+  end
+
+  #GET
+  def investigation_shared_with
+    #Passing list of 'Shared with people'
+    investigation_id = params[:inv_id]
+    inv_policy_id = Investigation.find(investigation_id).policy.id
+    permissions  = Permission.where(policy_id: inv_policy_id, contributor_type: 'Person')
+    user_ids=[]
+    permissions.each do |perm|
+      user_ids.push(perm.contributor.id) 
+    end
+    sharedwith =[]
+    sharedwith = Person.where(id: user_ids).select("id, CONCAT(first_name,' ',  last_name) as nam")
+  
+    render :json => {people: sharedwith} 
+    
+  end
+
+  #/POST /projects/upload_file
+  def upload_project_file
+    unique_id = SecureRandom.uuid
+    new_file = OtherProjectFile.new(uuid: unique_id, title:params[:file].original_filename, description: params[:description]);
+    new_file.project.push(Project.find(params[:pid]))
+    folder_id = DefaultProjectFolder.where(title: params[:folder]).first().id
+    unless params[:file].nil? && folder_id.nil?
+      new_file.default_project_folders_id = folder_id
+      path = File.join(Seek::Config.other_project_files_path, unique_id)
+      File.open(path, "wb") { |f| f.write(params[:file].read) }
+      if new_file.save
+        return render :json => {message: 'file uploaded!', id: new_file.id}
+      else
+        return render :json => {message: 'file NOT uploaded!'} 
+      end
+    end
+    render :json => {message: 'Error saving the uploaded file!'}
+  end
+
+   #GET
+  def get_file_list
+    folder_id = DefaultProjectFolder.where(title: params[:folder]).first().id
+    file_list_return =[]
+    file_list = Project.find(params[:id]).other_project_files.select{|file| file.default_project_folders_id == folder_id}
+    file_list.each do |file|
+      file_list_return.push({name:file.title, id: file.id, extension: File.extname(file.title)})
+    end
+    render :json => file_list_return
   end
 
   # GET /projects/new
@@ -429,4 +531,55 @@ class ProjectsController < ApplicationController
       false
     end
   end
+  
+ 
+
+  def build_tree_data
+    inv,std,prj,asy = Array.new(4) { [] }
+    bold = {'style': 'font-weight:bold'}
+    @project.investigations.each do |investigation|
+       investigation.studies.each do |study| 
+        if study.assays
+          study.assays.each_with_index do |assay, i|
+            asy.push(create_node(assay.title, 'asy',nil, assay.id, bold, true, i==0 ? 'Assay' : nil, nil,
+               [create_node('Methods', 'fld','0')]))
+          end
+          std.push(create_node(study.title, 'std', nil, study.id, bold, true, nil, nil, asy))
+          asy=[]
+        end
+       end
+       inv.push(create_node(investigation.title, 'inv',nil, investigation.id, bold, true, 'Studies', '#', std))
+       std=[]
+    end
+    #Documents folder  
+      chld = [create_node('Presentations', 'fld',f_count(1)), create_node('Slideshows', 'fld', f_count(2)),
+        create_node('Articles', 'fld',f_count(3)), create_node('Posters', 'fld', f_count(4))]
+      inv.unshift(create_node('Documents', nil, nil, nil, nil, true, nil, nil, chld))
+    prj.push(create_node(@project.title, 'prj',nil,  @project.id, bold, true, 'Investigations', '#', inv))
+    JSON[prj]
+  end
+
+  def retrieve_project_files
+    @PFiles = @project.other_project_files
+  end
+
+  def create_node(text, _type, count=nil, _id=nil, a_attr=nil, opened=true, label=nil, action=nil, children=nil)
+    nodes = {text: text, _type: _type, _id: _id, a_attr: a_attr, count: count, 
+      state: tidy_array({opened: opened, separate: tidy_array({label: label, action: action})}), children: children}
+    return  nodes.reject { |k,v| v.nil? }
+  end
+
+  def tidy_array(arr)
+    arr = arr.reject { |k,v| v.nil? }
+    if arr == {}
+      return nil
+    else
+      return arr
+    end
+  end
+
+  def f_count(folder_id)
+    (@PFiles.select {|file| file.default_project_folders_id == folder_id}).length.to_s
+  end
+
 end
