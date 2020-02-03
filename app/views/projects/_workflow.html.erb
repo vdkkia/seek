@@ -331,6 +331,7 @@
         $j.ajax({
             type: 'GET',
             url: pid + '/method',
+            cache: false,
             data: {
                 std_id
             },
@@ -362,6 +363,7 @@
         base.not(':last').remove()
         $j.ajax({
             type: 'GET',
+            cache: false,
             url: pid + '/samples',
             data: {
                 std_id,

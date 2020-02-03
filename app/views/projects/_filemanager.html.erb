@@ -56,6 +56,7 @@
              type: 'POST',
              url: pid + '/upload_project_file',
              data: formData,
+             cache: false,
              processData: false,
              contentType: false,
              success: s => {
@@ -78,6 +79,7 @@
          base.not(':last').remove()
          $j.ajax({
              type: 'GET',
+             cache: false,
              url: pid + '/get_file_list?folder=' + folderName,
              success: result => {
                  if (!result) {
@@ -149,6 +151,7 @@
              $j("#tbl_file_content").show()
          $j.ajax({
              type: 'GET',
+             cache: false,
              url: pid + '/text_content',
              data: {
                  std_id,
@@ -205,6 +208,7 @@
              }
              $j.ajax({
                  type: 'DELETE',
+                 cache: false,
                  url: pid + '/delete_project_file',
                  data,
                  success: result => {
@@ -220,6 +224,7 @@
      function update_method(std_id, asy_id, content) {
          $j.ajax({
              type: 'PATCH',
+             cache: false,
              url: pid + '/update_method',
              data: {
                  std_id,
@@ -304,6 +309,7 @@
      function update_iotable(std_id, sample_id, content) {
          $j.ajax({
              type: 'PATCH',
+             cache: false,
              url: pid + '/update_iotable',
              data: {
                  std_id,

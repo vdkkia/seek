@@ -237,6 +237,7 @@
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
+        cache: false,
         url: '/investigations',
         data: JSON.stringify(data),
         success: s => {
@@ -291,6 +292,7 @@
           "Content-Type": "application/json",
           "Accept": "application/json"
         },
+        cache: false,
         url: '/studies',
         data: JSON.stringify(data),
         success: s => {
@@ -314,6 +316,7 @@
       // 2  Get list of assays
       $j.ajax({
         method: 'GET',
+        cache: false,
         url: `/assays/study_assays?std_id=${$j("#selected_item_id").val()}`,
         success: s => {
           old_methods = $j.map(s.data, i => {
@@ -383,6 +386,7 @@
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
+      cache: false,
       url: `/assays/${assayId}`,
       success: s => {
         console.log(`assay ${assayId} deleted!`)
@@ -436,6 +440,7 @@
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
+      cache: false,
       url: '/assays',
       data: JSON.stringify(data),
       success: s => {
@@ -534,6 +539,7 @@
     let tag_input = item_type == 'inv' ? '#investigation-permission-people-ids' : '#study-permission-people-ids'
     $j.ajax({
       type: 'GET',
+      cache: false,
       url: pid + geturl + item_id,
       success: s => {
         if (s.people)
@@ -560,6 +566,7 @@
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
+      cache: false,
       url: `/studies/${$j("#selected_item_id").val()}`,
       success: s => {
         $j('#studytitleContent').text(s.data.attributes.title)
@@ -579,6 +586,7 @@
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
+      cache: false,
       url: `/investigations/${$j("#selected_item_id").val()}`,
       success: s => {
         $j('#investigationTitleC').text(s.data.attributes.title)
@@ -597,6 +605,7 @@
         "Content-Type": "application/json",
         "Accept": "application/json"
       },
+      cache: false,
       url: `/projects/${pid}`,
       success: s => {
         $j('#projectTitleC').text(s.data.attributes.title)

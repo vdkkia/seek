@@ -60,6 +60,7 @@
   display: none;
 }
 .jstree-anchor > .jstree-themeicon {
+  background-size: 24px !important;
   margin-right: 2px;
 }
 .jstree-no-icons .jstree-themeicon,

@@ -23,14 +23,28 @@ class TreeviewBuilder
     # Documents folder
     chld = [create_node('Presentations', 'fld', f_count('Presentations')), create_node('Slideshows', 'fld', f_count('Slideshows')),
             create_node('Articles', 'fld', f_count('Articles')), create_node('Posters', 'fld', f_count('Posters'))]
-    inv.unshift(create_node('Documents', nil, nil, nil, nil, true, nil, nil, chld))
+    inv.unshift(create_node('Documents', "fld", nil, nil, nil, true, nil, nil, chld))
     prj.push(create_node(@project.title, 'prj', nil, @project.id, bold, true, 'Investigations', '#', inv))
     JSON[prj]
   end
 
   def create_node(text, _type, count = nil, _id = nil, a_attr = nil, opened = true, label = nil, action = nil, children = nil)
+    icon=nil
+    case _type
+    when "std"
+      icon="study"
+    when "asy"
+      icon="assay"
+    when "inv"
+      icon="investigation"
+    when "prj"
+      icon="project"
+    when "fld", "methods"
+      icon="folder"
+    end
+    icon = ActionController::Base.helpers.asset_path("avatars/avatar-#{icon}.png") if (icon!=nil)
     nodes = { text: text, _type: _type, _id: _id, a_attr: a_attr, count: count,
-              state: tidy_array(opened: opened, separate: tidy_array(label: label, action: action)), children: children }
+              state: tidy_array(opened: opened, separate: tidy_array(label: label, action: action)), children: children, icon: icon }
     nodes.reject { |_k, v| v.nil? }
   end
 

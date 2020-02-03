@@ -191,6 +191,7 @@
     function save_design() {
         $j.ajax({
             method: 'PATCH',
+            cache: false,
             url: `${pid}/update_study_design`,
             data: {
                 "data" : JSON.stringify(create_data()),
@@ -208,6 +209,7 @@
     function save_flowchart(data, assays, samples) {
         $j.ajax({
             method: 'PATCH',
+            cache: false,
             url: `${pid}/update_study_design`,
             data: {
                 "flowchart_data" : JSON.stringify(data),
@@ -285,6 +287,7 @@
         //Load data from DB
         $j.ajax({
             method: 'GET',
+            cache: false,
             url: `${pid}/get_study_design`,
             data: {
                 "std_id": $j("#selected_item_id").val()
