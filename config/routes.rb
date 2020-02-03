@@ -210,15 +210,13 @@ SEEK::Application.routes.draw do
       post :request_membership
       get :isa_children
       get :overview
-      post :update_investigation_permission
-      post :update_study_permission
       get :investigation_shared_with
       get :study_shared_with
       post :upload_project_file
       delete :delete_project_file
       get :download_file
-      get :methods
-      get :iotables
+      get :method
+      get :samples
       get :get_file_list
       patch :update_study_design
       get :get_study_design
@@ -358,6 +356,7 @@ SEEK::Application.routes.draw do
       get :typeahead
       get :preview
       post :items_for_result
+      get :study_assays
       #MERGENOTE - these should be gets and are tested as gets, using post to fix later
     end
     resources :snapshots, :only => [:show, :new, :create, :destroy] do

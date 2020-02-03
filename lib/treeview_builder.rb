@@ -12,7 +12,7 @@ class TreeviewBuilder
 
         study.assays.each_with_index do |assay, i|
           asy.push(create_node(assay.title, 'asy', nil, assay.id, bold, true, i.zero? ? 'Assay' : nil, nil,
-                               [create_node('Methods', 'methods', method_count(study.id))]))
+                               [create_node('Methods', 'methods', 1, "#{investigation.id}_#{study.id}_#{assay.id}")]))
         end
         std.push(create_node(study.title, 'std', nil, study.id, bold, true, nil, nil, asy))
         asy = []

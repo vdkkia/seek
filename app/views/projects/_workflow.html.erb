@@ -11,9 +11,10 @@
             <div class="flowchart-example" style="overflow-x:scroll">
                 <div class="flowchart-example-container" id="chart_canvas">
                     <div id="operator_properties" style="display: none;">
-                        <label for="operator_title">Change title: </label><input style="margin-bottom:10px" type="text" id="operator_title"
-                            class="form-control">
-                        <a href="javascript:void(0);" class="delete_selected_button"><i class="glyphicon glyphicon-minus-sign"></i> Delete item</a>
+                        <label for="operator_title">Change title: </label><input style="margin-bottom:10px" type="text"
+                            id="operator_title" class="form-control">
+                        <a href="javascript:void(0);" class="delete_selected_button"><i
+                                class="glyphicon glyphicon-minus-sign"></i> Delete item</a>
 
                         <a style="position:absolute;top:5px;right:5px" href="javascript:void(0);"
                             onclick="$j('#operator_properties').hide()"><i class="glyphicon glyphicon-remove"></i></a>
@@ -89,8 +90,8 @@
                 $operatorProperties.show();
                 $operatorTitle.val($flowchart.flowchart('getOperatorTitle', operatorId));
                 $operatorProperties.css('position', 'absolute');
-                $operatorProperties.css("left", this.data.operators[operatorId].left-28);
-                $operatorProperties.css("top", this.data.operators[operatorId].top-42);
+                $operatorProperties.css("left", this.data.operators[operatorId].left - 28);
+                $operatorProperties.css("top", this.data.operators[operatorId].top - 42);
                 return true;
             },
             onOperatorUnselect: function () {
@@ -192,38 +193,31 @@
         $j('#chart_canvas').flowchart('deleteSelected');
     }
 
-    function saveWorkflow() {
-        var data = $j('#chart_canvas').flowchart('getData');
-        console.log("saveWorkflow")
-        save_flowchart(data, updateMethods(data), updateTBLs(data))
-    }
-
     function loadWorkflow(data) {
+
         var $flowchart = $j('#chart_canvas');
         if (!data) {
             $flowchart.flowchart('setData', "");
         } else {
             $flowchart.flowchart('setData', data);
+            console.log('flowchart set11!')
+            console.log(data)
             console.log('flowchart set!')
         }
     }
 
-    function updateMethods(data) {
+    function extractMethods(data) {
         let methods = [];
         // if the workflow has method box
         $j.map(data.operators, (operator) => {
             if (operator.properties.shape === "rectangle") {
-                methods.push({
-                    'id': 'method' + uniqId(),
-                    'title': operator.properties.title,
-                    'content': ''
-                })
+                methods.push(operator.properties.title)
             }
         })
         return methods
     }
 
-    function updateTBLs(data) {
+    function extractSamples(data) {
         if (Object.keys(data.operators) == 0)
             return []
         let TableNames = [];
@@ -232,7 +226,7 @@
         console.log(data)
         $j.map(data.operators, (operator, index) => {
             if (operator.properties.shape === "parallelogram") {
-                TableopIndexes.push(index);
+                TableopIndexes.push(operator);
             }
         })
         let FirstBox = findFirstBox(TableopIndexes, data.links);
@@ -240,7 +234,7 @@
         $j.map(arrenged, (operator, index) => {
             if (operator.properties.shape === "parallelogram") {
                 TableNames.push({
-                    'id': 'table' + uniqId(),
+                    'id': uniqId(),
                     'title': operator.properties.title,
                     'content': ''
                 });
@@ -254,11 +248,11 @@
         $j.each(operatorsIndexes, (op_key, op_val) => {
             temp = false;
             $j.each(links, (link_key, link_val) => {
-                if (link_val.toOperator.toString() == op_val)
+                if (link_val.toOperator.toString() == op_key)
                     temp = true;
             })
             if (!temp) {
-                result = op_val;
+                result = op_key;
                 return result
             }
         })
@@ -279,6 +273,45 @@
         }
         return arranged
     }
+
+    function connectedSamples(methodName, data) {
+        let operatorId, inputId, outputId
+        $j.each(data.operators, (op_key, op_val) => {
+            if (op_val.properties.title == methodName) {
+                operatorId = op_key;
+                return false;
+            }
+        })
+        $j.each(data.links, (link_key, link_val) => {
+            if (link_val.fromOperator == operatorId)
+                outputId = link_val.toOperator
+            if (link_val.toOperator == operatorId)
+                inputId = link_val.fromOperator
+        })
+        return {
+            "input": getOperatorName(inputId, data),
+            "output": getOperatorName(outputId, data)
+        }
+    }
+
+    function getOperatorName(operatorId, data) {
+        let opName
+        $j.each(data.operators, (op_key, op_val) => {
+            if (op_key == operatorId)
+                opName = op_val.properties.title
+        })
+        return opName
+    }
+
+    function getSampleId(sampleName, sampleList) {
+        let res
+        $j.each(sampleList, (i, sample) => {
+            if (sample.title == sampleName)
+                res = sample.id
+        })
+        return res
+    }
+
     $j('#inputs_num').on('input', function (e) {
         let num = $j(this).val();
         if (num >= 0 && num < 4)
@@ -291,13 +324,13 @@
             $j('.wf_btn').data('nb-outputs', num);
     });
 
-    function load_methods(std_id) {
+    function load_method(std_id, asy_id) {
         let base = $j(".fileManager");
         $j('.fileManager li:not(:last-child)').remove();
         base.not(':last').remove()
         $j.ajax({
             type: 'GET',
-            url: pid + '/methods',
+            url: pid + '/method',
             data: {
                 std_id
             },
@@ -308,10 +341,13 @@
                     return
                 }
                 result = JSON.parse(result.data)
+                console.log(result)
                 if (result.length > 0) {
-                    result.forEach(function (method) {
-                        addFile(`${std_id}_${method.id}`, file_icon('.txt'), minify(
-                            method.title))
+                    result.forEach(function (assay) {
+                        if (assay.id == asy_id) {
+                            addFile(`${std_id}_${asy_id}_method`, file_icon('.txt'), minify(
+                                assay.method.title))
+                        }
                     })
                 } else {
                     base.prepend('<li>empty</li>')
@@ -320,15 +356,16 @@
         })
     }
 
-    function load_iotables(std_id) {
+    function load_samples(std_id, asy_id) {
         let base = $j(".fileManager");
         $j('.fileManager li:not(:last-child)').remove();
         base.not(':last').remove()
         $j.ajax({
             type: 'GET',
-            url: pid + '/iotables',
+            url: pid + '/samples',
             data: {
-                std_id
+                std_id,
+                asy_id
             },
             success: result => {
                 if (!result) {
@@ -336,11 +373,11 @@
                     base.append("<li>Error!</li>")
                     return
                 }
-                result = JSON.parse(result.data)
-                if (result.length > 0) {
-                    result.forEach(function (iotable) {
-                        addFile(`${std_id}_${iotable.id}`, file_icon('.tbl'),
-                            minify(iotable.title))
+                //result = JSON.parse(result.data)
+                if (result.data.length > 0) {
+                    result.data.forEach(function (sample) {
+                        addFile(`${std_id}_${sample.id}_sample`, file_icon('.tbl'),
+                            minify(sample.title))
                     })
                 } else {
                     base.prepend('<li>empty</li>')
@@ -353,5 +390,62 @@
         setTimeout(() => {
             $j('#chart_canvas').flowchart('redrawLinksLayer')
         }, 250);
+    }
+
+    function validateWorkflow(data) {
+        // Check for name duplication
+
+        if (Object.keys(data.operators).length - Object.keys(data.links).length != 1) {
+            alert("Boxes are not connected correctly!")
+            return false;
+        }
+        // // Always 2 baxes with only 1 link
+        // let ioBoxes = 0,
+        //     connections = 0
+        // $j.each(data.operators, (op_key, op_val) => {
+        //     $j.each(data.links, (link_key, link_val) => {
+        //         console.log(op_val)
+        //         if (link_val.toOperator == op_key ||
+        //             link_val.fromOperator == op_key)
+        //             connections++
+        //     })
+        //     console.log("connections: " + connections)
+        //     if (connections == 1) {
+        //         ioBoxes++;
+        //     }
+        //     connections = 0
+
+        // })
+        // if (ioBoxes != 2) {
+        //     console.log(ioBoxes)
+        //     alert("Boxes are not connected correctly!")
+        //     return false;
+        // }
+
+        let first = findFirstBox(data.operators, data.links)
+        if (data.operators[first].properties.shape != "parallelogram") {
+            alert("First Box must be an Input box!")
+            return false;
+        }
+        let names = [],
+            nameValid = true
+        $j.each(data.operators, (op_key, op_val) => {
+            names.push(op_val.properties.title)
+        })
+        $j.each(names, (id, val) => {
+            $j.each(names, (i, v) => {
+                if (i != id && val == v) {
+                    alert("Duplicate names detected!")
+                    nameValid = false;
+                    return false
+                }
+            })
+            if (!nameValid)
+                return false
+        })
+        if (nameValid)
+            return true
+        else
+            return false
     }
 </script>

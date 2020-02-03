@@ -171,13 +171,32 @@ class ProjectsController < ApplicationController
   end
 
   # GET
-  def methods
-    render json: { data: StudyDesign.where(study_id: params[:std_id]).first.methods }
+  def method
+    render json: { data: StudyDesign.where(study_id: params[:std_id]).first.assays }
   end
 
   # GET
-  def iotables
-    render json: { data: StudyDesign.where(study_id: params[:std_id]).first.tables }
+  def samples
+    samples = []
+    in_id = ""
+    out_id = ""
+    assay_id = params[:asy_id]
+    row = StudyDesign.where(study_id: params[:std_id]).first
+    assays = JSON.parse(row.assays)
+    sample = JSON.parse(row.samples)
+    assays.each do |x|
+      if x['id'] == assay_id
+        in_id = x['in_id']
+        out_id = x['out_id']
+        break
+      end
+    end
+    sample.each do |x|
+      if x['id'] == in_id || x['id'] == out_id
+        samples.push(x)
+      end
+    end
+    render json: { data: samples }
   end
 
   # PATCH
@@ -185,10 +204,10 @@ class ProjectsController < ApplicationController
     study_design = StudyDesign.where(study_id: params[:std_id]).first
     study_design.data = params[:data] if params.key?(:data)
 
-    if params.key?(:flowchart_methods)
+    if params.key?(:flowchart_assays)
       study_design.flowchart = params[:flowchart_data]
-      study_design.tables = params[:flowchart_tables]
-      study_design.methods = params[:flowchart_methods]
+      study_design.samples = params[:flowchart_samples]
+      study_design.assays = params[:flowchart_assays]
     end
 
     return render json: { message: 'Study design was updated!' } if study_design.save
@@ -199,16 +218,16 @@ class ProjectsController < ApplicationController
   # PATCH
   def update_iotable
     study_design = StudyDesign.where(study_id: params[:std_id]).first
-    data = JSON.parse(study_design.tables)
-    table_id = params[:table_id]
+    data = JSON.parse(study_design.samples)
+    sample_id = params[:sample_id]
     data.each do |x|
-      if x['id'] == table_id
+      if x['id'] == sample_id
         x['content'] = params[:content]
-        study_design.tables = data.to_json
+        study_design.samples = data.to_json
         if study_design.save
-          return render json: { data: 'Table updated successfully!' }
+          return render json: { data: 'Sample updated successfully!' }
         else
-          return render json: { data: 'Error updating method', status: :unprocessable_entity }
+          return render json: { data: 'Error updating sample', status: :unprocessable_entity }
         end
       end
     end
@@ -224,21 +243,30 @@ class ProjectsController < ApplicationController
   def text_content
     study_design = StudyDesign.where(study_id: params[:std_id]).first
     item_id = params[:item_id]
-    data = item_id.start_with?('method') ? JSON.parse(study_design.methods) : JSON.parse(study_design.tables)
+    type = params[:item_type]
+    if type == 'method'
+      data = JSON.parse(study_design.assays)
+      data.each do |x|
+        return render json: { data: x['method']['content'] } if x['id'] == item_id
+      end
+    
+    else
+    data = JSON.parse(study_design.samples)
     data.each do |x|
       return render json: { data: x['content'] } if x['id'] == item_id
     end
   end
+end
 
   # Patch
   def update_method
     study_design = StudyDesign.where(study_id: params[:std_id]).first
-    data = JSON.parse(study_design.methods)
-    method_id = params[:method_id]
+    data = JSON.parse(study_design.assays)
+    asy_id = params[:asy_id]
     data.each do |x|
-      if x['id'] == method_id
-        x['content'] = params[:content]
-        study_design.methods = data.to_json
+      if x['id'] == asy_id
+        x['method']['content'] = params[:content]
+        study_design.assays = data.to_json
         if study_design.save
           return render json: { data: 'Method updated successfully!' }
         else

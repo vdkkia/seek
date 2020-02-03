@@ -100,7 +100,7 @@
          if ($j(".fileManager li:first").text() == "empty")
              $j(".fileManager li:first").remove();
 
-         let item = id.includes('method') || id.includes('table') ?
+         let item = id.includes('method') || id.includes('sample') ?
              `<li class="file" data-id=${id}><img src="/assets/${ext}.png"> <br><a onClick="load_text_content('${id}')" data-filetype="txt" class="file">${name}</a></li>` :
              `<li class="file" data-id=${id}><img src="/assets/${ext}.png"> <br><a href="/projects/${pid}/download_file?uid=${id}" data-filetype="txt" class="file">` +
              `${name}</a><span onClick="delete_file(event)" class="del_file"><i class="glyphicon glyphicon-remove"></i></span></li>`
@@ -141,8 +141,9 @@
      function load_text_content(id) {
          let std_id = id.split('_')[0]
          let item_id = id.split('_')[1]
+         let item_type = id.split('_')[2]
          $j("#text_content").attr('data-selected', id)
-         if (item_id.startsWith("method"))
+         if (item_type.includes("method"))
              $j("#text_content").show()
          else
              $j("#tbl_file_content").show()
@@ -151,15 +152,15 @@
              url: pid + '/text_content',
              data: {
                  std_id,
-                 item_id
+                 item_id,
+                 item_type
              },
              success: result => {
-
                  if (!result) {
                      alert('Error retrieving content!')
                      return
                  }
-                 if (item_id.startsWith("method"))
+                 if (item_type.includes("method"))
                      $j('#txt_file_content').val(result.data)
                  else {
 
@@ -216,13 +217,13 @@
          }
      }
 
-     function update_method(std_id, method_id, content) {
+     function update_method(std_id, asy_id, content) {
          $j.ajax({
              type: 'PATCH',
              url: pid + '/update_method',
              data: {
                  std_id,
-                 method_id,
+                 asy_id,
                  content
              },
              success: result => {
@@ -233,10 +234,9 @@
 
      $j('#btn_save_content').on('click', () => {
          let std_id = $j("#text_content").attr('data-selected').split('_')[0]
-         let method_id = $j("#text_content").attr('data-selected').split('_')[1]
+         let asy_id = $j("#text_content").attr('data-selected').split('_')[1]
          let content = $j("#txt_file_content").val()
-         console.log(content)
-         update_method(std_id, method_id, content)
+         update_method(std_id, asy_id, content)
      })
 
      function showPreDefinedCols(e) {
@@ -301,13 +301,13 @@
          });
      }
 
-     function update_iotable(std_id, table_id, content) {
+     function update_iotable(std_id, sample_id, content) {
          $j.ajax({
              type: 'PATCH',
              url: pid + '/update_iotable',
              data: {
                  std_id,
-                 table_id,
+                 sample_id,
                  content
              },
              success: result => {
@@ -318,8 +318,8 @@
 
      $j("#btn_update_tables").on("click", () => {
          let std_id = $j("#text_content").attr('data-selected').split('_')[0]
-         let table_id = $j("#text_content").attr('data-selected').split('_')[1]
+         let sample_id = $j("#text_content").attr('data-selected').split('_')[1]
          let content = $j('.tableInpOut').prop('outerHTML')
-         update_iotable(std_id, table_id, content)
+         update_iotable(std_id, sample_id, content)
      })
  </script>

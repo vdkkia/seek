@@ -1620,8 +1620,8 @@ ActiveRecord::Schema.define(version: 2020_01_09_125937) do
     t.integer "study_id"
     t.text "data"
     t.text "flowchart"
-    t.text "methods"
-    t.text "tables"
+    t.text "assays"
+    t.text "samples"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["study_id"], name: "index_study_id"

@@ -205,21 +205,21 @@
         })
     }
 
-    function save_flowchart(data, methods, tables) {
+    function save_flowchart(data, assays, samples) {
         $j.ajax({
             method: 'PATCH',
             url: `${pid}/update_study_design`,
             data: {
                 "flowchart_data" : JSON.stringify(data),
-                "flowchart_methods" : JSON.stringify(methods),
-                "flowchart_tables" : JSON.stringify(tables),
+                "flowchart_assays" : JSON.stringify(assays),
+                "flowchart_samples" : JSON.stringify(samples),
                 "std_id": $j("#selected_item_id").val()
             },
             success: s => {
                 alert('All changes were saved successfully!')
                 let origin = $j(
                     `#${$j("#selected_tree_item_id").val()} > ul > li:first > ul > li:first > a > span`)
-                bounce(origin, methods.length)
+                bounce(origin, 1)
             },
             error: e => {
                 alert('error!')

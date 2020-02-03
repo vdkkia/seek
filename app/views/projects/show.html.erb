@@ -184,8 +184,8 @@
   let pid
   $j(document).ready(function () {
     pid = <%= params[:id] %>
-      let uid = <%= current_user.id if current_user %>
-      hide_all_containers()
+    let uid = <%= current_user.id if current_user %>
+    hide_all_containers()
     $j("#projectDetailContainer").show()
     get_project()
     init_workflow()
@@ -204,7 +204,7 @@
               "access": "download",
               "permissions": [{
                 "resource": {
-                  "id": "1",
+                  "id": pid,
                   "type": "projects"
                 },
                 "access": "manage"
@@ -294,67 +294,159 @@
         url: '/studies',
         data: JSON.stringify(data),
         success: s => {
-          // Create Assay
-          let data = {
-            "data": {
-              "type": "assays",
-              "attributes": {
-                "title": "Assay",
-                "assay_class": {
-                  "key": "EXP"
-                },
-                "policy": {
-                  "access": "download",
-                  "permissions": [{
-                    "resource": {
-                      "id": pid,
-                      "type": "projects"
-                    },
-                    "access": "manage"
-                  }]
-                }
-              },
-              "relationships": {
-                "study": {
-                  "data": {
-                    "id": s.data.id,
-                    "type": "studies"
-                  }
-                },
-                "creators": {
-                  "data": [{
-                    "id": uid,
-                    "type": "people"
-                  }]
-                }
-              }
-            }
-          }
-          $j.ajax({
-            method: 'POST',
-            "headers": {
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            },
-            url: '/assays',
-            data: JSON.stringify(data),
-            success: s => {
-              location.reload(true);
-            },
-            error: (e) => {
-              console.log('error create assay!')
-            }
-          })
+          console.log('study created successfully!')
+          location.reload(true);
         },
         error: (e) => {
-          console.log('error create study!')
+          console.log('error creating study!')
         }
       })
     })
     $j("#btn_save_workflow").on("click", function () {
-      saveWorkflow()
+      let old_methods, new_methods, temp, assays = [],
+        samples, counter = 0
+      let data = $j('#chart_canvas').flowchart('getData');
+      // 0  Validate the flowchart (All boxes have at least one link + First and last boxes are type of Inp/Out)
+      if (!validateWorkflow(data))
+        return
+      // 1  extract samples from flowchart
+      samples = extractSamples(data);
+      // 2  Get list of assays
+      $j.ajax({
+        method: 'GET',
+        url: `/assays/study_assays?std_id=${$j("#selected_item_id").val()}`,
+        success: s => {
+          old_methods = $j.map(s.data, i => {
+            return {
+              "id": i.id,
+              "title": i.title
+            }
+          })
+          // 3  Get list of methods in flowchart
+          new_methods = extractMethods(data)
+          // 4  remove assays which are not present in new_methods from DB
+          let ajaxArray = []
+          $j.each(old_methods, (i, item) => {
+            if ($j.inArray(item.title, new_methods) == -1) {
+              ajaxArray.push(removeAssay(item.id))
+            }
+          })
+          $j.when.apply($j, ajaxArray).then(() => {
+            // console.log("GFGFGF")
+            // 5  create assays which are in new_methods and not in old_methods
+            temp = $j.map(old_methods, i => {
+              return i.title
+            });
+            ajaxArray = [];
+            $j.each(new_methods, i => {
+              if ($j.inArray(i, temp) == -1) {
+                counter++
+                ajaxArray.push(createAssay(pid, $j("#selected_item_id").val(), uid,
+                  `Assay${counter}`))
+                // all study_design samples and assays will be created again > alert the user to keep data as a backup
+                // 6  constitute sample object and assay object for study design
+                assays.push({
+                  "id": "x",
+                  "method": {
+                    "title": new_methods[i],
+                    "content": ""
+                  },
+                  "in_id": getSampleId(connectedSamples(new_methods[i], data).input, samples),
+                  "out_id": getSampleId(connectedSamples(new_methods[i], data).output,
+                    samples)
+                })
+              }
+            });
+            $j.when.apply($j, ajaxArray)
+              .then((res) => {
+                for (var i = 0; i < ajaxArray.length; i++) {
+                  assays[i].id = JSON.parse(ajaxArray[i].responseText).data.id
+                }
+                // 7  update study_design
+                save_flowchart(data, assays, samples)
+
+                location.reload(true);
+              })
+          })
+        },
+        error: e => {
+          alert('error!')
+        }
+      })
     });
   })
+
+  function removeAssay(assayId) {
+    return $j.ajax({
+      method: 'DELETE',
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      url: `/assays/${assayId}`,
+      success: s => {
+        console.log(`assay ${assayId} deleted!`)
+      },
+      error: (e) => {
+        console.log(`error deleting assay ${assayId}!`)
+      }
+    })
+  }
+
+  function createAssay(pid, std_id, uid, title) {
+    let data = {
+      "data": {
+        "type": "assays",
+        "attributes": {
+          "title": title,
+          "assay_class": {
+            "key": "EXP"
+          },
+          "policy": {
+            "access": "download",
+            "permissions": [{
+              "resource": {
+                "id": pid,
+                "type": "projects"
+              },
+              "access": "manage"
+            }]
+          }
+        },
+        "relationships": {
+          "study": {
+            "data": {
+              "id": std_id,
+              "type": "studies"
+            }
+          },
+          "creators": {
+            "data": [{
+              "id": uid,
+              "type": "people"
+            }]
+          }
+        }
+      }
+    }
+
+    return $j.ajax({
+      method: 'POST',
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      url: '/assays',
+      data: JSON.stringify(data),
+      success: s => {
+        //console.log('assay was created successfully! : ' + s.data.id)
+        s.data.id
+      },
+      error: (e) => {
+        console.log('error create assay!')
+      }
+    })
+  }
 
 
   function hide_all_containers() {
@@ -389,7 +481,9 @@
           break;
         case "asy":
           $j("#fileManagerContainer").show()
-          load_iotables($j(`#${item.parent}`).children('a[_type="std"]').attr("_id"));
+          let std_id = $j(`#${item.parent}`).children('a[_type="std"]').attr("_id")
+          let asy_id = $j(`#${item.id}`).children('a[_type="asy"]').attr("_id")
+          load_samples(std_id, asy_id);
           break;
         case "fld":
           $j("#fileManagerContainer").show()
@@ -400,7 +494,7 @@
         case "methods":
           $j("#fileManagerContainer").show()
           $j("#selected_folder").val(item.text)
-          load_methods($j(`#${item.parent}`).parent().siblings('a[_type="std"]').attr("_id"));
+          load_method(item_id.split('_')[1], item_id.split('_')[2])
           break;
       }
     })
@@ -427,12 +521,12 @@
     });
   }
 
-  function append_Form(name, val, form) {
-    let input = $j("<input>")
-      .attr("type", "hidden")
-      .attr("name", name).val(val);
-    form.append(input);
-  }
+  // function append_Form(name, val, form) {
+  //   let input = $j("<input>")
+  //     .attr("type", "hidden")
+  //     .attr("name", name).val(val);
+  //   form.append(input);
+  // }
 
   function populate_tags(item_id, item_type) {
     //Populate the tags input with list of 'Shared with people'
@@ -518,5 +612,3 @@
     return Math.round((Math.random() * 36 ** 12)).toString(36);
   }
 </script>
-
-

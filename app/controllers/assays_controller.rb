@@ -166,6 +166,10 @@ class AssaysController < ApplicationController
     end
   end
 
+  def study_assays
+    render json: { data: Assay.where(study_id: params[:std_id]) }
+  end
+
   private
 
   def assay_params

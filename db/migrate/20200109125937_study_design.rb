@@ -4,8 +4,8 @@ class StudyDesigns < ActiveRecord::Migration[5.2]
       t.integer :study_id
       t.text :data
       t.text :flowchart
-      t.text :methods
-      t.text :tables
+      t.text :assays
+      t.text :samples
       t.timestamps
     end
     add_index :study_design, [ :study_id], name: 'index_study_id'

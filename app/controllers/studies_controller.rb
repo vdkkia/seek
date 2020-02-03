@@ -80,7 +80,7 @@ class StudiesController < ApplicationController
     if @study.save
       # create a record in study_designs table
       study_design = StudyDesign.new(study_id: @study.id, data: '{"experimental_factors":[],"response_variables":[],"blocking_variables":[],"covariates":[],"cofounding_variables":[],"control_variables":[],"replicates":[],"design_of_experiment":{"item":"","description":""}}',
-        methods: '[]', tables: '[]')
+        assays: '[]', samples: '[]')
       study_design.save
       respond_to do |format|
         flash[:notice] = "The #{t('study')} was successfully created.<br/>".html_safe
