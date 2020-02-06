@@ -3,6 +3,7 @@
   <div class="col-lg-2"></div>
   <div class="col-lg-8">
     <%= hidden_field_tag 'selected_item_id', ''  %>
+    <%= hidden_field_tag 'selected_item_type', ''  %>
     <%= hidden_field_tag 'selected_folder', ''  %>
     <%= hidden_field_tag 'selected_tree_item_id', ''  %>
 
@@ -11,12 +12,21 @@
 </div>
 <div class="row">
   <div class="col-md-12  box_about_actor">
-    <ul class="bcrumb">
-      <li><a href="#">Project</a></li>
-      <li style="display:none"><a href="#">Investigation</a></li>
-      <li style="display:none"><a href="#">Study</a></li>
-      <li style="display:none"><a href="#">Assay</a></li>
-    </ul>
+    <div class="row">
+    <div class="col-md-7">
+  <ul class="bcrumb">
+        <li><a href="#">Project</a></li>
+        <li style="display:none"><a href="#">Investigation</a></li>
+        <li style="display:none"><a href="#">Study</a></li>
+        <li style="display:none"><a href="#">Assay</a></li>
+      </ul>
+    </div>
+    <div class="col-md-5" style="text-align:right">
+          <div>
+            <input id="btn_delete_item" type="button" class="btn btn-primary" value="Delete" onclick="deleteItem()" />
+          </div>
+    </div>
+    </div>
     <div class="row">
       <div class=col-lg-3>
         <div id="treeview" class="col-lg-12 project_treeview">
@@ -188,8 +198,8 @@
   let pid
   $j(document).ready(function () {
     pid = <%= params[:id] %>
-    let uid = <%= current_user.id if current_user %>
-    hide_all_containers()
+      let uid = <%= current_user.id if current_user %>
+      hide_all_containers()
     $j("#projectDetailContainer").show()
     get_project()
     init_workflow()
@@ -472,6 +482,7 @@
       let item = data.instance.get_node(data.selected[0])
       let item_id = item.original._id
       let item_type = item.original._type
+      $j("#selected_item_type").val(item_type)
       $j("#selected_item_id").val(item_id)
       $j("#selected_tree_item_id").val(item.id)
       hide_all_containers();
@@ -624,20 +635,69 @@
   }
 
   function breadcrumb(item) {
-      $j(".bcrumb li").hide()
+    $j(".bcrumb li").hide()
     switch (item) {
       case "prj":
         $j(".bcrumb li:first-child").show()
         break;
       case "inv":
-         $j(".bcrumb li:first-child, li:nth-child(2)").show()
+        $j(".bcrumb li:first-child, li:nth-child(2)").show()
         break;
       case "std":
-         $j(".bcrumb li:first-child, li:nth-child(2), li:nth-child(3)").show()
+        $j(".bcrumb li:first-child, li:nth-child(2), li:nth-child(3)").show()
         break;
       case "asy":
-         $j(".bcrumb li:first-child, li:nth-child(2), li:nth-child(3), li:nth-child(4)").show()
+        $j(".bcrumb li:first-child, li:nth-child(2), li:nth-child(3), li:nth-child(4)").show()
         break;
+    }
+  }
+
+  function deleteItem() {
+
+    if (confirm('Are you sure you want to delete the')) {
+      let id = $j("#selected_item_id").val();
+      let itemType = "unknown"
+      switch ($j("#selected_item_type").val()) {
+        case "prj":
+          itemType = "projects";
+          break;
+        case "inv":
+          itemType = "investigations";
+          break;
+        case "std":
+          itemType = "studies";
+          break;
+        case "asy":
+          itemType = "assays";
+          break;
+        default:
+          itemType = "unknown";
+      }
+      if (!id || itemType == "unknown") {
+        alert("Please select item.")
+        return;
+      }
+      $j.ajax({
+        method: 'DELETE',
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        cache: false,
+        url: `/${itemType}/${id}`,
+        success: s => {
+          alert("Item was deleted successfully!")
+          location.reload(true);
+        },
+        error: e => {
+          if (e.responseJSON.errors)
+            alert(e.responseJSON.errors[0].title + '\n' + e.responseJSON.errors[0].details)
+          else
+            alert('Cannot process the request')
+        }
+      })
+    } else {
+
     }
   }
 </script>
