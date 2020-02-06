@@ -202,20 +202,93 @@
 }
 
 .bcrumb {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    height: 40px;
-    margin-bottom: 5px;
-    color: #555;
+    list-style: none;
+    overflow: hidden;
+    font-size: 20px;
     font-weight: bold;
-    font-size: 16px;
-    padding:3px;
-    padding-left:10px
+    padding: 0;
 }
 
-.bcrumb img {
-    width: 32px;
+
+.bcrumb li a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 30px 10px 70px;
+    background: #000634;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    background: #000634;
+    position: relative;
+    display: block;
+    float: left;
 }
-#breadcrumb{
-    transition: all ease-in-out 200ms
+
+.bcrumb li a::after {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid #000634;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    left: 100%;
+    z-index: 2;
+}
+
+.bcrumb li a::before {
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid white;
+    position: absolute;
+    top: 50%;
+    margin-top: -50px;
+    margin-left: 1px;
+    left: 100%;
+    z-index: 1;
+}
+
+.breadcrumb li:first-child a {
+    padding-left: 10px;
+}
+
+.bcrumb li:nth-child(2) a {
+    background: #346090
+}
+
+.bcrumb li:nth-child(2) a:after {
+    border-left-color: #346090
+}
+
+.bcrumb li:nth-child(3) a {
+    background: #9cbede
+}
+
+.bcrumb li:nth-child(3) a:after {
+    border-left-color: #9cbede
+}
+
+.bcrumb li:nth-child(4) a {
+    background: #cbe2f7;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+    width: 170px
+}
+
+.bcrumb li:nth-child(4) a:after {
+    border: none
+}
+
+.bcrumb li a:hover {
+    cursor: default
+}
+
+.bcrumb li a:hover:after {
+    cursor: default
 }
