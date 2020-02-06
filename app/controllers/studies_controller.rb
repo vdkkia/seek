@@ -79,7 +79,7 @@ class StudiesController < ApplicationController
     ### TO DO: what about validation of person responsible? is it already included (for json?)
     if @study.save
       # create a record in study_designs table
-      study_design = StudyDesign.new(study_id: @study.id, data: '{"experimental_factors":[],"response_variables":[],"blocking_variables":[],"covariates":[],"cofounding_variables":[],"control_variables":[],"replicates":[],"design_of_experiment":{"item":"","description":""}}',
+      study_design = StudyDesign.new(study_id: @study.id, data: '{"experimental_factors":[],"response_variables":[],"blocking_variables":[],"covariates":[],"confounding_variables":[],"control_variables":[],"replicates":[],"design_of_experiment":{"item":"","description":""}}',
         assays: '[]', samples: '[]')
       study_design.save
       respond_to do |format|

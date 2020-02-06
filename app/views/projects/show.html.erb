@@ -12,7 +12,7 @@
 </div>
 <div class="row">
   <div class="col-md-12  box_about_actor">
-    <%= item_description @project.description -%>
+    <div class="bcrumb"><img src="/assets/avatars/avatar-project.png" /><span id="breadcrumb">Project</span></div>
     <div class="row">
       <div class=col-lg-3>
         <div id="treeview" class="col-lg-12 project_treeview">
@@ -474,14 +474,17 @@
       switch (item_type) {
         case "prj":
           $j("#projectDetailContainer").show()
+          $j("#breadcrumb").text("Project")
           break;
         case "inv":
           $j("#investigationContainer").show()
           populate_tags(item_id, 'inv')
+           $j("#breadcrumb").text("Project  >  Investigation")
           break;
         case "std":
           $j("#studyContainer").show()
           populate_tags(item_id, 'std')
+          $j("#breadcrumb").text("Project  >  Investigation  >  Study")
           load_design();
           break;
         case "asy":
@@ -489,6 +492,7 @@
           let std_id = $j(`#${item.parent}`).children('a[_type="std"]').attr("_id")
           let asy_id = $j(`#${item.id}`).children('a[_type="asy"]').attr("_id")
           load_samples(std_id, asy_id);
+          $j("#breadcrumb").text("Project  >  Investigation  >  Study  >  Assay")
           break;
         case "fld":
           $j("#fileManagerContainer").show()
@@ -500,6 +504,7 @@
           $j("#fileManagerContainer").show()
           $j("#selected_folder").val(item.text)
           load_method(item_id.split('_')[1], item_id.split('_')[2])
+          $j("#breadcrumb").text("Project  >  Investigation  >  Study  >  Assay")
           break;
       }
     })
