@@ -199,6 +199,7 @@ SEEK::Application.routes.draw do
     collection do
       get :request_institutions
       get :manage
+      get :my_projects
       post :items_for_result
     end
     member do

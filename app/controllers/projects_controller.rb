@@ -9,7 +9,7 @@ class ProjectsController < ApplicationController
 
   before_action :find_requested_item, only: %i[show admin edit update destroy asset_report admin_members
                                                admin_member_roles update_members storage_report request_membership overview]
-  before_action :find_assets, only: [:index]
+  before_action :find_assets, only: %i[index my_projects]
   before_action :auth_to_create, only: %i[new create]
   before_action :is_user_admin_auth, only: %i[manage destroy]
   before_action :editable_by_user, only: %i[edit update]
@@ -274,6 +274,12 @@ end
         end
       end
     end
+  end
+
+  def my_projects
+    person = current_user.person
+    @title = "My Projects"
+    @my_projects = person.projects
   end
 
   # GET /projects/new

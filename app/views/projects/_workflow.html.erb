@@ -200,9 +200,6 @@
             $flowchart.flowchart('setData', "");
         } else {
             $flowchart.flowchart('setData', data);
-            console.log('flowchart set11!')
-            console.log(data)
-            console.log('flowchart set!')
         }
     }
 
@@ -223,7 +220,6 @@
         let TableNames = [];
         let TableopIndexes = [];
         // if the workflow has TBL box
-        console.log(data)
         $j.map(data.operators, (operator, index) => {
             if (operator.properties.shape === "parallelogram") {
                 TableopIndexes.push(operator);

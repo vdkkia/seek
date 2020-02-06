@@ -1,8 +1,14 @@
 <div class="row seek-homepage-button-container">
+<div class="col-sm-4">
+    <%= frontpage_button('/projects/my_projects',
+                         '/assets/front_page/explore.svg') do %>
+        My Projects
+    <% end %>
+  </div>
   <div class="col-sm-4">
     <%= frontpage_button('/projects',
                          '/assets/front_page/explore.svg') do %>
-        Explore projects
+        Explore Projects
     <% end %>
   </div>
   <div class="col-sm-4">
