@@ -60,9 +60,10 @@
                     <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Drag & drop these items to
                         the canvas:</span><br />
                     <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
-                        data-nb-outputs="1" data-shape='rectangle'><i class="glyphicon glyphicon-move"></i>Method</div>
+                        data-nb-outputs="1" data-shape='rectangle' data-shape_id='na'><i
+                            class="glyphicon glyphicon-move"></i>Method</div>
                     <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
-                        data-nb-outputs="1" data-shape='parallelogram'><i
+                        data-nb-outputs="1" data-shape='parallelogram' data-shape_id='na'><i
                             class="glyphicon glyphicon-move"></i>Input/Output</div>
 
                 </div>
@@ -125,13 +126,13 @@
         function getOperatorData($element) {
             const nbInputs = parseInt($element.data('nb-inputs'));
             const nbOutputs = parseInt($element.data('nb-outputs'));
-            console.log(nbInputs)
             var data = {
                 properties: {
                     title: $element.text(),
                     inputs: {},
                     outputs: {},
-                    shape: $element.data('shape')
+                    shape: $element.data('shape'),
+                    shape_id: $element.data('shape_id'),
                 },
             };
             var i = 0;
@@ -201,6 +202,18 @@
         } else {
             $flowchart.flowchart('setData', data);
         }
+
+        console.log(data)
+         let TableopIndexes = [];
+        // if the workflow has TBL box
+        $j.map(data.operators, (operator, index) => {
+            if (operator.properties.shape === "parallelogram") {
+                TableopIndexes.push(index);
+            }
+        })
+        console.log(findFirstBox(TableopIndexes, data.links))
+
+
     }
 
     function extractMethods(data) {
@@ -222,15 +235,25 @@
         // if the workflow has TBL box
         $j.map(data.operators, (operator, index) => {
             if (operator.properties.shape === "parallelogram") {
-                TableopIndexes.push(operator);
+                TableopIndexes.push(index);
             }
         })
         let FirstBox = findFirstBox(TableopIndexes, data.links);
+        // console.log("FirstBox")
+        // console.log(FirstBox)
         let arrenged = arrangeBoxes(data.operators, FirstBox, data.links)
+
+        // console.log("arrenged")
+        // console.log(arrenged)
+
+
         $j.map(arrenged, (operator, index) => {
+            // console.log("Operator")
+            // console.log(operator)
             if (operator.properties.shape === "parallelogram") {
                 TableNames.push({
-                    'id': uniqId(),
+                    'id': operator.properties.shape_id == "na" ? uniqId() : operator.properties
+                        .shape_id,
                     'title': operator.properties.title,
                     'content': ''
                 });
@@ -240,18 +263,22 @@
     }
 
     function findFirstBox(operatorsIndexes, links) {
-        let temp, result;
+        let temp, result, g
         $j.each(operatorsIndexes, (op_key, op_val) => {
             temp = false;
             $j.each(links, (link_key, link_val) => {
-                if (link_val.toOperator.toString() == op_key)
+                console.log(link_val.toOperator.toString() + ' | ' + op_val)
+                if (link_val.toOperator.toString() == op_val)
                     temp = true;
             })
+            console.log("temp: " + temp)
             if (!temp) {
-                result = op_key;
+                result = op_val;
                 return result
             }
         })
+
+        console.log("FIRST BOX IS:" + result)
         return result
     }
 
@@ -264,6 +291,7 @@
                 if (link.fromOperator == current) {
                     arranged.push(OpList[link.toOperator])
                     current = link.toOperator
+                    return false
                 }
             })
         }
@@ -305,6 +333,8 @@
             if (sample.title == sampleName)
                 res = sample.id
         })
+        // console.log("SampleId")
+        // console.log(res)
         return res
     }
 
@@ -366,6 +396,9 @@
                 asy_id
             },
             success: result => {
+                console.log("result")
+
+                console.log(result)
                 if (!result) {
                     base.empty()
                     base.append("<li>Error!</li>")
@@ -392,8 +425,9 @@
 
     function validateWorkflow(data) {
         // Check for name duplication
-
-        if (Object.keys(data.operators).length - Object.keys(data.links).length != 1) {
+        let operatorLength = Object.keys(data.operators).length
+        if (operatorLength == 0) return true
+        if (operatorLength - Object.keys(data.links).length != 1) {
             alert("Boxes are not connected correctly!")
             return false;
         }
@@ -419,8 +453,14 @@
         //     alert("Boxes are not connected correctly!")
         //     return false;
         // }
+        let TableopIndexes = [];
+        $j.map(data.operators, (operator, index) => {
+            if (operator.properties.shape === "parallelogram") {
+                TableopIndexes.push(index);
+            }
+        })
 
-        let first = findFirstBox(data.operators, data.links)
+        let first = findFirstBox(TableopIndexes, data.links)
         if (data.operators[first].properties.shape != "parallelogram") {
             alert("First Box must be an Input box!")
             return false;

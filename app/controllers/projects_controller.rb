@@ -240,6 +240,13 @@ class ProjectsController < ApplicationController
   end
 
   # Get
+  def study_assays
+    study_design = StudyDesign.where(study_id: params[:std_id]).first
+    render json: { assays: study_design.assays, samples: study_design.samples }
+  end
+
+
+  # Get
   def text_content
     study_design = StudyDesign.where(study_id: params[:std_id]).first
     item_id = params[:item_id]

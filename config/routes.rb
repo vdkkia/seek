@@ -224,6 +224,7 @@ SEEK::Application.routes.draw do
       get :text_content
       patch :update_method
       patch :update_iotable
+      get :study_assays
     end
     resources :people,:institutions,:assays,:studies,:investigations,:models,:sops,:workflows,:nodes, :data_files,:presentations,
               :publications,:events,:samples,:specimens,:strains,:search,:organisms,:documents, :only=>[:index]
@@ -357,7 +358,6 @@ SEEK::Application.routes.draw do
       get :typeahead
       get :preview
       post :items_for_result
-      get :study_assays
       #MERGENOTE - these should be gets and are tested as gets, using post to fix later
     end
     resources :snapshots, :only => [:show, :new, :create, :destroy] do

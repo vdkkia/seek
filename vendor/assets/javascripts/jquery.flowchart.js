@@ -506,6 +506,7 @@ $j(function() {
                 operator: $joperator,
                 title: $joperator_title,
                 connectorSets: connectorSets,
+                operator_id: operatorData.properties.shape_id ,
                 connectors: connectors,
                 connectorArrows: connectorArrows,
                 connectorSmallArrows: connectorSmallArrows

@@ -221,22 +221,6 @@
          }
      }
 
-     function update_method(std_id, asy_id, content) {
-         $j.ajax({
-             type: 'PATCH',
-             cache: false,
-             url: pid + '/update_method',
-             data: {
-                 std_id,
-                 asy_id,
-                 content
-             },
-             success: result => {
-                 console.log('Content saved successfully!')
-             }
-         })
-     }
-
      $j('#btn_save_content').on('click', () => {
          let std_id = $j("#text_content").attr('data-selected').split('_')[0]
          let asy_id = $j("#text_content").attr('data-selected').split('_')[1]
@@ -318,6 +302,22 @@
              },
              success: result => {
                  alert('Content saved successfully!')
+             }
+         })
+     }
+
+      function update_method(std_id, asy_id, content) {
+         $j.ajax({
+             type: 'PATCH',
+             cache: false,
+             url: pid + '/update_method',
+             data: {
+                 std_id,
+                 asy_id,
+                 content
+             },
+             success: result => {
+                 console.log('Content saved successfully!')
              }
          })
      }

@@ -13,19 +13,19 @@
 <div class="row">
   <div class="col-md-12  box_about_actor">
     <div class="row">
-    <div class="col-md-7">
-  <ul class="bcrumb">
-        <li><a href="#">Project</a></li>
-        <li style="display:none"><a href="#">Investigation</a></li>
-        <li style="display:none"><a href="#">Study</a></li>
-        <li style="display:none"><a href="#">Assay</a></li>
-      </ul>
-    </div>
-    <div class="col-md-5" style="text-align:right">
-          <div>
-            <input id="btn_delete_item" type="button" class="btn btn-primary" value="Delete" onclick="deleteItem()" />
-          </div>
-    </div>
+      <div class="col-md-7">
+        <ul class="bcrumb">
+          <li><a href="#">Project</a></li>
+          <li style="display:none"><a href="#">Investigation</a></li>
+          <li style="display:none"><a href="#">Study</a></li>
+          <li style="display:none"><a href="#">Assay</a></li>
+        </ul>
+      </div>
+      <div class="col-md-5" style="text-align:right">
+        <div>
+          <input id="btn_delete_item" type="button" class="btn btn-primary" value="Delete" onclick="deleteItem()" />
+        </div>
+      </div>
     </div>
     <div class="row">
       <div class=col-lg-3>
@@ -195,10 +195,10 @@
     }
   })(jQuery);
 
-  let pid
+  let pid, uid
   $j(document).ready(function () {
     pid = <%= params[:id] %>
-      let uid = <%= current_user.id if current_user %>
+      uid = <%= current_user.id if current_user %>
       hide_all_containers()
     $j("#projectDetailContainer").show()
     get_project()
@@ -318,80 +318,152 @@
         }
       })
     })
-    $j("#btn_save_workflow").on("click", function () {
-      let old_methods, new_methods, temp, assays = [],
-        samples, counter = 0
-      let data = $j('#chart_canvas').flowchart('getData');
-      // 0  Validate the flowchart (All boxes have at least one link + First and last boxes are type of Inp/Out)
-      if (!validateWorkflow(data))
-        return
-      // 1  extract samples from flowchart
-      samples = extractSamples(data);
-      // 2  Get list of assays
-      $j.ajax({
-        method: 'GET',
-        cache: false,
-        url: `/assays/study_assays?std_id=${$j("#selected_item_id").val()}`,
-        success: s => {
-          old_methods = $j.map(s.data, i => {
-            return {
-              "id": i.id,
-              "title": i.title
-            }
-          })
-          // 3  Get list of methods in flowchart
-          new_methods = extractMethods(data)
-          // 4  remove assays which are not present in new_methods from DB
-          let ajaxArray = []
-          $j.each(old_methods, (i, item) => {
-            if ($j.inArray(item.title, new_methods) == -1) {
-              ajaxArray.push(removeAssay(item.id))
-            }
-          })
-          $j.when.apply($j, ajaxArray).then(() => {
-            // console.log("GFGFGF")
-            // 5  create assays which are in new_methods and not in old_methods
-            temp = $j.map(old_methods, i => {
-              return i.title
-            });
-            ajaxArray = [];
-            $j.each(new_methods, i => {
-              if ($j.inArray(i, temp) == -1) {
-                counter++
-                ajaxArray.push(createAssay(pid, $j("#selected_item_id").val(), uid,
-                  `Assay${counter}`))
-                // all study_design samples and assays will be created again > alert the user to keep data as a backup
-                // 6  constitute sample object and assay object for study design
-                assays.push({
-                  "id": "x",
-                  "method": {
-                    "title": new_methods[i],
-                    "content": ""
-                  },
-                  "in_id": getSampleId(connectedSamples(new_methods[i], data).input, samples),
-                  "out_id": getSampleId(connectedSamples(new_methods[i], data).output,
-                    samples)
-                })
-              }
-            });
-            $j.when.apply($j, ajaxArray)
-              .then((res) => {
-                for (var i = 0; i < ajaxArray.length; i++) {
-                  assays[i].id = JSON.parse(ajaxArray[i].responseText).data.id
-                }
-                // 7  update study_design
-                save_flowchart(data, assays, samples)
 
-                location.reload(true);
-              })
+    $j("#btn_save_workflow").on("click", function () {
+      SAVE()
+    });
+
+  })
+
+
+  //-----------------------------------------------------------------
+  async function SAVE() {
+    let flowchartData = $j('#chart_canvas').flowchart('getData');
+    const res = await getStudyAssays()
+    let oldAssays = JSON.parse(res.assays)
+    let oldSamples = JSON.parse(res.samples)
+    let newSamples = extractSamples(flowchartData);
+    newSamples = compareAndUpdateSamples(oldSamples, newSamples)
+    let oldMethods = getOldMethods(res)
+    let newMethods = extractMethods(flowchartData)
+    let toBeRemovedAssays = ToBeRemovedAssays(oldMethods, newMethods)
+    let counter = oldMethods.length - toBeRemovedAssays.length
+    $j.when.apply($j, toBeRemovedAssays).then(() => {
+      let oldMethodsTitles = $j.map(oldMethods, (value, index) => {
+        return value.title
+      });
+      let toBeCreatedAssays = [],
+        newAssays = []
+      $j.each(newMethods, (i, v) => {
+        if ($j.inArray(v, oldMethodsTitles) == -1) {
+          counter++
+          toBeCreatedAssays.push(createAssay(pid, $j("#selected_item_id").val(), uid,
+            `Assay${counter}`))
+          newAssays.push({
+            "id": "x",
+            "title": "y",
+            "method": {
+              "title": newMethods[i],
+              "content": ""
+            },
+            "in_id": getSampleId(connectedSamples(newMethods[i], flowchartData).input, newSamples),
+            "out_id": getSampleId(connectedSamples(newMethods[i], flowchartData).output,
+              newSamples)
           })
-        },
-        error: e => {
-          alert('error!')
+        }
+      });
+      $j.when.apply($j, toBeCreatedAssays)
+        .then((res) => {
+          newAssays = updateAssaysId(newAssays, toBeCreatedAssays)
+          newAssays = compareAndUpdateAssays(oldAssays, newAssays, newMethods)
+          setOperatorId(flowchartData, newSamples, newAssays)
+          save_flowchart(flowchartData, newAssays, newSamples)
+          location.reload(true);
+        })
+    })
+
+
+  }
+
+  function getStudyAssays() {
+    return $j.ajax({
+      method: 'GET',
+      cache: false,
+      url: `/projects/${pid}/study_assays?std_id=${$j("#selected_item_id").val()}`
+    })
+  }
+
+  function getOldMethods(data) {
+    // console.log("getOldMethods")
+    // console.log(data)
+    return $j.map(JSON.parse(data.assays), i => {
+      return {
+        "id": i.id,
+        "title": i.method.title
+      }
+    })
+  }
+
+  function ToBeRemovedAssays(OldMethods, newMethods) {
+    let arr = []
+    $j.each(OldMethods, (i, item) => {
+      if ($j.inArray(item.title, newMethods) == -1) {
+        arr.push(removeAssay(item.id))
+      }
+    })
+    return arr
+  }
+
+  function updateAssaysId(assays, arr) {
+    for (var i = 0; i < arr.length; i++) {
+      assays[i].id = JSON.parse(arr[i].responseText).data.id
+      assays[i].title = JSON.parse(arr[i].responseText).data.attributes.title
+    }
+    return assays
+  }
+
+  function setOperatorId(data, samples, assays) {
+    $j.map(data.operators, (operator, index) => {
+      $j.each(samples, (i, val) => {
+        if (val.title == operator.properties.title) {
+          operator.properties.shape_id = val.id
         }
       })
-    });
-  })
+      $j.each(assays, (i, val) => {
+        if (val.method.title == operator.properties.title) {
+          operator.properties.shape_id = val.id
+        }
+      })
+    })
+  }
+
+
+  function compareAndUpdateAssays(old, New, FLMethods){
+    let temp = []
+   let exist = false
+   $j.each(FLMethods,(k, v)=>{
+     for (let i=0; i<old.length;i++){
+          if (old[i].method.title == v)
+          {
+            temp.push(old[i])
+            break;
+          }
+       }
+   })
+   for (let i=0; i<New.length;i++){
+     temp.push(New[i])
+   }
+    return temp
+  }
+  function compareAndUpdateSamples(old, New)
+  {
+    // New contains all samples
+    if (New.length == 0) return old
+    for (let j=0; j<New.length;j++){
+      for (let i=0; i<old.length;i++){
+          if (old[i].id == New[j].id)
+          {
+            New[j].title = old[i].title // If exist just update the title
+            New[j].content = old[i].content
+            break;
+          }
+       }
+    }
+    return New
+  
+  }
+  //-----------------------------------------------------------------
+
 
   function removeAssay(assayId) {
     return $j.ajax({
@@ -458,7 +530,7 @@
       url: '/assays',
       data: JSON.stringify(data),
       success: s => {
-        //console.log('assay was created successfully! : ' + s.data.id)
+        console.log('assay was created successfully! : ' + s.data.id)
         s.data.id
       },
       error: (e) => {
