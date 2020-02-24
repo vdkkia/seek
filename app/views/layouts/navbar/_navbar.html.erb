@@ -8,15 +8,15 @@
         <span class="icon-bar"></span>
       </button>
       <% if Seek::Config.header_image_enabled %>
-        <%= link_to root_path,:class=>"logo_link" do %>
-            <%= header_logo_image %>
-        <% end %>
+      <%= link_to root_path,:class=>"logo_link" do %>
+      <%= header_logo_image %>
+      <% end %>
       <% end %>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="navbar-inner">
-<div style="height:35px;background-color:red;opacity:0.6;color:white;border-radius:5px;position:fixed; right:0;width:90px;z-index:999;padding:5px">Test version</div>
+      <div class="Test_version">Test version</div>
       <ul class="nav navbar-nav">
         <%= render :partial => "layouts/navbar/browse_menu" %>
         <%= render :partial => "layouts/navbar/create_menu" if logged_in_and_registered? %>
@@ -27,13 +27,26 @@
 
       <ul class="nav navbar-nav navbar-right">
         <% if logged_in_and_registered? %>
-            <%= render :partial => "layouts/navbar/user_menu" %>
+        <%= render :partial => "layouts/navbar/user_menu" %>
         <% else %>
-            <li><%= link_to 'Register', signup_path %></li>
-            <li><%= link_to 'Log in', login_path(:return_to => params[:return_to] || request.original_fullpath) %></li>
+        <li><%= link_to 'Register', signup_path %></li>
+        <li><%= link_to 'Log in', login_path(:return_to => params[:return_to] || request.original_fullpath) %></li>
         <% end %>
       </ul>
 
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+<style>
+  .Test_version {
+    pointer-events: none;
+    background-color: red;
+    opacity: 0.6;
+    color: white;
+    position: fixed;
+    right: 0;
+    z-index: 999;
+    padding: 4px;
+    text-align: center;
+  }
+</style>
