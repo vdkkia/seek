@@ -218,6 +218,7 @@ SEEK::Application.routes.draw do
       get :download_file
       get :method
       get :samples
+      get :all_samples
       get :get_file_list
       patch :update_study_design
       get :get_study_design

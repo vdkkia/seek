@@ -199,16 +199,17 @@ class ProjectsController < ApplicationController
     render json: { data: samples }
   end
 
+  def all_samples
+    render json: { data: JSON.parse(StudyDesign.where(study_id: params[:std_id]).first.samples) }
+  end
+
   # PATCH
   def update_study_design
     study_design = StudyDesign.where(study_id: params[:std_id]).first
     study_design.data = params[:data] if params.key?(:data)
-
-    if params.key?(:flowchart_assays)
-      study_design.flowchart = params[:flowchart_data]
-      study_design.samples = params[:flowchart_samples]
-      study_design.assays = params[:flowchart_assays]
-    end
+    study_design.flowchart = params[:flowchart_data] if params.key?(:flowchart_data)
+    study_design.samples = params[:flowchart_samples] if params.key?(:flowchart_samples)
+    study_design.assays = params[:flowchart_assays] if params.key?(:flowchart_assays)
 
     return render json: { message: 'Study design was updated!' } if study_design.save
 

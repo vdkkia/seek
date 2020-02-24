@@ -7,71 +7,72 @@
 <%# <link rel="stylesheet" href=" https://fonts.googleapis.com/css?family=Archivo+Narrow&display=swap"> %>
 <div id="content-wrapper">
     <div class="inner">
-        <section id="main-content">
-            <div class="flowchart-example" style="overflow-x:scroll">
-                <div class="flowchart-example-container" id="chart_canvas">
-                    <div id="operator_properties" style="display: none;">
-                        <label for="operator_title">Change title: </label><input style="margin-bottom:10px" type="text"
-                            id="operator_title" class="form-control">
-                        <a href="javascript:void(0);" class="delete_selected_button"><i
-                                class="glyphicon glyphicon-minus-sign"></i> Delete item</a>
+        <div class="flowchart-example" style="overflow-x:scroll">
+            <div class="flowchart-example-container" id="chart_canvas">
+                <div id="operator_properties" style="display: none;">
+                    <label for="operator_title">Change title: </label><input style="margin-bottom:10px" type="text"
+                        id="operator_title" class="form-control">
+                    <a href="javascript:void(0);" class="delete_selected_button"><i
+                            class="glyphicon glyphicon-minus-sign"></i> Delete item</a>
 
-                        <a style="position:absolute;top:5px;right:5px" href="javascript:void(0);"
-                            onclick="$j('#operator_properties').hide()"><i class="glyphicon glyphicon-remove"></i></a>
+                    <a style="position:absolute;top:5px;right:5px" href="javascript:void(0);"
+                        onclick="$j('#operator_properties').hide()"><i class="glyphicon glyphicon-remove"></i></a>
 
-                    </div>
                 </div>
-                <style>
-                    #operator_properties {
-                        position: absolute;
-                        background-color: white;
-                        opacity: 0.9;
-                        border-radius: 5px;
-                        border: 2px solid #bbb;
-                        z-Index: 999;
-                        font-size: 12px;
-                        -webkit-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
-                        -moz-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
-                        box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
-                    }
+            </div>
+        </div>
+        <div class="draggable_operators" style="font-size:12px">
+            <div style="float:left;margin-right:20px">
+                <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Set input and output count of
+                    items:</span><br />
+                <div class="form-inline">
+                    Inputs: <input id="inputs_num" type="number" class="form-control" style="width:50px;font-size:12px"
+                        value="1" min="0" max="3"> &nbsp;
+                    Outputs: <input id="outputs_num" type="number" class="form-control"
+                        style="width:50px;font-size:12px" value="1" min="0" max="3">
+                </div>
+            </div>
+            <div class="draggable_operators_divs">
+                <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Drag & drop these items to
+                    the canvas:</span><br />
+                <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
+                    data-nb-outputs="1" data-shape='rectangle' data-shape_id='na'><i
+                        class="glyphicon glyphicon-move"></i>Method</div>
+                <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
+                    data-nb-outputs="1" data-shape='parallelogram' data-shape_id='na'><i
+                        class="glyphicon glyphicon-move"></i>Input/Output</div>
 
-                    #operator_properties input {
-                        font-size: 12px
-                    }
-
-                    .badge {
-                        transition: all 200ms ease-in-out;
-                    }
-                </style>
             </div>
 
-            <div class="draggable_operators" style="font-size:12px">
-                <div style="float:left;margin-right:20px">
-                    <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Set input and output count of
-                        items:</span><br />
-                    <div class="form-inline">
-                        Inputs: <input id="inputs_num" type="number" class="form-control"
-                            style="width:50px;font-size:12px" value="1" min="0" max="3"> &nbsp;
-                        Outputs: <input id="outputs_num" type="number" class="form-control"
-                            style="width:50px;font-size:12px" value="1" min="0" max="3">
-                    </div>
+              <div style="text-align:center">
+                    <h2></h2>
+                    <a class="btn btn-primary" id="btn_save_workflow">Save</a>
                 </div>
-                <div class="draggable_operators_divs">
-                    <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Drag & drop these items to
-                        the canvas:</span><br />
-                    <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
-                        data-nb-outputs="1" data-shape='rectangle' data-shape_id='na'><i
-                            class="glyphicon glyphicon-move"></i>Method</div>
-                    <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
-                        data-nb-outputs="1" data-shape='parallelogram' data-shape_id='na'><i
-                            class="glyphicon glyphicon-move"></i>Input/Output</div>
-
-                </div>
-                <input type="button" class="btn btn-primary btn-sm pull-right" value="Save" id="btn_save_workflow">
-                <br />
-            </div>
+            <br />
+        </div>
     </div>
-</div>
+    <style>
+        #operator_properties {
+            position: absolute;
+            background-color: white;
+            opacity: 0.9;
+            border-radius: 5px;
+            border: 2px solid #bbb;
+            z-Index: 999;
+            font-size: 12px;
+            -webkit-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
+            box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
+        }
+
+        #operator_properties input {
+            font-size: 12px
+        }
+
+        .badge {
+            transition: all 200ms ease-in-out;
+        }
+    </style>
 </div>
 
 <script type="text/javascript">
@@ -202,18 +203,6 @@
         } else {
             $flowchart.flowchart('setData', data);
         }
-
-        console.log(data)
-         let TableopIndexes = [];
-        // if the workflow has TBL box
-        $j.map(data.operators, (operator, index) => {
-            if (operator.properties.shape === "parallelogram") {
-                TableopIndexes.push(index);
-            }
-        })
-        console.log(findFirstBox(TableopIndexes, data.links))
-
-
     }
 
     function extractMethods(data) {
@@ -239,17 +228,8 @@
             }
         })
         let FirstBox = findFirstBox(TableopIndexes, data.links);
-        // console.log("FirstBox")
-        // console.log(FirstBox)
         let arrenged = arrangeBoxes(data.operators, FirstBox, data.links)
-
-        // console.log("arrenged")
-        // console.log(arrenged)
-
-
         $j.map(arrenged, (operator, index) => {
-            // console.log("Operator")
-            // console.log(operator)
             if (operator.properties.shape === "parallelogram") {
                 TableNames.push({
                     'id': operator.properties.shape_id == "na" ? uniqId() : operator.properties
@@ -267,18 +247,14 @@
         $j.each(operatorsIndexes, (op_key, op_val) => {
             temp = false;
             $j.each(links, (link_key, link_val) => {
-                console.log(link_val.toOperator.toString() + ' | ' + op_val)
                 if (link_val.toOperator.toString() == op_val)
                     temp = true;
             })
-            console.log("temp: " + temp)
             if (!temp) {
                 result = op_val;
                 return result
             }
         })
-
-        console.log("FIRST BOX IS:" + result)
         return result
     }
 
@@ -333,8 +309,6 @@
             if (sample.title == sampleName)
                 res = sample.id
         })
-        // console.log("SampleId")
-        // console.log(res)
         return res
     }
 
@@ -368,7 +342,6 @@
                     return
                 }
                 result = JSON.parse(result.data)
-                console.log(result)
                 if (result.length > 0) {
                     result.forEach(function (assay) {
                         if (assay.id == asy_id) {
@@ -396,9 +369,6 @@
                 asy_id
             },
             success: result => {
-                console.log("result")
-
-                console.log(result)
                 if (!result) {
                     base.empty()
                     base.append("<li>Error!</li>")
@@ -406,7 +376,7 @@
                 }
                 //result = JSON.parse(result.data)
                 if (result.data.length > 0) {
-                    result.data.forEach(function (sample) {
+                    result.data.reverse().forEach(function (sample) {
                         addFile(`${std_id}_${sample.id}_sample`, file_icon('.tbl'),
                             minify(sample.title))
                     })
@@ -436,12 +406,10 @@
         //     connections = 0
         // $j.each(data.operators, (op_key, op_val) => {
         //     $j.each(data.links, (link_key, link_val) => {
-        //         console.log(op_val)
         //         if (link_val.toOperator == op_key ||
         //             link_val.fromOperator == op_key)
         //             connections++
         //     })
-        //     console.log("connections: " + connections)
         //     if (connections == 1) {
         //         ioBoxes++;
         //     }
@@ -449,15 +417,14 @@
 
         // })
         // if (ioBoxes != 2) {
-        //     console.log(ioBoxes)
         //     alert("Boxes are not connected correctly!")
         //     return false;
         // }
         let TableopIndexes = [];
         $j.map(data.operators, (operator, index) => {
-            if (operator.properties.shape === "parallelogram") {
+           // if (operator.properties.shape === "parallelogram") {
                 TableopIndexes.push(index);
-            }
+           // }
         })
 
         let first = findFirstBox(TableopIndexes, data.links)

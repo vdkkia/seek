@@ -129,7 +129,19 @@
     </div>
   </div>
 </div>
-
+<div class="arrow_box" style="padding:5px; display:none; z-index:999; position:absolute">
+  <ul id="preDefinedList" class="fadeout"
+    style="list-style-type: none;padding:0;max-height:300px;overflow-y: scroll;margin:0">
+    <li>
+      <div class="input-group">
+        <input placeholder="column name..." class="form-control customCol" />
+        <span class="input-group-btn">
+          <input id="btn_custom_col" class="btn btn-primary" type="button" value="Insert" onClick="">
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
 <script>
   $j('#project-hierarchy-toggle').click(function () {
     var el = $j('#project_hierarchy');
@@ -196,6 +208,9 @@
   })(jQuery);
 
   let pid, uid
+  let acSource = {}
+  let GSource= {}
+  var tbl_response_variables //saving this for resetting table cols
   $j(document).ready(function () {
     pid = <%= params[:id] %>
       uid = <%= current_user.id if current_user %>
@@ -323,17 +338,25 @@
       SAVE()
     });
 
+    tbl_response_variables = $j('.tbl_response_variables').html()
+    $j('.design_chk').change(function () {
+      $j(`#div_${this.id}`).slideToggle('fast')
+    });
   })
+
 
 
   //-----------------------------------------------------------------
   async function SAVE() {
     let flowchartData = $j('#chart_canvas').flowchart('getData');
+    if (validateWorkflow(flowchartData) == false) return
     const res = await getStudyAssays()
     let oldAssays = JSON.parse(res.assays)
     let oldSamples = JSON.parse(res.samples)
     let newSamples = extractSamples(flowchartData);
     newSamples = compareAndUpdateSamples(oldSamples, newSamples)
+    // If there is already a sample source in DB, keep content and just change the id and the name with the new one
+    newSamples = checkSampleSource(newSamples)
     let oldMethods = getOldMethods(res)
     let newMethods = extractMethods(flowchartData)
     let toBeRemovedAssays = ToBeRemovedAssays(oldMethods, newMethods)
@@ -371,8 +394,6 @@
           location.reload(true);
         })
     })
-
-
   }
 
   function getStudyAssays() {
@@ -384,8 +405,6 @@
   }
 
   function getOldMethods(data) {
-    // console.log("getOldMethods")
-    // console.log(data)
     return $j.map(JSON.parse(data.assays), i => {
       return {
         "id": i.id,
@@ -428,39 +447,37 @@
   }
 
 
-  function compareAndUpdateAssays(old, New, FLMethods){
+  function compareAndUpdateAssays(old, New, FLMethods) {
     let temp = []
-   let exist = false
-   $j.each(FLMethods,(k, v)=>{
-     for (let i=0; i<old.length;i++){
-          if (old[i].method.title == v)
-          {
-            temp.push(old[i])
-            break;
-          }
-       }
-   })
-   for (let i=0; i<New.length;i++){
-     temp.push(New[i])
-   }
+    let exist = false
+    $j.each(FLMethods, (k, v) => {
+      for (let i = 0; i < old.length; i++) {
+        if (old[i].method.title == v) {
+          temp.push(old[i])
+          break;
+        }
+      }
+    })
+    for (let i = 0; i < New.length; i++) {
+      temp.push(New[i])
+    }
     return temp
   }
-  function compareAndUpdateSamples(old, New)
-  {
+
+  function compareAndUpdateSamples(old, New) {
     // New contains all samples
     if (New.length == 0) return old
-    for (let j=0; j<New.length;j++){
-      for (let i=0; i<old.length;i++){
-          if (old[i].id == New[j].id)
-          {
-            New[j].title = old[i].title // If exist just update the title
-            New[j].content = old[i].content
-            break;
-          }
-       }
+    for (let j = 0; j < New.length; j++) {
+      for (let i = 0; i < old.length; i++) {
+        if (old[i].id == New[j].id) {
+          New[j].title = old[i].title // If exist just update the title
+          New[j].content = old[i].content
+          break;
+        }
+      }
     }
     return New
-  
+
   }
   //-----------------------------------------------------------------
 
@@ -573,12 +590,15 @@
           populate_tags(item_id, 'std')
           breadcrumb("std")
           load_design();
+          loadSuggestedCols(item_id)
           break;
         case "asy":
           $j("#fileManagerContainer").show()
           let std_id = $j(`#${item.parent}`).children('a[_type="std"]').attr("_id")
           let asy_id = $j(`#${item.id}`).children('a[_type="asy"]').attr("_id")
           load_samples(std_id, asy_id);
+          loadSuggestedCols(std_id)
+          load_design(std_id);
           breadcrumb("asy")
           break;
         case "fld":
@@ -771,5 +791,27 @@
     } else {
 
     }
+  }
+
+  function checkSampleSource(samples) {
+    $j.ajax({
+      method: 'GET',
+      cache: false,
+      url: pid + '/all_samples',
+      data: {
+        'std_id' : $j("#selected_item_id").val()
+      },
+      success: s => {
+        console.log("all samples:")
+        console.log(s)
+        if (s.data)
+        {
+          console.log(samples[0])
+          console.log(s.data.content)
+          samples[0].content = s.data.content
+        }
+      }
+    })
+     return samples
   }
 </script>

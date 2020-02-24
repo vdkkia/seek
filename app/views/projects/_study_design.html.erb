@@ -31,13 +31,14 @@
                         class="glyphicon glyphicon-plus"></i> Add
                     Variable</a>
                 &nbsp;
-                <a class="btn btn-secondary pull-left" onClick="add_dep_col('',true)">
+                <a class="btn btn-secondary pull-left"
+                    onClick="add_dep_col('','sub-sample of', '.tbl_response_variables', 2)">
                     <i class="glyphicon glyphicon-plus"></i> Add sub-sample</a>
 
                 <table class="table tableXs tbl_response_variables">
                     <thead class="thead-dark">
-                        <th>Response variables (what will you quantify?)</th>
-                        <th>Material (quantification on what?)</th>
+                        <th>Response variables <%= help_icon('what will you quantify?')%> </th>
+                        <th>Material <%= help_icon('quantification on what?')%> </th>
                         <th>Sub-sample of</th>
                     </thead>
                     <tbody>
@@ -76,7 +77,8 @@
 
                 <table class="table tableXs tbl_covariates">
                     <thead class="thead-dark">
-                        <th>Covariates (Variables of no interest that might affect response variables)</th>
+                        <th>Covariates <%= help_icon('Variables of no interest that might affect response variables') %>
+                        </th>
                         <th></th>
                         <th>Levels</th>
                     </thead>
@@ -97,8 +99,8 @@
 
                 <table class="table tableXs tbl_confounding_variables">
                     <thead class="thead-dark">
-                        <th>Confounding variables (Variables of no interest that might affect experimental factors and
-                            response variables)</th>
+                        <th>Confounding variables <%= help_icon('Variables of no interest that might affect experimental factors and
+                            response variables') %></th>
                         <th></th>
                         <th>Levels</th>
                     </thead>
@@ -107,24 +109,6 @@
                 </table>
             </div>
 
-            <h2>
-                <label><input class="design_chk" type="checkbox" id="chk_control_variables"> Control variables</label>
-            </h2>
-            <div id="div_chk_control_variables" style="display:none">
-
-                <a class="btn btn-secondary pull-left" onClick="add_rep('.tbl_control_variables','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i>
-                    Add Variable</a>
-
-                <table class="table tableXs tbl_control_variables">
-                    <thead class="thead-dark">
-                        <th>Control variables (Variable that stay unchanged)</th>
-                        <th>Description</th>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div>
             <h2> <label><input class="design_chk" type="checkbox" id="chk_replicates"> Replicates</label>
             </h2>
             <div id="div_chk_replicates" style="display:none">
@@ -146,27 +130,21 @@
 
             <h2>Design of experiment</h2>
             <div class="form-inline" style="text-align:left">
-                <select id="expDesign" class="form-control">
-                    <option value="">Please select an item</option>
-                    <option value="1">One-factor experiment</option>
-                </select>
+                <input id="expDesign" class="form-control" placeholder="...">
                 <input id="experiment_design_desc" type="text" class="form-control" style="min-width:400px"
                     placeholder="Description" value="Compare two temperature. Three independent replicates">
             </div>
             <div style="text-align:center">
                 <h2></h2>
                 <a class="btn btn-primary" onClick="save_design()">Save Design</a>
+                or
+                <a class="btn btn-default" onClick="genSampleSource()">Generate Sample</a>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    var tbl_response_variables //saving this for resetting table cols
-    $j(document).ready(function () {
-        tbl_response_variables = $j('.tbl_response_variables').html()
-    });
-
     function add_level(_tr = '', level = '', add_single = false) {
         let action =
             "<td><a href='' onclick='remove_tr(event)' class=''> <span class='glyphicon glyphicon-trash'></span></a></td>"
@@ -187,16 +165,24 @@
         $j(`${table} tbody`).append(tag)
     }
 
-    function add_dep_col(value = '', add_single = false) {
-        let bias = add_single ? 2 : 1
+    function add_dep_col(value = '', title, tableClass, bias = 1, acTerm = '', useOntology = true) {
         let action =
             "<a href='' onclick='remove_col(event)'> <span style='color:white' class='glyphicon glyphicon-trash'></span></a>"
-        let colCount = $j('.tbl_response_variables thead tr th').length;
-        $j('.tbl_response_variables').find('thead').find('th').eq(colCount - bias).after(
-            `<th>sub-sample of${action}</th>`);
-        $j('.tbl_response_variables').find('tr').each(function () {
+        let colCount = $j(`${tableClass} thead tr th`).length;
+        if (colCount == 0) {
+            $j(tableClass).find('thead').find('tr').append(
+                `<th data-term="${acTerm}">${title} ${action}</th>`);
+        } else {
+            $j(tableClass).find('thead').find('th').eq(colCount - bias).after(
+                `<th data-term="${acTerm}">${title} ${action}</th>`);
+        }
+        $j(tableClass).find('tr').each(function () {
             $j(this).find('td').eq(colCount - bias).after(`<td contentEditable='true'>${value}</td>`);
         });
+
+        if (acTerm && useOntology) {
+            applyOntology(tableClass, colCount == 0 ? 1 : colCount - bias + 2, acTerm)
+        }
     }
 
     function add_rep(table, items = '', add_single = false) {
@@ -204,10 +190,18 @@
             "<a href='' onclick='remove_tr(event)' class=''> <span class='glyphicon glyphicon-trash'></span></a>"
         let newRow;
         let tdCount = $j(`${table} thead tr`).find('th').length
-        $j(`${table} thead tr`).find('th').each(function (i, a) {
+        let template = Object.keys(items).length > 0 ? items : $j(`${table} thead tr`).find('th')
+        $j.each(template, (i, a) => {
             newRow += Object.keys(items).length > 0 ?
-                `<td contentEditable='true'>${Object.values(items)[i]}</td>` :
-                '<td contentEditable="true"></td>'
+                `<td contentEditable='true'>${a}</td>` :
+                '<td contentEditable="true"></td>';
+            // Apply each column auto complete list
+            // TO-DO: cache auto complete list response rather than Ajax call each time
+            if (add_single) {
+                let term = $j(`${table} thead tr th:nth-child(${i+1})`).data("term") || ''
+                if (term.length > 1)
+                    applyOntology(table, i + 1, term)
+            }
         });
         $j(`${table} tbody`).append('<tr>' + newRow + '</tr>')
         if (add_single) {
@@ -233,6 +227,7 @@
                 alert('error!')
             }
         })
+        // Constitute the first input source header
     }
 
     function save_flowchart(data, assays, samples) {
@@ -292,9 +287,18 @@
         }
         data.confounding_variables = get_table_JSON(".tbl_confounding_variables", item_structure, [1])
         item_structure = {
-            "variable": "",
-            "description": ""
+            "Organism": "",
+            "Organism part": "",
+            "Developmental stage": ""
         }
+        let cols = $j('.tbl_control_variables thead tr th')
+        $j.each(cols, (key, val) => {
+            if (key > 2 && key != cols.length - 1) {
+                let t = $j.trim($j(val).html().replace(/<a( |>).*?<\/a>/gi, ""))
+                item_structure[t] = ""
+            }
+        })
+
         data.control_variables = get_table_JSON(".tbl_control_variables", item_structure, [])
         item_structure = {
             "replicate": "",
@@ -303,13 +307,13 @@
         }
         data.replicates = get_table_JSON(".tbl_replicates", item_structure, [])
         data.design_of_experiment = {
-            "item": $j("#expDesign option:selected").val(),
+            "item": $j("#expDesign").val(),
             "description": $j("#experiment_design_desc").val()
         }
         return data
     }
 
-    function load_design() {
+    function load_design(std_id) {
         $j(".rem").each((i, t) => {
             t.remove()
         })
@@ -322,7 +326,7 @@
             cache: false,
             url: `${pid}/get_study_design`,
             data: {
-                "std_id": $j("#selected_item_id").val()
+                "std_id": std_id ? std_id : $j("#selected_item_id").val()
             },
             success: data => {
                 load_tables(JSON.parse(data.data))
@@ -337,7 +341,7 @@
 
     function load_tables(data) {
         $j('.tbl_experimental_factors tbody').empty()
-        $j('.tbl_response_variables').html(tbl_response_variables)
+        $j('.tbl_response_variables tbody').empty()
         $j('.tbl_blocking_variables tbody').empty()
         $j('.tbl_covariates tbody').empty()
         $j('.tbl_confounding_variables tbody').empty()
@@ -352,10 +356,15 @@
         }
         for (let key in data.experimental_factors) {
             let temp = data.experimental_factors[key]
+            GSource[temp.factor] = []
+            GSource[temp.factor].push(temp.levels[0])
             add_var('.tbl_experimental_factors', temp.factor, temp.levels[0])
             let last_tr = $j('.tbl_experimental_factors tbody tr').last()
             for (let l in temp.levels) {
-                if (l > 0) add_level(last_tr, temp.levels[l])
+                if (l > 0) {
+                    add_level(last_tr, temp.levels[l])
+                    GSource[temp.factor].push(temp.levels[l])
+                }
             }
         }
         for (let key in data.response_variables) {
@@ -363,53 +372,92 @@
             let curCount = $j('.tbl_response_variables thead tr th').length
             let realCount = Object.keys(temp).length
             for (let i = 0; i < realCount - curCount; i++) {
-                add_dep_col(temp[realCount + i])
+                add_dep_col(temp[realCount + i], "sub-sample of ", ".tbl_response_variables")
             }
             add_rep('.tbl_response_variables', temp)
         }
         for (let key in data.blocking_variables) {
             let temp = data.blocking_variables[key]
-            add_var('.tbl_blocking_variables', temp.factor, temp.levels[0])
+            GSource[temp.variable] = []
+            GSource[temp.variable].push(temp.levels[0])
+            add_var('.tbl_blocking_variables', temp.variable, temp.levels[0])
             let last_tr = $j('.tbl_blocking_variables tbody tr').last()
             for (let l in temp.levels) {
-                if (l > 0) add_level(last_tr, temp.levels[l])
+                if (l > 0) {
+                    add_level(last_tr, temp.levels[l])
+                    GSource[temp.variable].push(temp.levels[l])
+                }
             }
         }
         for (let key in data.covariates) {
             let temp = data.covariates[key]
-            add_var('.tbl_covariates', temp.factor, temp.levels[0])
+            GSource[temp.covariate] = []
+            GSource[temp.covariate].push(temp.levels[0])
+            add_var('.tbl_covariates', temp.covariate, temp.levels[0])
             let last_tr = $j('.tbl_covariates tbody tr').last()
             for (let l in temp.levels) {
-                if (l > 0) add_level(last_tr, temp.levels[l])
+                if (l > 0) {
+                    add_level(last_tr, temp.levels[l])
+                    GSource[temp.covariate].push(temp.levels[l])
+                }
             }
         }
         for (let key in data.confounding_variables) {
             let temp = data.confounding_variables[key]
-            add_var('.tbl_confounding_variables', temp.factor, temp.levels[0])
+            GSource[temp.variable] = []
+            GSource[temp.variable].push(temp.levels[0])
+            add_var('.tbl_confounding_variables', temp.variable, temp.levels[0])
             let last_tr = $j('.tbl_confounding_variables tbody tr').last()
             for (let l in temp.levels) {
-                if (l > 0) add_level(last_tr, temp.levels[l])
+                if (l > 0) {
+                    add_level(last_tr, temp.levels[l])
+                    GSource[temp.variable].push(temp.levels[l])
+                }
+            }
+        }
+        if (Object.keys(data.control_variables).length > 0) {
+            $j('.tbl_control_variables thead tr').empty()
+            let cnt = 0
+            let action =
+                "<a href='' onclick='remove_col(event)'> <span style='color:white' class='glyphicon glyphicon-trash'></span></a>"
+            for (let key in data.control_variables[0]) {
+
+                $j('.tbl_control_variables thead tr').append(`<th>${key} ${cnt > 2?action:''}</th>`)
+                cnt++
             }
         }
         for (let key in data.control_variables) {
             let temp = data.control_variables[key]
             add_rep('.tbl_control_variables', temp)
         }
+        applyOntology('.tbl_control_variables', 1, 'experimental factor.material entity.organism')
+        applyOntology('.tbl_control_variables', 2, 'experimental factor.material entity.organism part')
+        applyOntology('.tbl_control_variables', 3, 'experimental factor.process.developmental stage')
+
         for (let key in data.replicates) {
             let temp = data.replicates[key]
             add_rep('.tbl_replicates', temp)
         }
         $j("#expDesign").val(data.design_of_experiment.item)
         $j("#experiment_design_desc").val(data.design_of_experiment.description)
-
+        console.log(GSource)
     }
 
-    function get_table_JSON(table_class, item_structure, ignore_col_list) {
-        if (!$j(`#chk_${table_class.substr(5)}`).prop('checked')) {
+    function get_table_JSON(table_class, item_structure, ignore_col_list = []) {
+        //if its a design table and unchecked => return
+        if (item_structure && !$j(`#chk_${table_class.substr(5)}`).prop('checked')) {
             return []
         }
         let trs = $j(table_class + " tbody tr");
         let headerTdCount = $j(table_class + " thead tr th").length;
+        let headers = {}
+        $j(table_class + " thead tr th").map((i, val) => {
+            let temp = $j.trim($j(val).html().replace(/<a( |>).*?<\/a>/gi, ""))
+            let itm = temp.length > 0 ? temp : undefined
+            if (itm != undefined)
+                headers[itm] = ""
+        }).get()
+        item_structure = item_structure || headers
         let counter = 0
         let root = []
         let currentItem = copy(item_structure)
@@ -425,11 +473,13 @@
                             counter = $j(td).attr("rowspan") - 1;
                         }
                         if (j == 0) {
-                            currentItem[Object.keys(item_structure)[0]] = $j(td).html()
+                            currentItem[Object.keys(item_structure)[0]] =
+                                getTextFromElement($j(td).html())
                         } else if (ignore_col_list.indexOf(j) == -1) {
                             if (Object.keys(item_structure)[1] == "levels")
-                                currentItem.levels.push($j(td).html())
-                            else currentItem[Object.keys(item_structure)[j]] = $j(td).html()
+                                currentItem.levels.push(getTextFromElement($j(td).html()))
+                            else currentItem[Object.keys(item_structure)[j]] =
+                                getTextFromElement($j(td).html())
                         }
                     }
                 })
@@ -443,13 +493,21 @@
         return JSON.parse(JSON.stringify(x));
     }
 
+    function getTextFromElement(element) {
+        if ($j(element).children().length == 0) return element
+        else {
+            var t = $j(element).find(":selected").text()
+            return t
+        }
+    }
+
+
+
     function add_remove_action() {
         let action =
             "<a href='' onclick='remove_tr(event)' class=''> <span class='glyphicon glyphicon-trash'></span></a>"
         $j(".tableXs").each(function (i, t) {
-            $j(t).children('thead').children('tr').each(function (i, t) {
-                $j(t).append("<th class='rem' style='width:50px;'></th>")
-            })
+            $j(t).children('thead').children('tr').append("<th class='rem' style='width:50px;'></th>")
             $j(t).children('tbody').children('tr').each(function (i, g) {
                 if ($j(g).children('td').length > 1)
                     $j(g).append(
@@ -478,6 +536,10 @@
 
     function remove_col(e) {
         event.preventDefault();
+        if ($j(e.target).closest('tr').find('th').length == 2) {
+            alert('Can not remove column. \nThere sould be at least one column.')
+            return
+        }
         let th = $j(e.target).closest('th')
         $j(e.target).closest('table').find('tbody tr').each(function (i, tr) {
             $j(tr).find(`td:eq(${th.index()})`).remove();
@@ -485,11 +547,55 @@
         th.remove()
     }
 
-    $j(document).ready(function () {
-        $j('.design_chk').change(function () {
-            $j(`#div_${this.id}`).toggle()
-        });
-    });
+    function genSampleSource() {
+        save_design()
+        let cols = []
+        let data = create_data()
+        $j.merge(cols, formCol(data.experimental_factors, 'factor'))
+        $j.merge(cols, formCol(data.blocking_variables, 'variable'))
+        $j.merge(cols, formCol(data.covariates, 'covariate'))
+        $j.merge(cols, formCol(data.confounding_variables, 'variable'))
+        // add columns to the first inpout source
+        let std_id = $j("#selected_item_id").val() // OK
+        // Form up the table
+        $j('table.tableInpOut thead tr').empty()
+        $j.each(cols, (key, val) => {
+            add_dep_col('', val.name, '.tableInpOut', '1', `generated-${val.name}`, false)
+        })
+        let content = $j('.tableInpOut').prop('outerHTML')
+        let sampleSource = {
+            'id': '',
+            'title': 'Sample source',
+            'content': content
+        }
+        $j.ajax({
+            method: 'PATCH',
+            cache: false,
+            url: `${pid}/update_study_design`,
+            data: {
+                "flowchart_samples": JSON.stringify(sampleSource),
+                std_id
+            },
+            success: s => {
+                console.log('Sample source saved.')
+            }
+        })
+    }
+
+    function formCol(data, colItem) {
+        let cols = []
+        $j.each(data, (key, val) => {
+            let item = []
+            $j.each(val.levels, (i, level) => {
+                item.push(level)
+            })
+            cols.push({
+                "name": val[colItem],
+                "options": item
+            })
+        })
+        return cols
+    }
 </script>
 
 <style>
