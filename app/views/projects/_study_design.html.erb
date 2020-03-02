@@ -440,7 +440,6 @@
         }
         $j("#expDesign").val(data.design_of_experiment.item)
         $j("#experiment_design_desc").val(data.design_of_experiment.description)
-        console.log(GSource)
     }
 
     function get_table_JSON(table_class, item_structure, ignore_col_list = []) {
@@ -449,6 +448,8 @@
             return []
         }
         let trs = $j(table_class + " tbody tr");
+        console.log(trs.length);
+        
         let headerTdCount = $j(table_class + " thead tr th").length;
         let headers = {}
         $j(table_class + " thead tr th").map((i, val) => {
@@ -458,6 +459,7 @@
                 headers[itm] = ""
         }).get()
         item_structure = item_structure || headers
+        
         let counter = 0
         let root = []
         let currentItem = copy(item_structure)
@@ -474,12 +476,12 @@
                         }
                         if (j == 0) {
                             currentItem[Object.keys(item_structure)[0]] =
-                                getTextFromElement($j(td).html())
+                                getTextFromElement($j(td))
                         } else if (ignore_col_list.indexOf(j) == -1) {
                             if (Object.keys(item_structure)[1] == "levels")
-                                currentItem.levels.push(getTextFromElement($j(td).html()))
+                                currentItem.levels.push(getTextFromElement($j(td)))
                             else currentItem[Object.keys(item_structure)[j]] =
-                                getTextFromElement($j(td).html())
+                                getTextFromElement($j(td))
                         }
                     }
                 })
@@ -494,19 +496,20 @@
     }
 
     function getTextFromElement(element) {
-        if ($j(element).children().length == 0) return element
+        let html = $j(element).html()
+        if (html.indexOf('<select') == -1 || $j(html).children().length == 0) return html
         else {
-            var t = $j(element).find(":selected").text()
+            var t = $j(element).children(":first").children("option:selected").text()
             return t
         }
     }
 
 
 
-    function add_remove_action() {
+    function add_remove_action(tblClass = '.tableXs') {
         let action =
             "<a href='' onclick='remove_tr(event)' class=''> <span class='glyphicon glyphicon-trash'></span></a>"
-        $j(".tableXs").each(function (i, t) {
+        $j(tblClass).each(function (i, t) {
             $j(t).children('thead').children('tr').append("<th class='rem' style='width:50px;'></th>")
             $j(t).children('tbody').children('tr').each(function (i, g) {
                 if ($j(g).children('td').length > 1)
@@ -558,15 +561,15 @@
         // add columns to the first inpout source
         let std_id = $j("#selected_item_id").val() // OK
         // Form up the table
-        $j('table.tableInpOut thead tr').empty()
+        let r = {}
         $j.each(cols, (key, val) => {
-            add_dep_col('', val.name, '.tableInpOut', '1', `generated-${val.name}`, false)
+            r[`${val.name}%generated-${val.name}`] = ''
         })
-        let content = $j('.tableInpOut').prop('outerHTML')
+        r = JSON.stringify([r])
         let sampleSource = {
             'id': '',
             'title': 'Sample source',
-            'content': content
+            'content': r
         }
         $j.ajax({
             method: 'PATCH',

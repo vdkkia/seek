@@ -160,22 +160,39 @@
                  if (item_type.includes("method"))
                      $j('#txt_file_content').val(result.data)
                  else {
-
-                     if (result.data.length > 10) {
-                         //console.log(result.data)
-                         $j('.tableInpOut').html(result.data);
+                     if (result.data && result.data.length > 10) {
+                         //    $j('.tableInpOut').html(result.data);
+                         $j('.tableInpOut').html(loadIOTable(result.data));
                          setTableOntology('.tableInpOut')
                      } else {
                          $j('.tableInpOut').html(
                              '<table class="table tableXs tableInpOut"><thead class="thead-dark"><tr></tr></thead><tbody></tbody></table>'
                          );
                      }
-
                  }
-
              }
          })
      }
+
+     function loadIOTable(data) {
+         $j('.tableInpOut tbody').empty()
+         $j('.tableInpOut thead tr').empty()
+         data = JSON.parse(data)
+         let realCount = Object.keys(data[0]).length
+         for (let i = 0; i < realCount; i++) {
+             let hash = Object.keys(data[0])[i].split('%')
+             if (hash.length > 1)
+                 add_dep_col('', hash[0], ".tableInpOut", 1, hash[1])
+             else
+                 add_dep_col('', Object.keys(data[0])[i], ".tableInpOut")
+         }
+         // Apply the ontology type
+         console.log(data)
+         for (let i = 0; i < data.length; i++)
+             add_rep('.tableInpOut', data[i])
+         add_remove_action(".tableInpOut")
+     }
+
      $j(".fileManager").on("click", ".file", function (event) {
          $j('.file').each(function () {
              $j(this).removeClass("file_selected")
@@ -330,19 +347,28 @@
      }
 
      $j("#btn_update_tables").on("click", () => {
+         // Add data-term to the col name to be extracted later
+         // TO-DO: Search col name in acSource array instead! (if match then apply data-term="generated-xxx")
+
+         let cols = []
+         $j.each($j(".tableInpOut thead tr th"), (key, val) => {
+             cols.push($j(val).html())
+             if ($j(val).attr('data-term'))
+                 $j(val).text($j(val).text() + '%' + $j(val).attr('data-term'))
+         })
+         let r = JSON.stringify(get_table_JSON(".tableInpOut"))
+         $j.each($j(".tableInpOut thead tr th"), (key, val) => {
+             $j(val).html(cols[key])
+         })
+         //  let content = $j('.tableInpOut').prop('outerHTML')
          let std_id = $j("#text_content").attr('data-selected').split('_')[0]
          let sample_id = $j("#text_content").attr('data-selected').split('_')[1]
-         let r = get_table_JSON(".tableInpOut")
-         console.log("ITEMS:")
-         console.log(r)
-         let content = $j('.tableInpOut').prop('outerHTML')
-         update_iotable(std_id, sample_id, content)
+         update_iotable(std_id, sample_id, r)
      })
 
      function applyOntology(tblClass, column, term) {
          //console.log("Applying ontology...")
          if (term.match("^custom")) {
-             console.log(acSource)
              $j(`${tblClass} tbody tr td:nth-child(${column})`).autocomplete({
                  source: acSource[term.split('-')[1]],
                  mustMatch: true
@@ -352,7 +378,10 @@
              $j.each(tds, (key, val) => {
                  if (!$j(tds[key]).attr("applied")) {
                      $j(tds[key]).attr("applied", true)
+                     let temp = $j(tds[key]).text()
+                     $j(tds[key]).empty()
                      $j(tds[key]).append(appendDropDown(GSource[term.split('-')[1]]))
+                     $j(tds[key]).children(':first').val(temp)
                  }
              })
 
