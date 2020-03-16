@@ -151,14 +151,15 @@
     border-radius: 10px;
 }
 
-.flowchart-example-container {
+.flowchartex-container {
     height: 200px;
     margin-bottom: 10px;
     /* border: #ddd 1px solid; */
     border-radius: 5px;
+    overflow: scroll;
 }
 
-.flowchart-example {
+.flowchartex {
     border-radius: 5px;
     border: 1px #ddd solid
 }
@@ -171,7 +172,7 @@
     top: 9px;
 }
 
-.flowchart-example pre {
+.flowchartex pre {
     display: none;
 }
 
@@ -179,7 +180,7 @@
     margin-bottom: 10px;
 }
 
-.flowchart-example-event {
+.flowchartex-event {
     margin-top: 10px;
     margin-bottom: 10px;
     color: #b4a16f;
@@ -239,7 +240,7 @@ h4 {
 
 .flowchart-operator-title {
     text-align: center;
-    line-height: 58px;
+    padding: 8px;
     font-size: 12px;
     color: black;
     height: 20px;

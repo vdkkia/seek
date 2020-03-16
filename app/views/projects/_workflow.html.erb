@@ -7,16 +7,16 @@
 <%# <link rel="stylesheet" href=" https://fonts.googleapis.com/css?family=Archivo+Narrow&display=swap"> %>
 <div id="content-wrapper">
     <div class="inner">
-        <div class="flowchart-example" style="overflow-x:scroll">
-            <div class="flowchart-example-container" id="chart_canvas">
-                <div id="operator_properties" style="display: none;">
+        <div class="flowchartex" style="overflow-x:scroll">
+            <div class="flowchartex-container" id="chart_canvas">
+                <div id="operator_properties" class="workflowPopup">
                     <label for="operator_title">Change title: </label><input style="margin-bottom:10px" type="text"
                         id="operator_title" class="form-control">
                     <a href="javascript:void(0);" class="delete_selected_button"><i
                             class="glyphicon glyphicon-minus-sign"></i> Delete item</a>
 
-                    <a style="position:absolute;top:5px;right:5px" href="javascript:void(0);"
-                        onclick="$j('#operator_properties').hide()"><i class="glyphicon glyphicon-remove"></i></a>
+                    <a class="pgclose" href="javascript:void(0);" onclick="$j('#operator_properties').hide()"><i
+                            class="glyphicon glyphicon-remove"></i></a>
 
                 </div>
             </div>
@@ -36,46 +36,307 @@
                 <span style="color:#888"><i class="glyphicon glyphicon-info-sign"></i> Drag & drop these items to
                     the canvas:</span><br />
                 <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
-                    data-nb-outputs="1" data-shape='rectangle' data-shape_id='na'><i
-                        class="glyphicon glyphicon-move"></i>Method</div>
-                <div class="draggable_operator ui-draggable ui-draggable-handle wf_btn" data-nb-inputs="1"
-                    data-nb-outputs="1" data-shape='parallelogram' data-shape_id='na'><i
-                        class="glyphicon glyphicon-move"></i>Input/Output</div>
-
+                    data-nb-outputs="1" data-shape='rectangle' data-shape_id='na'>Assay</div>
             </div>
 
-              <div style="text-align:center">
-                    <h2></h2>
-                    <a class="btn btn-primary" id="btn_save_workflow">Save</a>
-                </div>
+            <div style="text-align:center">
+                <h2></h2>
+                <a class="btn btn-primary" id="btn_save_workflow">Save</a>
+            </div>
             <br />
         </div>
     </div>
-    <style>
-        #operator_properties {
-            position: absolute;
-            background-color: white;
-            opacity: 0.9;
-            border-radius: 5px;
-            border: 2px solid #bbb;
-            z-Index: 999;
-            font-size: 12px;
-            -webkit-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
-            -moz-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
-            box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
-        }
 
-        #operator_properties input {
-            font-size: 12px
-        }
 
-        .badge {
-            transition: all 200ms ease-in-out;
-        }
-    </style>
+    <div id="assayInfo" class="modal in">
+        <div class="modal-dialog modal-m">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close" data-dismiss="modal"><span aria-hidden="true">×</span></button>
+                    <h4 class="modal-title">Assay</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div>
+                            <label>Title:</label>
+                            <input style="margin-bottom:10px" type="text" class="form-control" id="assayTitle">
+                        </div>
+                        <div style="display:inline-block">
+                            <div class="cdiv">
+                                <label>Type:</label>
+                                <select class="form-control" id="assayType" onchange="asyTypeChange(this);">
+                                    <input type="hidden" id="method_type">
+                                </select>
+                            </div>
+                            <div class="cdiv">
+                                <label>Attributes:</label>
+                                <ul id="attribs" class="small_list"></ul>
+                            </div>
+                        </div>
+                        <div><label>Description: </label>
+                            <textarea id="assayDes" class="form-control"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input id="btnSaveAssay" type="button" value="Save" class="btn btn-primary" data-dismiss="modal" />
+                    <input id="btnCancelAssay" type="button" value="Cancel" class="btn btn-default"
+                        data-dismiss="modal" />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
+    let methodTypes = [{
+            title: 'Custom',
+            attributes: []
+        }, {
+            title: 'ENA library Information',
+            attributes: [{
+                    title: 'ENA_lib Library Layout',
+                    ontology: ['SINGLE', 'PAIRED']
+                },
+                {
+                    title: 'ENA_lib Library Source',
+                    ontology: ['GENOMIC (Genomic DNA (includes PCR products from genomic DNA))',
+                        'TRANSCRIPTOMIC (Transcription products or non genomic DNA (EST, cDNA, RT-PCR, screened libraries)',
+                        'TRANSCRIPTOMIC SINGLE CELL', 'METAGENOMIC (Mixed material from metagenome)',
+                        'METATRANSCRIPTOMIC (Transcription products from community targets)',
+                        'SYNTHETIC (Synthetic DNA)', 'VIRAL RNA (Viral RNA)',
+                        'OTHER (Other, unspecified, or unknown source material)'
+                    ]
+                },
+                {
+                    title: 'ENA_lib Library Strategy',
+                    ontology: [
+                        'RNA-Seq (Random sequencing of whole transcriptome, also known as Whole Transcriptome Shotgun Sequencing, or WTSS. (see pubmed 18611170 for details))',
+                        'ATAC-seq (Assay for Transposase-Accessible Chromatin (ATAC) strategy is used to study genome-wide chromatin accessibility. Alternative method to Dnase-seq that uses en engineered Tn5)',
+                        'ChIP-Seq (Direct sequencing of chromatin immunoprecipitates)',
+                        'Bisulfite-Seq (Sequencing following treatment of DNA with bisulfite to cnvert cytosine residues to uracil depending on methylation status)',
+                        'MeDIP-Seq (Methylated DNA Immunoprecipitation Sequencing)',
+                        'FAIRE-seq (Formaldehyde-Assisted Isolation of Regulatory Elements. Reveals regions of open chromatin)',
+                        'RIP-Seq (Direct sequencing of RNA immunoprecipitates (includes CLIP-Seq, HITS-CLIP and PAR-CLI))',
+                        'ChIA-PET (Direct sequencing of proximity-ligated chromatin immunoprecipitates)',
+                        'OTHER (Library strategy not listed)'
+                    ]
+                },
+                {
+                    title: 'ENA_lib Library Selection',
+                    ontology: ['RANDOM (Random selection by sharing or other method)',
+                        'PCR (Source material was selected by designed primers)',
+                        'RANDOM PCR (Source material eas selected by randomly generated primers)',
+                        'RT-PCR (Source material was selected by reverse transcription PCR)',
+                        'cDNA_randomPriming',
+                        'PolyA (PolyA selection or enrichment for messanger RNA (mRNA))',
+                        'Oligo-dT (enrichment of messanger RNA (mRNA) by hybridization to Oligo-dT)',
+                        'ChIP (Chromatin immunoprecipitation)',
+                        'DNase (DNase I endonuclease digestion and size selection reveals regions of chromatin where the DNA is highly sensitive',
+                        'to Dnase I)',
+                        'Reduced Representation (Reproducible genomic subsets, often generated by restriction fragment size selection, containing',
+                        'a manageable number of loci to facilitate re-sampling)',
+                        'Restriction Digest (DNA fraction using restriction enzymes)',
+                        '5-methylcytidine antibody (Selection of methylated DNA fragments using an antibody raised against 5-methylcytosine or',
+                        '5-methylcytidine (m5C))',
+                        'other (Other library enrichment, screening, or selection process)',
+                        'unspecified (library enrichment, screening, or selection is not specified)',
+                    ]
+                },
+                {
+                    title: 'ENA_lib Library Strand',
+                    ontology: ['not applicable',
+                        'first strand',
+                        'second strand'
+                    ]
+                }
+            ]
+        },
+        {
+            title: 'Sample_Requirements_RNA',
+            attributes: [{
+                    title: 'RNA UNIQUE SAMPLE NUMBER',
+                    ontology: []
+                }, {
+                    title: 'RNA SAMPLE NAME',
+                    ontology: []
+                }, {
+                    title: 'RNA CONC (ng/ul)',
+                    ontology: []
+                }, {
+                    title: 'RNA OD 260/280',
+                    ontology: []
+                }, {
+                    title: 'RNA OD 260/230',
+                    ontology: []
+                }, {
+                    title: 'RNA RIN',
+                    ontology: []
+                },
+                {
+                    title: 'RNA VOLUME (ul)',
+                    ontology: []
+                },
+                {
+                    title: 'RNA SOLVENT',
+                    ontology: ['Nuclease-free water',
+                        'DEPC-MQ',
+                        'Elution Buffer',
+                        'TE (1x)',
+                        'Low TE',
+                        'BR5',
+                        'Other'
+                    ]
+                },
+                {
+                    title: 'RNA ORGANISM',
+                    ontology: []
+                }
+            ]
+        },
+        {
+            title: 'Sample_Requirements_Library',
+            attributes: [{
+                title: 'Lib UNIQUE SAMPLE NUMBER',
+                ontology: []
+            }, {
+                title: 'Lib LIBRARY/POOL NAME/NUMBER',
+                ontology: []
+            }, {
+                title: 'Lib LIBRARY PREP METHOD',
+                ontology: []
+            }, {
+                title: 'Lib CONC (ng/ul)',
+                ontology: []
+            }, {
+                title: 'Lib VOLUME (ul)',
+                ontology: []
+            }, {
+                title: 'Lib SOLVENT',
+                ontology: ['Nuclease-free water',
+                    'DEPC-MQ',
+                    'Elution Buffer',
+                    'TE (1x)',
+                    'Low TE',
+                    'BR5',
+                    'Other'
+                ]
+            }, {
+                title: 'SIZE RANGE (bp)',
+                ontology: []
+            }, {
+                title: 'AVERAGE LENGTH (bp)',
+                ontology: []
+            }, {
+                title: 'MOLARITY',
+                ontology: []
+            }, {
+                title: 'ILLUMINA SEQ KIT',
+                ontology: []
+            }, {
+                title: 'RUN TYPE',
+                ontology: ['single reads',
+                    'paired reads'
+                ]
+            }, {
+                title: 'ORGANISM',
+                ontology: []
+            }, {
+                title: 'BARCODE NUMBER (p7)',
+                ontology: []
+            }, {
+                title: 'BARCODE NUMBER (p5)',
+                ontology: []
+            }]
+        }, {
+            title: 'Sample_Requirements_DNA',
+            attributes: [{
+                title: 'UNIQUE SAMPLE NUMBER',
+                ontology: []
+            }, {
+                title: 'SAMPLE NAME',
+                ontology: []
+            }, {
+                title: 'CONC (ng/ul)',
+                ontology: []
+            }, {
+                title: 'VOLUME (ul)',
+                ontology: []
+            }, {
+                title: 'SOLVENT',
+                ontology: ['Nuclease-free water',
+                    'DEPC-MQ',
+                    'Elution Buffer',
+                    'TE (1x)',
+                    'Low TE',
+                    'BR5',
+                    'Other'
+                ]
+            }, {
+                title: 'ORGANISM',
+                ontology: []
+            }, {
+                title: 'OD 260/280',
+                ontology: []
+            }, {
+                title: 'OD 260/230',
+                ontology: []
+            }, {
+                title: 'LENGTH',
+                ontology: []
+            }, {
+                title: 'AVERAGE LENGTH (bp)',
+                ontology: []
+            }, {
+                title: 'SIZE RANGE (bp)',
+                ontology: []
+            }, {
+                title: 'BARCODE NUMBER (p7)',
+                ontology: []
+            }, {
+                title: 'BARCODE NUMBER (p5)',
+                ontology: []
+            }]
+        }, {
+            title: 'Sample_Requirements_HMW-DNA',
+            attributes: [{
+                    title: 'DNA_HMW UNIQUE SAMPLE NUMBER',
+                    ontology: []
+                },
+                {
+                    title: 'DNA_HMW SAMPLE NAME',
+                    ontology: []
+                },
+                {
+                    title: 'DNA_HMW CONC (ng/ul)',
+                    ontology: []
+                },
+                {
+                    title: 'DNA_HMW VOLUME (ul)',
+                    ontology: []
+                },
+                {
+                    title: 'DNA_HMW SOLVENT',
+                    ontology: ['Nuclease-free water',
+                        'DEPC-MQ',
+                        'Elution Buffer',
+                        'TE (1x)',
+                        'Low TE',
+                        'BR5',
+                        'Other'
+                    ]
+                },
+                {
+                    title: 'DNA_HMW ORGANISM',
+                    ontology: ['SINGLE', 'PAIRED']
+                }
+            ]
+        }
+    ]
+
+    let initialWorkflow =
+        '{"operators":{"0":{"properties":{"title":"Sample source","inputs":{"input_0":{"label":"Input 1"}},"outputs":{"output_0":{"label":"Output 1"}},"shape":"parallelogram","shape_id":"init"},"left":40,"top":100}},"links":{},"operatorTypes":{}}'
+
     function init_workflow() {
         var $flowchart = $j('#chart_canvas');
         var $container = $flowchart.parent();
@@ -179,10 +440,26 @@
                     var data = getOperatorData($this);
                     data.left = relativeLeft;
                     data.top = relativeTop;
-                    $flowchart.flowchart('addOperator', data);
+                    let opId = $flowchart.flowchart('addOperator', data);
+                    showAssayPopup(relativeLeft, relativeTop)
+                    // console.log(r);
+                    // console.log($j('#chart_canvas').flowchart('getData'));
+
+
+                    $flowchart.flowchart('selectOperator', opId);
                 }
             }
         });
+    }
+
+    function showAssayPopup(left, top) {
+        // $j('#assayInfo').show().css({
+        //     'position': 'absolute',
+        //     "left": left,
+        //     "top": top
+        // })
+
+        $j('#assayInfo').modal('show');
     }
 
     $j('html').keyup(function (e) {
@@ -196,7 +473,6 @@
     }
 
     function loadWorkflow(data) {
-
         var $flowchart = $j('#chart_canvas');
         if (!data) {
             $flowchart.flowchart('setData', "");
@@ -206,38 +482,42 @@
     }
 
     function extractMethods(data) {
-        let methods = [];
+        let methods = [],
+            methodsId = [],
+            opId = []
         // if the workflow has method box
-        $j.map(data.operators, (operator) => {
+        $j.map(data.operators, (operator, i) => {
             if (operator.properties.shape === "rectangle") {
                 methods.push(operator.properties.title)
+                methodsId.push(operator.properties.shape_id)
+                opId.push(i)
             }
         })
-        return methods
+        return {
+            methods,
+            methodsId,
+            opId // for using to identify Assay name associated with the method
+        }
     }
 
     function extractSamples(data) {
-        if (Object.keys(data.operators) == 0)
+        if (Object.keys(data.operators).length == 0)
             return []
         let TableNames = [];
         let TableopIndexes = [];
-        // if the workflow has TBL box
         $j.map(data.operators, (operator, index) => {
-            if (operator.properties.shape === "parallelogram") {
-                TableopIndexes.push(index);
-            }
+            TableopIndexes.push(index);
         })
         let FirstBox = findFirstBox(TableopIndexes, data.links);
         let arrenged = arrangeBoxes(data.operators, FirstBox, data.links)
         $j.map(arrenged, (operator, index) => {
-            if (operator.properties.shape === "parallelogram") {
-                TableNames.push({
-                    'id': operator.properties.shape_id == "na" ? uniqId() : operator.properties
-                        .shape_id,
-                    'title': operator.properties.title,
-                    'content': ''
-                });
-            }
+            TableNames.push({
+                'id': operator.properties.shape_id == "na" ? "?" : operator
+                    .properties
+                    .shape_id,
+                'title': operator.properties.title,
+                'content': ''
+            });
         })
         return TableNames
     }
@@ -295,7 +575,7 @@
     }
 
     function getOperatorName(operatorId, data) {
-        let opName
+        let opName = ""
         $j.each(data.operators, (op_key, op_val) => {
             if (op_key == operatorId)
                 opName = op_val.properties.title
@@ -304,7 +584,7 @@
     }
 
     function getSampleId(sampleName, sampleList) {
-        let res
+        let res = ""
         $j.each(sampleList, (i, sample) => {
             if (sample.title == sampleName)
                 res = sample.id
@@ -324,68 +604,6 @@
             $j('.wf_btn').data('nb-outputs', num);
     });
 
-    function load_method(std_id, asy_id) {
-        let base = $j(".fileManager");
-        $j('.fileManager li:not(:last-child)').remove();
-        base.not(':last').remove()
-        $j.ajax({
-            type: 'GET',
-            url: pid + '/method',
-            cache: false,
-            data: {
-                std_id
-            },
-            success: result => {
-                if (!result) {
-                    base.empty()
-                    base.append("<li>Error!</li>")
-                    return
-                }
-                result = JSON.parse(result.data)
-                if (result.length > 0) {
-                    result.forEach(function (assay) {
-                        if (assay.id == asy_id) {
-                            addFile(`${std_id}_${asy_id}_method`, file_icon('.txt'), minify(
-                                assay.method.title))
-                        }
-                    })
-                } else {
-                    base.prepend('<li>empty</li>')
-                }
-            }
-        })
-    }
-
-    function load_samples(std_id, asy_id) {
-        let base = $j(".fileManager");
-        $j('.fileManager li:not(:last-child)').remove();
-        base.not(':last').remove()
-        $j.ajax({
-            type: 'GET',
-            cache: false,
-            url: pid + '/samples',
-            data: {
-                std_id,
-                asy_id
-            },
-            success: result => {
-                if (!result) {
-                    base.empty()
-                    base.append("<li>Error!</li>")
-                    return
-                }
-                //result = JSON.parse(result.data)
-                if (result.data.length > 0) {
-                    result.data.reverse().forEach(function (sample) {
-                        addFile(`${std_id}_${sample.id}_sample`, file_icon('.tbl'),
-                            minify(sample.title))
-                    })
-                } else {
-                    base.prepend('<li>empty</li>')
-                }
-            }
-        })
-    }
 
     function refreshWorkflow() {
         setTimeout(() => {
@@ -422,9 +640,9 @@
         // }
         let TableopIndexes = [];
         $j.map(data.operators, (operator, index) => {
-           // if (operator.properties.shape === "parallelogram") {
-                TableopIndexes.push(index);
-           // }
+            // if (operator.properties.shape === "parallelogram") {
+            TableopIndexes.push(index);
+            // }
         })
 
         let first = findFirstBox(TableopIndexes, data.links)
@@ -452,5 +670,43 @@
             return true
         else
             return false
+    }
+
+
+    $j("#btnSaveAssay").on("click", () => {
+        var Id = $j('#chart_canvas').flowchart('getSelectedOperatorId');
+        AssayDetails.push({
+            opId: Id,
+            title: $j.trim($j("#assayTitle").val()),
+            description: $j.trim($j("#assayDes").val()),
+            methodType: $j("#method_type").val() || 0
+        })
+        $j("#assayInfo").hide()
+    })
+    $j("#btnCancelAssay").on("click", () => {
+        $j("#assayInfo").hide()
+    })
+
+    function addAssayTypeOptions() {
+        $j('#assayType').empty()
+        $j.each(methodTypes, (key, value) => {
+            $j('#assayType')
+                .append($j("<option></option>")
+                    .attr("value", key)
+                    .text(value.title));
+        })
+
+        $j.each(methodTypes[0].attributes, (k, attr) => {
+            $j("#attribs").append(`<li>${attr.title}</li>`)
+        })
+
+    }
+
+    asyTypeChange = (i) => {
+        $j("#attribs").empty()
+        $j("#method_type").val(i.value)
+        $j.each(methodTypes[i.value].attributes, (k, attr) => {
+            $j("#attribs").append(`<li>${attr.title}</li>`)
+        })
     }
 </script>

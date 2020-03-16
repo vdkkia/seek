@@ -184,19 +184,19 @@ class ProjectsController < ApplicationController
     row = StudyDesign.where(study_id: params[:std_id]).first
     assays = JSON.parse(row.assays)
     sample = JSON.parse(row.samples)
-    assays.each do |x|
-      if x['id'] == assay_id
-        in_id = x['in_id']
-        out_id = x['out_id']
-        break
-      end
-    end
-    sample.each do |x|
-      if x['id'] == in_id || x['id'] == out_id
-        samples.push(x)
-      end
-    end
-    render json: { data: samples }
+    # assays.each do |x|
+    #   if x['id'] == assay_id
+    #     in_id = x['in_id']
+    #     out_id = x['out_id']
+    #     break
+    #   end
+    # end
+    # sample.each do |x|
+    #   if x['id'] == in_id || x['id'] == out_id
+    #     samples.push(x)
+    #   end
+    # end
+    render json: { data: sample }
   end
 
   def all_samples
@@ -220,17 +220,18 @@ class ProjectsController < ApplicationController
   def update_iotable
     study_design = StudyDesign.where(study_id: params[:std_id]).first
     data = JSON.parse(study_design.samples)
-    sample_id = params[:sample_id]
-    data.each do |x|
-      if x['id'] == sample_id
-        x['content'] = params[:content]
-        study_design.samples = data.to_json
-        if study_design.save
-          return render json: { data: 'Sample updated successfully!' }
-        else
-          return render json: { data: 'Error updating sample', status: :unprocessable_entity }
-        end
+    params[:sample_id].each_with_index do |id, i|
+      data.each do |x|
+         if x['id'] == id
+           x['content'] = params[:content][i]
+         end
       end
+    end
+    study_design.samples = data.to_json
+    if study_design.save
+      return render json: { data: 'Sample updated successfully!' }
+    else
+      return render json: { data: 'Error updating sample', status: :unprocessable_entity }
     end
   end
 

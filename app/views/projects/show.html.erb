@@ -6,6 +6,7 @@
     <%= hidden_field_tag 'selected_item_type', ''  %>
     <%= hidden_field_tag 'selected_folder', ''  %>
     <%= hidden_field_tag 'selected_tree_item_id', ''  %>
+    <%= hidden_field_tag 'selected_std_asy', ''  %>
 
   </div>
   <div class="col-lg-2"></div>
@@ -48,9 +49,12 @@
                 <% end %>
               </div>
             </div>
+
+
             <div id="fileManagerContainer" class="row">
               <%= render :partial => "filemanager" -%>
             </div>
+
             <div id="investigationContainer" class="row">
 
               <%= render :partial => "investigation_details" -%>
@@ -58,6 +62,9 @@
             </div>
             <div id="studyContainer" class="row">
               <%= render :partial => "study" -%>
+            </div>
+            <div id="assayContainer" class="row">
+              <%= render :partial => "assay" -%>
             </div>
           </div>
         </div>
@@ -207,14 +214,15 @@
     }
   })(jQuery);
 
-  let pid, uid
+  let pid, uid, std_id, inv_id, asy_id
   let acSource = {}
-  let GSource= {}
+  let GSource = {}
+  let AssayDetails = []
   var tbl_response_variables //saving this for resetting table cols
   $j(document).ready(function () {
     pid = <%= params[:id] %>
-      uid = <%= current_user.id if current_user %>
-      hide_all_containers()
+    uid = <%= current_user.id if current_user %>
+    hide_all_containers()
     $j("#projectDetailContainer").show()
     get_project()
     init_workflow()
@@ -342,6 +350,16 @@
     $j('.design_chk').change(function () {
       $j(`#div_${this.id}`).slideToggle('fast')
     });
+    addAssayTypeOptions()
+
+    $j('#addSubSample').on("click", () => {
+      let options = {
+        title: 'sub-sample of',
+        tableClass: '.tbl_response_variables',
+        bias: 2,
+      }
+      addColumn(options)
+    })
   })
 
 
@@ -349,51 +367,132 @@
   //-----------------------------------------------------------------
   async function SAVE() {
     let flowchartData = $j('#chart_canvas').flowchart('getData');
+    //console.log(flowchartData);
+    // return
+
+    // $j.map(flowchartData.operators, (v, index) => {
+    //   console.log(v.properties.shape_id)
+    // })
     if (validateWorkflow(flowchartData) == false) return
     const res = await getStudyAssays()
     let oldAssays = JSON.parse(res.assays)
     let oldSamples = JSON.parse(res.samples)
+    if (!$j.isArray(oldSamples))
+      oldSamples = [oldSamples]
     let newSamples = extractSamples(flowchartData);
     newSamples = compareAndUpdateSamples(oldSamples, newSamples)
     // If there is already a sample source in DB, keep content and just change the id and the name with the new one
     newSamples = checkSampleSource(newSamples)
     let oldMethods = getOldMethods(res)
-    let newMethods = extractMethods(flowchartData)
-    let toBeRemovedAssays = ToBeRemovedAssays(oldMethods, newMethods)
-    let counter = oldMethods.length - toBeRemovedAssays.length
+    let methodNameIds = extractMethods(flowchartData)
+    let newMethods = methodNameIds.methods
+    let toBeRemovedAssays = ToBeRemovedAssays(oldMethods, methodNameIds.methodsId)
     $j.when.apply($j, toBeRemovedAssays).then(() => {
-      let oldMethodsTitles = $j.map(oldMethods, (value, index) => {
-        return value.title
+      let oldMethodsIds = $j.map(oldMethods, (value, index) => {
+        return value.id
       });
       let toBeCreatedAssays = [],
         newAssays = []
-      $j.each(newMethods, (i, v) => {
-        if ($j.inArray(v, oldMethodsTitles) == -1) {
-          counter++
+      $j.each(methodNameIds.methodsId, (i, v) => {
+        if ($j.inArray(v, oldMethodsIds) == -1) {
+          let assayDetail = getAssayDetail(methodNameIds.opId[i])
           toBeCreatedAssays.push(createAssay(pid, $j("#selected_item_id").val(), uid,
-            `Assay${counter}`))
-          newAssays.push({
-            "id": "x",
-            "title": "y",
-            "method": {
-              "title": newMethods[i],
-              "content": ""
-            },
-            "in_id": getSampleId(connectedSamples(newMethods[i], flowchartData).input, newSamples),
-            "out_id": getSampleId(connectedSamples(newMethods[i], flowchartData).output,
-              newSamples)
-          })
+            assayDetail.title, assayDetail.description))
+          newAssays.push(genAssayStruct(newMethods[i]))
+
         }
       });
       $j.when.apply($j, toBeCreatedAssays)
         .then((res) => {
-          newAssays = updateAssaysId(newAssays, toBeCreatedAssays)
-          newAssays = compareAndUpdateAssays(oldAssays, newAssays, newMethods)
+          // Pass newSamples also , their ID should be set coz tabes are inside methods NOW!!
+          let tempVal = updateAssaysId(newAssays, toBeCreatedAssays, newSamples)
+          newAssays = tempVal.assays
+          newSamples = tempVal.samples
+          newAssays = compareAndUpdateAssays(oldAssays, newAssays, methodNameIds)
           setOperatorId(flowchartData, newSamples, newAssays)
+          $j.each(newAssays, (i, v) => {
+            let conSamples = connectedSamples(newAssays[i].method.title, flowchartData)
+            newAssays[i].in_id = getSampleId(conSamples.input, newSamples)
+            newAssays[i].out_id = getSampleId(conSamples.output, newSamples)
+          })
+          // Apply new columns from attributes
+          newSamples = applyAttributes(newAssays, newSamples)
+          //Sample structure : {data:[], samples:[newSamples]}
           save_flowchart(flowchartData, newAssays, newSamples)
-          location.reload(true);
+          // location.reload(true);
         })
     })
+  }
+
+  function applyAttributes(assays, samples) {
+    // We have to handle all the samples
+    // Check if they have the attributes currently or not
+    $j.each(assays, (k, v) => {
+      let sampleId = v.id // assay and sample id are the same
+      let typeId = v.method.type
+      let needUpdate = false
+      //find the sample
+      let sample, sampleIndex
+
+      $j.each(samples, (k, v) => {
+        if (v.id == sampleId) {
+          sample = v
+          sampleIndex = k
+          return false
+        }
+      })
+
+      if (sample == undefined) return true
+      let sampleContent = sample.content
+      // Try parse
+      sampleContent = TryJsonParse(sampleContent)
+
+      if (!sampleContent) {
+        sampleContent = {};
+        needUpdate = true
+      }
+      // Insert ID Column
+      if (!sampleContent.id) {
+        sampleContent["id"] = '';
+        needUpdate = true
+      }
+
+      //check if it has the attributes currently
+      if (JSON.stringify(sampleContent).indexOf("attribute-") == -1) // attribute-colName
+      {
+        needUpdate = true
+        //Aquire the list of the attributes
+        let cols = methodTypes[typeId].attributes
+        // Append to the content
+        $j.each(cols, (k, v) => {
+          sampleContent[`${v.title}%attribute-${v.title}`] = ""
+        })
+      } else {
+        // just skip
+      }
+      if (needUpdate) {
+        let tmp = $j.isArray(sampleContent) ? sampleContent : [sampleContent];
+        samples[sampleIndex].content = JSON.stringify(tmp)
+      }
+    })
+    console.log("samples");
+
+    console.log(samples);
+
+    return samples
+  }
+
+  function genAssayStruct(title) {
+    return {
+      "id": "x",
+      "title": "y",
+      "method": {
+        title,
+        "content": ""
+      },
+      "in_id": "",
+      "out_id": ""
+    }
   }
 
   function getStudyAssays() {
@@ -416,19 +515,27 @@
   function ToBeRemovedAssays(OldMethods, newMethods) {
     let arr = []
     $j.each(OldMethods, (i, item) => {
-      if ($j.inArray(item.title, newMethods) == -1) {
+      if ($j.inArray(item.id, newMethods) == -1) {
         arr.push(removeAssay(item.id))
       }
     })
     return arr
   }
 
-  function updateAssaysId(assays, arr) {
+  function updateAssaysId(assays, arr, samples) {
+    let sampleLength = samples.length
+    let assayLength = assays.length
+    let cnt = sampleLength - assayLength
     for (var i = 0; i < arr.length; i++) {
-      assays[i].id = JSON.parse(arr[i].responseText).data.id
+      let id = JSON.parse(arr[i].responseText).data.id
+      assays[i].id = id
       assays[i].title = JSON.parse(arr[i].responseText).data.attributes.title
+      samples[cnt + i].id = samples[cnt + i].id == "?" ? id : samples[cnt + i].id
     }
-    return assays
+    return {
+      'assays': assays,
+      'samples': samples
+    }
   }
 
   function setOperatorId(data, samples, assays) {
@@ -450,15 +557,18 @@
   function compareAndUpdateAssays(old, New, FLMethods) {
     let temp = []
     let exist = false
-    $j.each(FLMethods, (k, v) => {
+    $j.each(FLMethods.methodsId, (k, v) => {
       for (let i = 0; i < old.length; i++) {
-        if (old[i].method.title == v) {
+        if (old[i].id == v) {
+          old[i].method.title = FLMethods.methods[k]
           temp.push(old[i])
           break;
         }
       }
     })
     for (let i = 0; i < New.length; i++) {
+      //Syncing the method types
+      New[i].method["type"] = AssayDetails[i].methodType
       temp.push(New[i])
     }
     return temp
@@ -466,7 +576,7 @@
 
   function compareAndUpdateSamples(old, New) {
     // New contains all samples
-    if (New.length == 0) return old
+    if (New.length == 0) return [] //old
     for (let j = 0; j < New.length; j++) {
       for (let i = 0; i < old.length; i++) {
         if (old[i].id == New[j].id) {
@@ -500,12 +610,13 @@
     })
   }
 
-  function createAssay(pid, std_id, uid, title) {
+  function createAssay(pid, std_id, uid, title, desc) {
     let data = {
       "data": {
         "type": "assays",
         "attributes": {
           "title": title,
+          "description": desc,
           "assay_class": {
             "key": "EXP"
           },
@@ -562,8 +673,9 @@
     $j("#fileManagerContainer").hide()
     $j("#investigationContainer").hide()
     $j("#studyContainer").hide()
-    $j("#text_content").hide()
-    $j("#tbl_file_content").hide()
+    $j("#assayContainer").hide()
+    // $j("#text_content").hide()
+    // $j("#tbl_file_content").hide()
     $j("#separator_item").hide()
   }
 
@@ -582,36 +694,34 @@
           break;
         case "inv":
           $j("#investigationContainer").show()
+          inv_id = item_id
           populate_tags(item_id, 'inv')
           breadcrumb("inv")
           break;
         case "std":
           $j("#studyContainer").show()
+          std_id = item_id
           populate_tags(item_id, 'std')
           breadcrumb("std")
           load_design();
           loadSuggestedCols(item_id)
           break;
         case "asy":
-          $j("#fileManagerContainer").show()
-          let std_id = $j(`#${item.parent}`).children('a[_type="std"]').attr("_id")
-          let asy_id = $j(`#${item.id}`).children('a[_type="asy"]').attr("_id")
-          load_samples(std_id, asy_id);
+          $j("#assayContainer").show()
+          std_id = $j(`#${item.parent}`).children('a[_type="std"]').attr("_id")
+          asy_id = $j(`#${item.id}`).children('a[_type="asy"]').attr("_id")
+          loadMethod(std_id, asy_id)
           loadSuggestedCols(std_id)
           load_design(std_id);
+          load_samples(std_id, asy_id)
           breadcrumb("asy")
+          get_assay(asy_id)
           break;
         case "fld":
           $j("#fileManagerContainer").show()
           $j("#selected_folder").val(item.text)
           $j("#separator_item").show()
           load_files()
-          break;
-        case "methods":
-          $j("#fileManagerContainer").show()
-          $j("#selected_folder").val(item.text)
-          load_method(item_id.split('_')[1], item_id.split('_')[2])
-          breadcrumb("asy")
           break;
       }
     })
@@ -717,7 +827,26 @@
         $j('#projectDesC').text(s.data.attributes.description)
       },
       error: (e) => {
-        console.log('error gettign investigation!')
+        console.log('error gettign project!')
+      }
+    })
+  }
+
+  function get_assay(assayId) {
+    $j.ajax({
+      method: 'GET',
+      "headers": {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      cache: false,
+      url: `/assays/${assayId}`,
+      success: s => {
+        $j('#assaytitleContent').text(s.data.attributes.title)
+        $j('#assayDescription').text(s.data.attributes.description)
+      },
+      error: (e) => {
+        console.log('error gettign assay!')
       }
     })
   }
@@ -799,19 +928,32 @@
       cache: false,
       url: pid + '/all_samples',
       data: {
-        'std_id' : $j("#selected_item_id").val()
+        'std_id': $j("#selected_item_id").val()
       },
       success: s => {
-        console.log("all samples:")
-        console.log(s)
-        if (s.data)
-        {
-          console.log(samples[0])
-          console.log(s.data.content)
+        if (s.data && s.data.length == 0) {
           samples[0].content = s.data.content
         }
       }
     })
-     return samples
+    return samples
+  }
+
+  function getAssayDetail(opId) {
+    for (let i = 0; i < AssayDetails.length; i++) {
+      if (AssayDetails[i].opId == opId) {
+        return AssayDetails[i]
+      }
+    }
+  }
+
+  function TryJsonParse(str) {
+    let json = ''
+    try {
+      json = JSON.parse(str);
+    } catch (e) {
+      return false;
+    }
+    return json;
   }
 </script>

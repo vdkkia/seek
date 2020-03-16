@@ -104,7 +104,9 @@
 .tableXs th {
     background-color: #000;
     color: white;
-    text-align: center
+    text-align: center;
+    white-space: nowrap;
+    font-size:11px
 }
 
 .tableXs tr:nth-child(even) {
@@ -291,4 +293,58 @@
 
 .bcrumb li a:hover:after {
     cursor: default
+}
+
+.small_list {
+    margin-bottom: 10px;
+    max-height: 75px;
+    overflow-y: scroll;
+    font-size: 9px;
+    border-radius: 3px;
+    border: soloid #aaa 1px
+}
+
+.pgclose {
+    position: absolute;
+    top: 5px;
+    right: 5px
+}
+
+.workflowPopup input {
+    font-size: 12px
+}
+
+.workflowPopup {
+    position: absolute;
+    background-color: white;
+    opacity: 0.9;
+    border-radius: 5px;
+    border: 2px solid #bbb;
+    z-Index: 999;
+    font-size: 12px;
+    -webkit-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 32px -5px rgba(0, 0, 0, 0.75);
+}
+
+.workflowPopup select {
+    font-size: 12px;
+    max-width: 150px
+}
+
+.workflowPopup table {
+    border-spacing: 5px;
+    border-collapse: separate;
+}
+
+.cdiv {
+    float: left
+}
+
+.cdiv label {
+    display: block;
+}
+
+.badge {
+    transition: all 200ms ease-in-out;
 }
