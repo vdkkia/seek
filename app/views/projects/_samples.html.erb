@@ -375,7 +375,7 @@
          } else {
              $j.ajax({
                  type: 'GET',
-                 url: `http://193.190.85.155:53006/ontology/${term}`,
+                 url: `https://fairdomhub.be/ontology/ontology/${term}`,
                  cache: true,
                  success: s => {
                      $j(`${tblClass} tbody tr td:nth-child(${column})`).autocomplete({
