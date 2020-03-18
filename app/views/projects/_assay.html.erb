@@ -7,8 +7,19 @@
         </ul>
         <div class="tab-content">
             <div id="assayDetails" class="tab-pane fade in active" style="padding:10px">
-                <p><strong>Type: </strong> <span id="assayType"></span></p>
-                 <p><strong>Attributes: </strong> <span id="assayAttrib"></span></p>
+                <p><strong>Type: </strong> <span id="assayTypeTab"></span></p>
+                <%
+=begin%>
+                <p><strong>Attributes: </strong> <span id="assayAttrib"></span></p>
+                <%
+=end%>
+                <p>
+
+                        <label>Attributes:</label>
+                        <ul id="adetailsAttribs" class="small_list"></ul>
+
+                </p>
+
                 <p id="assayTitle"><strong style="text-align: center;">Title:</strong> <span
                         id="assaytitleContent"></span>
                 </p>

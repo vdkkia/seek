@@ -495,11 +495,12 @@
     }
   }
 
-  function getStudyAssays() {
+  function getStudyAssays(std_id) {
+    std_id = std_id || $j("#selected_item_id").val()
     return $j.ajax({
       method: 'GET',
       cache: false,
-      url: `/projects/${pid}/study_assays?std_id=${$j("#selected_item_id").val()}`
+      url: `/projects/${pid}/study_assays?std_id=${std_id}`
     })
   }
 
@@ -717,6 +718,7 @@
           load_samples(std_id, asy_id)
           breadcrumb("asy")
           get_assay(asy_id)
+          loadAssayType(asy_id, std_id)
           break;
         case "fld":
           $j("#fileManagerContainer").show()
@@ -733,6 +735,22 @@
       plugins: ["separate"]
     });
 
+async function loadAssayType(asy_id, std_id){
+   let res = await getStudyAssays(std_id), assayType=0
+   res = JSON.parse(res.assays)
+
+   $j.each(res, (key, assay)=>{
+     if (assay.id == asy_id){
+        assayType = assay.method.type
+        return false
+     }
+   })
+   $j("#assayTypeTab").html(methodTypes[assayType].title)
+    $j.each(methodTypes[assayType].attributes, (k, attr) => {
+            $j("#adetailsAttribs").append(`<li>${attr.title}</li>`)
+        })
+   
+}
   function addInvestigations(t) {
     $j('#data-file-modal-inv').modal({
       backdrop: 'static',
