@@ -57,10 +57,6 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <div>
-                            <label>Title:</label>
-                            <input style="margin-bottom:10px" type="text" class="form-control" id="assayTitle">
-                        </div>
                         <div style="display:inline-block">
                             <div class="cdiv">
                                 <label>Type:</label>
@@ -73,8 +69,26 @@
                                 <ul id="attribs" class="small_list"></ul>
                             </div>
                         </div>
+                        <div>
+                            <label>Title:</label>
+                            <input style="margin-bottom:10px" type="text" class="form-control" id="assayTitle">
+                        </div>
                         <div><label>Description: </label>
-                            <textarea id="assayDes" class="form-control"></textarea>
+                            <textarea id="assayDes" class="form-control" style="max-height:50px"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-header">
+                    <h4 class="modal-title">Method</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div>
+                            <label>Title:</label>
+                            <input style="margin-bottom:10px" type="text" class="form-control" id="modalMethodTitle">
+                        </div>
+                        <div><label>Description: </label>
+                            <textarea id="modalMethodDes" class="form-control" style="max-height:50px"></textarea>
                         </div>
                     </div>
                 </div>
@@ -447,6 +461,7 @@
 
 
                     $flowchart.flowchart('selectOperator', opId);
+                    $j('#operator_properties').hide()
                 }
             }
         });
@@ -681,6 +696,8 @@
             description: $j.trim($j("#assayDes").val()),
             methodType: $j("#method_type").val() || 0
         })
+         //Add the method detail:
+        $j('#chart_canvas').flowchart('setOperatorTitle', Id, $j("#modalMethodTitle").val());
         $j("#assayInfo").hide()
     })
     $j("#btnCancelAssay").on("click", () => {
@@ -705,8 +722,10 @@
     asyTypeChange = (i) => {
         $j("#attribs").empty()
         $j("#method_type").val(i.value)
+        $j("#assayTitle").val(methodTypes[i.value].title)
         $j.each(methodTypes[i.value].attributes, (k, attr) => {
             $j("#attribs").append(`<li>${attr.title}</li>`)
         })
+
     }
 </script>

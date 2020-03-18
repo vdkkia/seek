@@ -7,6 +7,8 @@
         </ul>
         <div class="tab-content">
             <div id="assayDetails" class="tab-pane fade in active" style="padding:10px">
+                <p><strong>Type: </strong> <span id="assayType"></span></p>
+                 <p><strong>Attributes: </strong> <span id="assayAttrib"></span></p>
                 <p id="assayTitle"><strong style="text-align: center;">Title:</strong> <span
                         id="assaytitleContent"></span>
                 </p>
@@ -14,12 +16,12 @@
             </div>
             <div id="assayMethod" class="tab-pane fade" style="padding:10px">
 
-                    <%= render :partial => "method" -%>
+                <%= render :partial => "method" -%>
 
             </div>
             <div id="assaySample" class="tab-pane fade" style="padding:10px">
 
-                    <%= render :partial => "samples" -%>
+                <%= render :partial => "samples" -%>
 
             </div>
 

@@ -256,7 +256,8 @@ class ProjectsController < ApplicationController
     if type == 'method'
       data = JSON.parse(study_design.assays)
       data.each do |x|
-        return render json: { data: x['method']['content'] } if x['id'] == item_id
+        return render json: { data: x['method']['content'], 
+          title: x['method']['title'] } if x['id'] == item_id
       end
     
     else
