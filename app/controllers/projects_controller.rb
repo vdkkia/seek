@@ -177,12 +177,12 @@ class ProjectsController < ApplicationController
 
   # GET
   def samples
-    samples = []
-    in_id = ""
-    out_id = ""
-    assay_id = params[:asy_id]
+    # samples = []
+    # in_id = ""
+    # out_id = ""
+    # assay_id = params[:asy_id]
     row = StudyDesign.where(study_id: params[:std_id]).first
-    assays = JSON.parse(row.assays)
+    # assays = JSON.parse(row.assays)
     sample = JSON.parse(row.samples)
     # assays.each do |x|
     #   if x['id'] == assay_id

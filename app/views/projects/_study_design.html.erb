@@ -108,6 +108,11 @@
                 </table>
             </div>
 
+
+                  <%=  render partial: 'sample_source' %>
+
+
+
             <h2> <label><input class="design_chk" type="checkbox" id="chk_replicates"> Replicates</label>
             </h2>
             <div id="div_chk_replicates" style="display:none">
@@ -611,6 +616,7 @@
             success: s => {
                 console.log('Sample source saved.')
                 load_design(std_id)
+                loadSamplesSourceTable(std_id)
             }
         })
     }

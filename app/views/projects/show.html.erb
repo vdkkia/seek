@@ -704,6 +704,7 @@
           populate_tags(item_id, 'std')
           breadcrumb("std")
           load_design();
+          loadSamplesSourceTable(std_id); // for the tbl_sample_source
           loadSuggestedCols(item_id)
           break;
         case "asy":

@@ -1,0 +1,63 @@
+<div id="content-wrapper">
+    <div class="inner">
+        <div>
+            <h2>
+                <label>Samples source table</label>
+            </h2>
+            <div>
+                <table class="table tableXs tbl_sample_source">
+                    <thead class="thead-dark">
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function loadSamplesSourceTable(std_id) {
+
+
+        $j('.tbl_sample_source thead tr').empty()
+        $j('.tbl_sample_source tbody').empty()
+        $j.ajax({
+            type: 'GET',
+            cache: false,
+            url: pid + '/samples',
+            data: {
+                std_id
+            },
+            success: result => {
+                if (result.data.length == undefined) result.data = [result.data]
+                if (result.data.length > 0) {
+                    let data = JSON.parse(result.data[0].content)
+                    if (!data) return
+                    let header = Object.keys(data[0])
+                    $j.each(header, (k, col) => {
+                        let hash = col.split('%')
+                        let options = hash.length > 1 ? {
+                            title: hash[0],
+                            tableClass: ".tbl_sample_source",
+                            acTerm: hash[1],
+                            ableToRemove: false,
+                            originalTitle: col
+                        } : {
+                            title: col,
+                            tableClass: ".tbl_sample_source",
+                            ableToRemove: false,
+                            originalTitle: col
+                        }
+                        addColumn(options)
+                    })
+                    $j('.tbl_sample_source tbody').append(`<td colspan=${header.length + 1}>NO DATA</td>`)
+                    $j('.dpd').show()
+                } else
+                    $j('.dpd').hide()
+
+            }
+        })
+    }
+</script>
