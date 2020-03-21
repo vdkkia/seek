@@ -8,10 +8,9 @@
                     factors</label>
             </h2>
             <div id="div_chk_experimental_factors" style="display:none">
-                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_experimental_factors','','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i> Add
+                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_experimental_factors','','',true)"> <i class="glyphicon glyphicon-plus"></i> Add
                     Variable</a>
-                <table class="table tableXs tbl_experimental_factors">
+                <table class="table tableXs tbl_experimental_factors designTbl">
                     <thead class="thead-dark">
                         <th>Experimental factors</th>
                         <th></th>
@@ -27,14 +26,13 @@
             </h2>
 
             <div id="div_chk_response_variables" style="display:none">
-                <a class="btn btn-secondary pull-left" onClick="addTableRow('.tbl_response_variables','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i> Add
+                <a class="btn btn-secondary pull-left" onClick="addTableRow('.tbl_response_variables','',true)"> <i class="glyphicon glyphicon-plus"></i> Add
                     Variable</a>
                 &nbsp;
                 <a class="btn btn-secondary pull-left" id="addSubSample">
                     <i class="glyphicon glyphicon-plus"></i> Add sub-sample</a>
 
-                <table class="table tableXs tbl_response_variables">
+                <table class="table tableXs tbl_response_variables designTbl">
                     <thead class="thead-dark">
                         <th>Response variables <%= help_icon('what will you quantify?')%> </th>
                         <th>Material <%= help_icon('quantification on what?')%> </th>
@@ -50,11 +48,10 @@
             </h2>
             <div id="div_chk_blocking_variables" style="display:none">
 
-                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_blocking_variables','','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i>
+                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_blocking_variables','','',true)"> <i class="glyphicon glyphicon-plus"></i>
                     Add Variable</a>
 
-                <table class="table tableXs tbl_blocking_variables">
+                <table class="table tableXs tbl_blocking_variables designTbl">
                     <thead class="thead-dark">
                         <th>Blocking variables</th>
                         <th></th>
@@ -70,11 +67,10 @@
             </h2>
             <div id="div_chk_covariates" style="display:none">
 
-                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_covariates','','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i> Add
+                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_covariates','','',true)"> <i class="glyphicon glyphicon-plus"></i> Add
                     Variable</a>
 
-                <table class="table tableXs tbl_covariates">
+                <table class="table tableXs tbl_covariates designTbl">
                     <thead class="thead-dark">
                         <th>Covariates <%= help_icon('Variables of no interest that might affect response variables') %>
                         </th>
@@ -92,11 +88,10 @@
             </h2>
 
             <div id="div_chk_confounding_variables" style="display:none">
-                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_confounding_variables','','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i>
+                <a class="btn btn-secondary pull-left" onClick="add_var('.tbl_confounding_variables','','',true)"> <i class="glyphicon glyphicon-plus"></i>
                     Add Variable</a>
 
-                <table class="table tableXs tbl_confounding_variables">
+                <table class="table tableXs tbl_confounding_variables designTbl">
                     <thead class="thead-dark">
                         <th>Confounding variables <%= help_icon('Variables of no interest that might affect experimental factors and
                             response variables') %></th>
@@ -109,7 +104,7 @@
             </div>
 
 
-                  <%=  render partial: 'sample_source' %>
+            <%=  render partial: 'sample_source' %>
 
 
 
@@ -117,11 +112,10 @@
             </h2>
             <div id="div_chk_replicates" style="display:none">
 
-                <a class="btn btn-secondary pull-left" onClick="addTableRow('.tbl_replicates','',true)"> <i
-                        class="glyphicon glyphicon-plus"></i> Add
+                <a class="btn btn-secondary pull-left" onClick="addTableRow('.tbl_replicates','',true)"> <i class="glyphicon glyphicon-plus"></i> Add
                     Variable</a>
 
-                <table class="table tableXs tbl_replicates">
+                <table class="table tableXs tbl_replicates designTbl">
                     <thead class="thead-dark">
                         <th>Replicates</th>
                         <th>Number</th>
@@ -135,8 +129,7 @@
             <h2>Design of experiment</h2>
             <div class="form-inline" style="text-align:left">
                 <input id="expDesign" class="form-control" placeholder="...">
-                <input id="experiment_design_desc" type="text" class="form-control" style="min-width:400px"
-                    placeholder="Description" value="Compare two temperature. Three independent replicates">
+                <input id="experiment_design_desc" type="text" class="form-control" style="min-width:400px" placeholder="Description" value="Compare two temperature. Three independent replicates">
             </div>
             <div style="text-align:center">
                 <h2></h2>
@@ -194,7 +187,7 @@
         } else {
             $j(tableClass).find('thead').find('th').eq(colCount - bias).after(element)
         }
-        $j(tableClass).find('tr').each(function () {
+        $j(tableClass).find('tr').each(function() {
             $j(this).find('td').eq(colCount - bias).after(`<td contentEditable='true'>${value}</td>`);
         });
 
@@ -215,13 +208,29 @@
             templates = headers;
         else
             templates = items
-
+        // console.log(items);
         $j.each(templates, (i, a) => {
-            newRow += items ?
-                defaultCol.replace('$$', typeof (a) != 'string' && $j(a).data('original') ? items[$j(a).data(
-                    'original')].replace(
-                    'undefined', '') : a) :
-                defaultCol.replace('$$', '');
+            if (items) {
+                if (typeof(a) != 'string' && $j(a).data('original')) {
+                    let tmp = items[$j(a).data('original')]
+                    if (tmp) {
+                        newRow += defaultCol.replace('$$', tmp.replace('undefined', ''))
+                    } else {
+                        newRow += defaultCol.replace('$$', '')
+                    }
+                } else {
+                    newRow += defaultCol.replace('$$', a)
+                }
+            } else {
+                newRow += defaultCol.replace('$$', '')
+            }
+
+            // newRow += items ?
+            //     defaultCol.replace('$$', typeof(a) != 'string' && $j(a).data('original') ? items[$j(a).data(
+            //         'original')].replace(
+            //         'undefined', '') : a) :
+            //     defaultCol.replace('$$', '');
+
             // Apply each column auto complete list
             // TO-DO: cache auto complete list response rather than Ajax call each time
             if (add_single) {
@@ -294,7 +303,7 @@
             "sub_sample": ""
         }
         let thCount = $j('.tbl_response_variables thead tr th').length; //Avoid remove cell
-        $j('.tbl_response_variables thead tr th').each(function (i, a) {
+        $j('.tbl_response_variables thead tr th').each(function(i, a) {
             if (i > 2 && i < thCount - 2) item_structure[`sub_sample${i-2}`] = ""
         })
         data.response_variables = get_table_JSON(".tbl_response_variables", item_structure, [])
@@ -357,7 +366,7 @@
             },
             success: data => {
                 load_tables(JSON.parse(data.data))
-                add_remove_action()
+                add_remove_action('.designTbl')
                 loadWorkflow(JSON.parse(data.flowchart))
             },
             error: e => {
@@ -492,13 +501,13 @@
         let counter = 0
         let root = []
         let currentItem = copy(item_structure)
-        trs.each(function (i, tr) {
+        trs.each(function(i, tr) {
             if (counter > 0) {
                 counter--;
                 currentItem.levels.push($j(tr).find('td').html())
             } else {
                 currentItem = copy(item_structure)
-                $j(tr).find('td').each(function (j, td) {
+                $j(tr).find('td').each(function(j, td) {
                     if (j != headerTdCount - 1) {
                         if ($j(td).attr("rowspan")) {
                             counter = $j(td).attr("rowspan") - 1;
@@ -539,10 +548,10 @@
     function add_remove_action(tblClass = '.tableXs') {
         let action =
             "<a href='' onclick='remove_tr(event)' class=''> <span class='glyphicon glyphicon-trash'></span></a>"
-        $j(tblClass).each(function (i, t) {
+        $j(tblClass).each(function(i, t) {
             $j(t).children('thead').children('tr').append("<th class='rem' style='width:50px;'></th>")
-            $j(t).children('tbody').children('tr').each(function (i, g) {
-                if ($j(g).children('td').length > (tblClass == '.tableXs' ? 1 :
+            $j(t).children('tbody').children('tr').each(function(i, g) {
+                if ($j(g).children('td').length > (tblClass == '.designTbl' ? 1 :
                         0)) //1 for tables with rowspan
                     $j(g).append(
                         `<td class='rem' rowspan=${$j(g).children('td:first').attr("rowspan")}>${action}</td>`
@@ -575,7 +584,7 @@
             return
         }
         let th = $j(e.target).closest('th')
-        $j(e.target).closest('table').find('tbody tr').each(function (i, tr) {
+        $j(e.target).closest('table').find('tbody tr').each(function(i, tr) {
             $j(tr).find(`td:eq(${th.index()})`).remove();
         });
         th.remove()
@@ -599,11 +608,11 @@
             r[`${val.name}%generated-${val.name}`] = ''
         })
         r = JSON.stringify([r])
-        let sampleSource = {
+        let sampleSource = [{
             'id': 'init',
             'title': 'Sample source',
             'content': r
-        }
+        }]
         $j.ajax({
             method: 'PATCH',
             cache: false,

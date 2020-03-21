@@ -3,17 +3,10 @@
             <li class="active "><a data-toggle="tab" href="#details"><i class="glyphicon glyphicon-th-list"></i>
                     Details</a></li>
             <li><a data-toggle="tab" href="#design"><i class="glyphicon glyphicon-pencil"></i> Design</a></li>
-            <%
-=begin%>
-            <li><a data-toggle="tab" href="#sample_design"><i class="glyphicon glyphicon-edit"></i> Sample Source
-                    Description</a></li>
-            <%
-=end%>
 
             <li><a data-toggle="tab" href="#sampleSourceTable" style="display:none" class="dpd"><i class="glyphicon glyphicon-edit"></i> Samples Source
                     Table</a></li>
-            <li><a data-toggle="tab" href="#workflow" onclick="refreshWorkflow()" style="display:none" class="dpd"><i
-                        class="glyphicon glyphicon-random"></i> Workflow</a></li>
+            <li><a data-toggle="tab" href="#workflow" onclick="refreshWorkflow()" style="display:none" class="dpd"><i class="glyphicon glyphicon-random"></i> Workflow</a></li>
         </ul>
         <div class="tab-content">
             <div id="details" class="tab-pane fade in active" style="padding:10px">
@@ -45,13 +38,6 @@
             <div id="sampleSourceTable" class="tab-pane fade" style="padding:10px">
                 <%=  render partial: 'ssTable' %>
             </div>
-            <%
-=begin%>
-            <div id="sample_design" class="tab-pane fade" style="padding:10px">
-                <%=  render partial: 'sample_source' %>
-            </div>
-            <%
-=end%>
         </div>
     </div>
 
@@ -74,7 +60,7 @@
                     }
                 }
             }
-            people.forEach(function (person, index) {
+            people.forEach(function(person, index) {
                 data.data.attributes.policy.permissions.push({
                     'resource': {
                         'id': person.id,
